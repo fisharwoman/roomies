@@ -1,0 +1,12 @@
+# Defines the local environment configuration for our application
+version: '3'
+services:
+  db:
+    image: "postgres:11-alpine"
+    container_name: "roomies_postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - roomies_dbdata:/var/lib/postgresql/data
+volumes:
+  roomies_dbdata:
