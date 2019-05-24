@@ -35,6 +35,9 @@ async function makeTables() {
 }
 
 makeTables()
+    .then(() => {
+        console.log("All additions successful");
+    })
     .catch((err) => {
         console.log(err);
     });

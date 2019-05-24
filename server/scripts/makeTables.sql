@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS Roommates(
 	email text
 );
 
+CREATE TABLE IF NOT EXISTS Household_Roommates (
+	houseID integer REFERENCES Households,
+	roommateID varchar(50) REFERENCES Roommates(userID),
+	PRIMARY KEY(houseID,roommateID)
+);
+
