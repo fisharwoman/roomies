@@ -1,7 +1,8 @@
 
 # Created by https://www.gitignore.io/api/node,macos,windows,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,macos,windows,visualstudiocode
-
+# Webstorm
+.idea/*
 ### macOS ###
 # General
 .DS_Store
