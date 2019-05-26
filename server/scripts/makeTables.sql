@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS Events (
 	creator integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Events_Located_int (
+CREATE TABLE IF NOT EXISTS Events_Located_In (
 	eventID integer REFERENCES Events ON DELETE CASCADE ON UPDATE CASCADE,
 	houseID integer,
 	roomName varChar(40),
@@ -59,3 +59,33 @@ CREATE TABLE IF NOT EXISTS Events_Located_int (
 	PRIMARY KEY (eventID, houseID, roomName)
 );
 
+CREATE TABLE IF NOT EXISTS ExpenseCategories (
+    categoryID integer PRIMARY KEY,
+    description varchar(40) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS ExpenseTypes (
+	expenseTypeID integer PRIMARY KEY,
+	description varchar(40) NOT NULL UNIQUE,
+	category integer REFERENCES ExpenseCategories(categoryID)
+);
+
+CREATE TABLE IF NOT EXISTS Expenses(
+	expenseID integer PRIMARY KEY,
+	expenseDate timestamptz NOT NULL,
+	amount money NOT NULL CHECK (amount >= money(0.0)),
+	description varchar(40) DEFAULT 'No description',
+	createdBy integer REFERENCES Roommates(userID),
+	expenseType integer REFERENCES ExpenseTypes(expenseTypeID),
+	houseId integer REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS PartialExpenses (
+	expenseID integer REFERENCES Expenses ON DELETE CASCADE ON UPDATE CASCADE,
+	lender integer REFERENCES Roommates(userID),
+	borrower integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	amount money NOT NULL CHECK (amount >= money(0.0)),
+	dateSplit timestamptz NOT NULL,
+	datePaid timestamptz,
+	PRIMARY KEY (expenseID, lender, borrower)
+);
