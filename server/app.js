@@ -30,12 +30,12 @@ async function makeTables() {
     try {
         await db.none(sql('makeTables.sql'),{id:123});
     } catch (err) {
-        console.log(err);
+        throw err;
     }
 }
 
 makeTables()
-    .then(() => {
+    .then((res) => {
         console.log("All additions successful");
     })
     .catch((err) => {

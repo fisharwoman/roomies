@@ -38,7 +38,24 @@ CREATE TABLE IF NOT EXISTS Reminders (
 	creator integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS Roommate_Reminders(
+	reminderID integer REFERENCES Reminders ON DELETE CASCADE ON UPDATE CASCADE,
+	userToRemind integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (reminderID, userToRemind)
+);
 
+CREATE TABLE IF NOT EXISTS Events (
+	eventID integer PRIMARY KEY,
+	title varchar(40),
+	eventDate timestamptz NOT NULL,
+	creator integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
-
+CREATE TABLE IF NOT EXISTS Events_Located_int (
+	eventID integer REFERENCES Events ON DELETE CASCADE ON UPDATE CASCADE,
+	houseID integer,
+	roomName varChar(40),
+	FOREIGN KEY (roomName,houseID) REFERENCES Rooms(roomName,houseID) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (eventID, houseID, roomName)
+);
 
