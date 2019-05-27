@@ -61,12 +61,12 @@ CREATE TABLE IF NOT EXISTS Events_Located_In (
 
 CREATE TABLE IF NOT EXISTS ExpenseCategories (
     categoryID integer PRIMARY KEY,
-    description varchar(40) NOT NULL UNIQUE
+    description varchar(40) NOT NULL 
 );
 
 CREATE TABLE IF NOT EXISTS ExpenseTypes (
 	expenseTypeID integer PRIMARY KEY,
-	description varchar(40) NOT NULL UNIQUE,
+	description varchar(40) NOT NULL,
 	category integer REFERENCES ExpenseCategories(categoryID)
 );
 
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
 	bID integer PRIMARY KEY,
 	title varchar(20) NOT NULL,
 	body text,
-	dateCreated timestamptz  NOT NULL,
+	dateCreated timestamptz NOT NULL,
 	createdBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	assignedTo integer REFERENCES Roommates(userID)
 ); 
