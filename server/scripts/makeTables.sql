@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS Roommates(
 
 CREATE TABLE IF NOT EXISTS Household_Roommates (
 	houseID integer REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
-	roommateID integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY(houseID,roommateID)
+    roommateID integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY(houseID,roommateID)
 );
 
 CREATE TABLE IF NOT EXISTS Rooms (
@@ -46,8 +46,9 @@ CREATE TABLE IF NOT EXISTS Roommate_Reminders(
 
 CREATE TABLE IF NOT EXISTS Events (
 	eventID integer PRIMARY KEY,
-	title varchar(40),
-	eventDate timestamptz NOT NULL,
+	title varchar(40), 
+	startDate timestamptz NOT NULL,
+    endDate timestamptz NOT NULL,
 	creator integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -91,10 +92,11 @@ CREATE TABLE IF NOT EXISTS PartialExpenses (
 );
 
 CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
-	bID integer PRIMARY KEY,
+	bID integer,
 	title varchar(20) NOT NULL,
 	body text,
 	dateCreated timestamptz NOT NULL,
 	createdBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	assignedTo integer REFERENCES Roommates(userID)
+	PRIMARY KEY (bID, assignedTo)
 ); 
