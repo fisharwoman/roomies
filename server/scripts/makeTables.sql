@@ -92,9 +92,9 @@ CREATE TABLE IF NOT EXISTS PartialExpenses (
 
 CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
 	bID integer PRIMARY KEY,
-	title varchar(20),
+	title varchar(20) NOT NULL,
 	body text,
-	dateCreated timestamptz,
-	createdBy integer REFERENCES Roommates(userID),
+	dateCreated timestamptz  NOT NULL,
+	createdBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	assignedTo integer REFERENCES Roommates(userID)
 ); 
