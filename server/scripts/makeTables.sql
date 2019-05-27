@@ -97,6 +97,6 @@ CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
 	body text,
 	dateCreated timestamptz NOT NULL,
 	createdBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
-	assignedTo integer REFERENCES Roommates(userID)
+	assignedTo integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (bID, assignedTo)
 ); 
