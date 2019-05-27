@@ -83,12 +83,12 @@ CREATE TABLE IF NOT EXISTS Expenses(
 
 CREATE TABLE IF NOT EXISTS PartialExpenses (
 	expenseID integer REFERENCES Expenses ON DELETE CASCADE ON UPDATE CASCADE,
-	lender integer REFERENCES Roommates(userID),
+	lender integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	borrower integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	amount money NOT NULL CHECK (amount >= money(0.0)),
 	dateSplit timestamptz NOT NULL,
 	datePaid timestamptz,
-	PRIMARY KEY (expenseID, lender, borrower)
+	PRIMARY KEY (expenseID, borrower)
 );
 
 CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
