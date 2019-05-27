@@ -89,3 +89,12 @@ CREATE TABLE IF NOT EXISTS PartialExpenses (
 	datePaid timestamptz,
 	PRIMARY KEY (expenseID, lender, borrower)
 );
+
+CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
+	bID integer PRIMARY KEY,
+	title varchar(20),
+	body text,
+	dateCreated timestamptz,
+	createdBy integer REFERENCES Roommates(userID),
+	assignedTo integer REFERENCES Roommates(userID)
+); 

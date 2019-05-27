@@ -12,14 +12,31 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+setUp()
+.then(makeTables)
+.then((res) => {
+    loadRouter();
+    console.log("All additions successful");
+})
+.catch((err) => {
+    console.log(err);
+});
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
+function setUp() {
+    app.use(logger('dev'));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
+    app.use(cookieParser());
+    app.use(express.static(path.join(__dirname, 'public')));
+    return Promise.resolve();
+}
+
+function loadRouter() {
+    app.use('/', indexRouter);
+    app.use('/users', usersRouter);
+    return Promise.resolve();
+}
 
 function sql(file) {
     const fullpath = path.join('../scripts/',file);
@@ -33,13 +50,5 @@ async function makeTables() {
         throw err;
     }
 }
-
-makeTables()
-    .then((res) => {
-        console.log("All additions successful");
-    })
-    .catch((err) => {
-        console.log(err);
-    });
 
 module.exports = app;
