@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Household_Roommates (
 );
 
 CREATE TABLE IF NOT EXISTS Rooms (
-	houseID integer NOT NULL REFERENCES Households,
+	houseID integer NOT NULL REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
 	roomName varchar(40) NOT NULL,
 	PRIMARY KEY (houseID, roomName)
 );
