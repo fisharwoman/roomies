@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS Contacts (
 	name varchar(20) NOT NULL,
 	phoneNo varchar(15) NOT NULL,
 	relationship text,
-	-- listedBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
-	listedBy bigserial
+	listedBy bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
+	-- listedBy bigserial
 );
 
 CREATE TABLE IF NOT EXISTS Reminders (
