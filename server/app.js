@@ -7,12 +7,15 @@ const db = require("./db");
 const pg = require('pg-promise');
 const QueryFile = pg.QueryFile;
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var contactsRouter = require('./routes/contacts');
-var householdsRouter = require('./routes/households');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const contactsRouter = require('./routes/contacts');
+const householdsRouter = require('./routes/households');
+const bulletinsRouter = require('./routes/bulletins');
+const calendarRouter = require('./routes/calendar-entries');
+const expensesRouter = require('./routes/expenses');
 
-var app = express();
+const app = express();
 
 setUp()
 .then(makeTables)
@@ -39,6 +42,9 @@ function loadRouter() {
     app.use('/users', usersRouter);
     app.use('/contacts', contactsRouter);
     app.use('/households', householdsRouter);
+    app.use('/bulletins', bulletinsRouter);
+    app.use('/calendar-entries', calendarRouter);
+    app.use('/expenses', expensesRouter);
     return Promise.resolve();
 }
 
