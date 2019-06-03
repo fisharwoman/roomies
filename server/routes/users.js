@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const db = require('../db');
 
+const url = "http://localhost:3000/users/";
 /* GET users listing. */
 router
     /**
@@ -11,6 +12,9 @@ router
         try {
             const query = "SELECT userID FROM Roommates";
             let result = await db.any(query);
+            result = result.map((value) => {
+                return url + value.userid;
+            });
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send("Bad request");
