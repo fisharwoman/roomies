@@ -44,7 +44,7 @@ router
             res.status(400).send(e.message);
         }
     })
-    .put('/:userID', async(req,res) => {
+    .patch('/:userID', async(req,res) => {
         try {
             const query = `UPDATE Roommates SET name = '${req.body.name}', phoneNo = '${req.body.phoneNo}', password = '${req.body.password}',`+
                 ` email = '${req.body.email}' WHERE userID = ${req.params.userID} RETURNING userID, name, phoneNo, email`;
