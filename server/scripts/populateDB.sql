@@ -26,8 +26,6 @@ INSERT INTO Rooms VALUES
 (1, 'laundry room'),
 (2, 'living room');
 
-
-
 INSERT INTO Contacts (name, phoneNo, relationship, listedBy) VALUES
 ('Phoebe Buffay', '604-222-3333', 'Best friend',2),
 ('Cosmo Kramer', '778-888-4444', 'Plumber', 3),
@@ -42,4 +40,11 @@ INSERT INTO Reminders (title, reminderDate, creator) VALUES
 ('clean apartment', '2019-06-28 13:15:00-07', 2),
 ('straighten hair!!!', '2019-07-01 08:00:00-07', 1);
 
--- INSERT INTO Roommate_Reminders VALUES
+INSERT INTO Roommate_Reminders VALUES
+(1,2),
+(2,3),
+(2,4),
+(3,4),
+(3,5);
+
+
