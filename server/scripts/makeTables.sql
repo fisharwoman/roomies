@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS Household_Roommates (
     PRIMARY KEY(houseID,roommateID)
 );
 
-INSERT INTO Households VALUES (1,'123 road');
-INSERT INTO Roommates VALUES (1,'john', '1234', 'password', 'something@email.com');
-INSERT INTO Household_Roommates VALUES (1,1);
+-- INSERT INTO Households VALUES (1,'123 road');
+-- INSERT INTO Roommates VALUES (1,'john', '1234', 'password', 'something@email.com');
+-- INSERT INTO Household_Roommates VALUES (1,1);
 
 CREATE TABLE IF NOT EXISTS Rooms (
 	houseID bigserial NOT NULL REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,

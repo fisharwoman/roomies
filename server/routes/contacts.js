@@ -38,7 +38,7 @@ router
         try {
             const query = `INSERT INTO Contacts (name, phoneNo, relationship, listedBy)` +
                 `VALUES ('${req.body.name}', '${req.body.phoneNo}', '${req.body.relationship}', '${req.body.listedBy}')` +
-                // `VALUES ('adele', '123456', 'father', '1')` +
+                // `VALUES ('adele', '123456', 'father', '1')` + //FOR TESTING
                 `RETURNING contactsID;`;
             let result = await db.any(query);
             console.log(result[0].contactsid);
