@@ -10,6 +10,7 @@ const QueryFile = pg.QueryFile;
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var contactsRouter = require('./routes/contacts');
+var householdsRouter = require('./routes/households');
 
 var app = express();
 
@@ -37,6 +38,7 @@ function loadRouter() {
     app.use('/', indexRouter);
     app.use('/users', usersRouter);
     app.use('/contacts', contactsRouter);
+    app.use('/households', householdsRouter);
     return Promise.resolve();
 }
 
