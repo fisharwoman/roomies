@@ -9,6 +9,7 @@ const QueryFile = pg.QueryFile;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var contactsRouter = require('./routes/contacts');
 
 var app = express();
 
@@ -35,6 +36,7 @@ function setUp() {
 function loadRouter() {
     app.use('/', indexRouter);
     app.use('/users', usersRouter);
+    app.use('/contacts', contactsRouter);
     return Promise.resolve();
 }
 
@@ -46,6 +48,7 @@ function sql(file) {
 async function makeTables() {
     try {
         await db.none(sql('makeTables.sql'),{id:123});
+        await db.none(sql('populateDB.sql'),{id:123});
     } catch (err) {
         throw err;
     }
