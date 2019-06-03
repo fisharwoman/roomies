@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS Households(
-	houseID integer PRIMARY KEY,
+	houseID bigserial PRIMARY KEY,
 	address text
 );
 
 CREATE TABLE IF NOT EXISTS Roommates(
-	userID integer PRIMARY KEY,
+	userID bigserial PRIMARY KEY,
 	name varchar(40) NOT NULL,
 	phoneNo varchar(15),
 	password varchar(20) NOT NULL,
@@ -12,19 +12,19 @@ CREATE TABLE IF NOT EXISTS Roommates(
 );
 
 CREATE TABLE IF NOT EXISTS Household_Roommates (
-	houseID integer REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
-    roommateID integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	houseID bigserial REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
+    roommateID bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY(houseID,roommateID)
 );
 
 CREATE TABLE IF NOT EXISTS Rooms (
-	houseID integer NOT NULL REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
+	houseID bigserial NOT NULL REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
 	roomName varchar(40) NOT NULL,
 	PRIMARY KEY (houseID, roomName)
 );
 
 CREATE TABLE IF NOT EXISTS Contacts (
-	cID integer PRIMARY KEY,
+	cID bigserial PRIMARY KEY,
 	name varchar(20) NOT NULL,
 	phoneNo varchar(15) NOT NULL,
 	relationship text,
@@ -32,59 +32,59 @@ CREATE TABLE IF NOT EXISTS Contacts (
 );
 
 CREATE TABLE IF NOT EXISTS Reminders (
-	reminderID integer PRIMARY KEY,
+	reminderID bigserial PRIMARY KEY,
 	title varchar(40),
 	reminderDate timestamptz NOT NULL,
-	creator integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
+	creator bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Roommate_Reminders(
-	reminderID integer REFERENCES Reminders ON DELETE CASCADE ON UPDATE CASCADE,
-	userToRemind integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	reminderID bigserial REFERENCES Reminders ON DELETE CASCADE ON UPDATE CASCADE,
+	userToRemind bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (reminderID, userToRemind)
 );
 
 CREATE TABLE IF NOT EXISTS Events (
-	eventID integer PRIMARY KEY,
+	eventID bigserial PRIMARY KEY,
 	title varchar(40), 
 	startDate timestamptz NOT NULL,
     endDate timestamptz NOT NULL,
-	creator integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
+	creator bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Events_Located_In (
-	eventID integer REFERENCES Events ON DELETE CASCADE ON UPDATE CASCADE,
-	houseID integer,
+	eventID bigserial REFERENCES Events ON DELETE CASCADE ON UPDATE CASCADE,
+	houseID bigserial,
 	roomName varChar(40),
 	FOREIGN KEY (roomName,houseID) REFERENCES Rooms(roomName,houseID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (eventID, houseID, roomName)
 );
 
 CREATE TABLE IF NOT EXISTS ExpenseCategories (
-    categoryID integer PRIMARY KEY,
+    categoryID bigserial PRIMARY KEY,
     description varchar(40) NOT NULL 
 );
 
 CREATE TABLE IF NOT EXISTS ExpenseTypes (
-	expenseTypeID integer PRIMARY KEY,
+	expenseTypeID bigserial PRIMARY KEY,
 	description varchar(40) NOT NULL,
-	category integer REFERENCES ExpenseCategories(categoryID)
+	category bigserial REFERENCES ExpenseCategories(categoryID)
 );
 
 CREATE TABLE IF NOT EXISTS Expenses(
-	expenseID integer PRIMARY KEY,
+	expenseID bigserial PRIMARY KEY,
 	expenseDate timestamptz NOT NULL,
 	amount money NOT NULL CHECK (amount >= money(0.0)),
 	description varchar(40) DEFAULT 'No description',
 	createdBy integer REFERENCES Roommates(userID),
-	expenseType integer REFERENCES ExpenseTypes(expenseTypeID),
-	houseId integer REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE
+	expenseType bigserial REFERENCES ExpenseTypes(expenseTypeID),
+	houseId bigserial REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS PartialExpenses (
-	expenseID integer REFERENCES Expenses ON DELETE CASCADE ON UPDATE CASCADE,
-	lender integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
-	borrower integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	expenseID bigserial REFERENCES Expenses ON DELETE CASCADE ON UPDATE CASCADE,
+	lender bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	borrower bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	amount money NOT NULL CHECK (amount >= money(0.0)),
 	dateSplit timestamptz NOT NULL,
 	datePaid timestamptz,
@@ -92,11 +92,11 @@ CREATE TABLE IF NOT EXISTS PartialExpenses (
 );
 
 CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
-	bID integer,
+	bID bigserial,
 	title varchar(20) NOT NULL,
 	body text,
 	dateCreated timestamptz NOT NULL,
-	createdBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
-	assignedTo integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	createdBy bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	assignedTo bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (bID, assignedTo)
 ); 
