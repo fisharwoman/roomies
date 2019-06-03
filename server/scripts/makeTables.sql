@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Events (
 	eventID bigserial PRIMARY KEY,
 	title varchar(40),
 	startDate timestamptz NOT NULL,
-    endDate timestamptz NOT NULL,
+  endDate timestamptz NOT NULL,
 	creator bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
