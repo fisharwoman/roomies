@@ -43,3 +43,24 @@ INSERT INTO Reminders (title, reminderDate, creator) VALUES
 ('straighten hair!!!', '2019-07-01 08:00:00-07', 1);
 
 -- INSERT INTO Roommate_Reminders VALUES
+
+INSERT INTO ExpenseCategories (description) VALUES
+('entertainment'),
+('food/drink'),
+('utilities'),
+('other'),
+('supplies');
+
+INSERT INTO ExpenseTypes (description, category) VALUES
+('movies',1),
+('grocery',2),
+('water',3),
+('hydro',3),
+('bathroom supplies',5);
+
+INSERT INTO Expenses(expenseDate, amount, description, createdBy, expenseType, houseID) VALUES
+('2019-04-29 19:10:25-07','24.00','no description',1,2,2),
+('2019-05-03 17:11:14-07','10.00', 'Toilet Paper',3,5,2),
+('2019-05-06 16:01:19-07','38.99','Groceries from Save-On',3,2,2),
+('2019-05-07 09:12:21-07','5.10','Toilet Paper (on sale)', 2,5,1),
+('2019-05-15 17:11:14-07', '50.00', 'April electricity bill', 4,3,2);
