@@ -1,3 +1,8 @@
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
+
 CREATE TABLE IF NOT EXISTS Households(
 	houseID bigserial PRIMARY KEY,
 	address text
@@ -17,6 +22,10 @@ CREATE TABLE IF NOT EXISTS Household_Roommates (
     PRIMARY KEY(houseID,roommateID)
 );
 
+INSERT INTO Households VALUES (1,'123 road');
+INSERT INTO Roommates VALUES (1,'john', '1234', 'password', 'something@email.com');
+INSERT INTO Household_Roommates VALUES (1,1);
+
 CREATE TABLE IF NOT EXISTS Rooms (
 	houseID bigserial NOT NULL REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
 	roomName varchar(40) NOT NULL,
@@ -24,11 +33,12 @@ CREATE TABLE IF NOT EXISTS Rooms (
 );
 
 CREATE TABLE IF NOT EXISTS Contacts (
-	cID bigserial PRIMARY KEY,
+	contactsID bigserial PRIMARY KEY,
 	name varchar(20) NOT NULL,
 	phoneNo varchar(15) NOT NULL,
 	relationship text,
-	listedBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
+	-- listedBy integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE
+	listedBy bigserial
 );
 
 CREATE TABLE IF NOT EXISTS Reminders (
