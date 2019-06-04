@@ -172,7 +172,7 @@ router
      */
     .get("/types/:typeID", async (req, res) => {
         try {
-            const query = `SELECT FROM ExpenseTypes WHERE expenseTypeID = ${req.params.typeID}`;
+            const query = `SELECT * FROM ExpenseTypes WHERE expenseTypeID = ${req.params.typeID}`;
             let result = await db.one(query);
             res.status(200).json(result);
         } catch (e) {
