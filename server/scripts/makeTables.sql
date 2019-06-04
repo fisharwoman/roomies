@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS PartialExpenses (
 
 CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
 	bID bigserial,
-	title varchar(20) NOT NULL,
+	title varchar(30) NOT NULL,
 	body text,
 	dateCreated timestamptz NOT NULL,
 	createdBy bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
