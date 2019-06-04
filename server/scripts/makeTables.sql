@@ -79,7 +79,8 @@ CREATE TABLE IF NOT EXISTS ExpenseTypes (
 	expenseTypeID bigserial PRIMARY KEY,
 	description varchar(40) NOT NULL,
 	category bigserial REFERENCES ExpenseCategories(categoryID),
-	UNIQUE (description, category)
+	UNIQUE (description, category),
+	CHECK (LENGTH(description) > 0)
 );
 
 CREATE OR REPLACE FUNCTION validate_expense(houseID bigint, roommateID integer)

@@ -5,12 +5,12 @@ const db = require('../db');
 
 router
     /* GET contacts listing based on householdID. */
-    .get('/', async function(req, res, next) {
+    .get('/houses/:houseID', async function(req, res, next) {
         try {
           const query1 = `CREATE OR REPLACE VIEW ContactsByHouseID AS
           SELECT * FROM Contacts
           RIGHT JOIN (SELECT * FROM Household_Roommates WHERE 
-            Household_Roommates.houseID = ${req.params.houseid}) AS derivedTable
+            Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
           ON derivedTable.roommateID = Contacts.listedBy`;
 
           const query2 = `SELECT * FROM ContactsByHouseID`;

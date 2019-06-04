@@ -237,10 +237,73 @@ router
         } catch (e) {
             res.status(400).send(e.message);
         }
+    })
+    /**
+     * Get an expense summary for a particular user
+     */
+    .get('/roommates/:userID/summary', async (req,res) => {
+        try {
+            req.body.id = req.params.userID;
+            const query = makeUserSummaryQuery(req.body);
+            let result = await db.one(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    .get('/households/:houseID/summary', async (req,res) => {
+        try {
+            req.body.id = req.params.houseID;
+            const query = makeHouseholdSummaryQuery(req.body);
+            console.log(query);
+            let result = await db.one(query);
+            res.status(200).json(result);
+        } catch (e) {
+            console.log(e);
+            res.status(400).send(e.message);
+        }
     });
 
 function calculateSplitCost(totalCost, proportion) {
     return totalCost * proportion;
 }
+
+function makeUserSummaryQuery(req) {
+    return makeSummaryQuery(req, 'createdBy');
+}
+
+function makeHouseholdSummaryQuery(req) {
+    return makeSummaryQuery(req, 'houseid');
+}
+
+function makeSummaryQuery(req, summarizeFor) {
+    let type = req.type.toLowerCase();
+    if (type === 'sum' || type === 'avg' || type === 'count' || type === 'max') {
+        let sq = new summaryQuery(req, summarizeFor);
+        return sq.creatQuery();
+    } else {
+        throw new Error("Invalid request");
+    }
+}
+
+class summaryQuery {
+    constructor (req, summarizeFor) {
+        this.opp = req.type;
+        this.filter = ` WHERE ${summarizeFor} = ${req.id}`;
+        this.selection = `SELECT ${this.opp}(amount::numeric) FROM Expenses`;
+        if (req.startDate && req.endDate) {
+            this.filter =  this.filter + ` AND expenseDate >= '${req.startDate}' AND expenseDate <= '${req.endDate}'`;
+        } else if (req.startDate) {
+            this.filter = this.filter + ` AND expenseDate >= '${req.startDate}'`;
+        } else if (req.endDate) {
+            this.filter = this.filter + ` AND expenseDate <= '${req.endDate}'`;
+        }
+    }
+    creatQuery() {
+        return this.selection + this.filter;
+    }
+}
+
+
 
 module.exports = router;
