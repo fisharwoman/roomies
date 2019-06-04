@@ -119,11 +119,10 @@ CREATE TABLE IF NOT EXISTS PartialExpenses (
 );
 
 CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
-	bID bigserial,
+	bID bigserial PRIMARY KEY,
 	title varchar(30) NOT NULL,
 	body text,
 	dateCreated timestamptz NOT NULL,
 	createdBy bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
-	assignedTo bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (bID, assignedTo)
+	assignedTo bigserial REFERENCES Households(houseID) ON DELETE CASCADE ON UPDATE CASCADE
 );
