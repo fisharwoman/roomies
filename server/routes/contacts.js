@@ -22,8 +22,8 @@ router
       }
       })
 
-      /* GET contact based on contactsid. */
-      .get('/:contactsid', async (req,res) => {
+    /* GET contact based on contactsid. */
+    .get('/:contactsid', async (req,res) => {
         try {
             const query = `SELECT * FROM Contacts WHERE contactsID = ${req.params.contactsid}`;
             let result = await db.any(query);
@@ -31,14 +31,14 @@ router
         } catch (e) {
             res.status(400).send(e.message);
         }
-      })
+    })
 
-      /* ADDS new contact */
-      .post('/', async (req,res) => {
+    /* ADDS new contact */
+    .post('/', async (req,res) => {
         try {
             const query = `INSERT INTO Contacts (name, phoneNo, relationship, listedBy)` +
-                `VALUES ('${req.body.name}', '${req.body.phoneNo}', '${req.body.relationship}', '${req.body.listedBy}')` +
-                // `VALUES ('adele', '123456', 'father', '1')` + //FOR TESTING
+                `VALUES ('${req.body.name}', '${req.body.phoneNo}', '${req.body.relationship}', '${req.body.listedby}')` +
+                // `VALUES ('adele', '123456', 'father', '1')` + /* FOR TESTING */
                 `RETURNING contactsID;`;
             let result = await db.any(query);
             console.log(result[0].contactsid);
@@ -47,7 +47,38 @@ router
             console.log(e);
             res.status(400).send(e.message);
         }
-  
+    })
+
+    /* deletes contact based on contactsid */
+    .delete('/:contactsid', async (req,res) => {
+            try {
+                const original = await db.any(`SELECT * FROM Contacts WHERE contactsID = ${req.params.contactsid}`);
+                const query = `DELETE FROM Contacts WHERE contactsID = ${req.params.contactsid}`;
+                // const query = `DELETE FROM Contacts WHERE contactsID = 1`;
+                await db.any(query);
+                res.status(200).send( 'Following contactID ' + `${req.params.contactsid}` + ' deleted:\n' + JSON.stringify(original));
+            } catch (e) {
+                console.log(e);
+                res.status(400).send(e.message);
+            }
+    })
+    
+    /* updates contact for one or more of the attributes */
+    .patch('/:contactsid', async (req,res) => {
+            try {
+                const query = `UPDATE Contacts SET name = ${req.params.name},
+                    phoneNo = ${req.params.phoneNo}, relationship = ${req.params.relationship}, 
+                    listedBy = ${req.params.listedby} WHERE contactsid = ${req.params.contactsid} RETURNING contactsid, name, phoneNo, relationship, listedBy`;
+                    // const query = `UPDATE Contacts SET name = 'john legend',
+                    //     phoneNo = '12345', relationship = 'brother', listedBy = 2 WHERE contactsid = ${req.params.contactsid} 
+                    //     RETURNING contactsid, name, phoneNo, relationship, listedBy`;
+                result = await db.any(query);
+                res.status(200).send( 'Following contactID ' + `${req.params.contactsid}` + 
+                    ' updated:\n' + JSON.stringify(result));
+            } catch (e) {
+                console.log(e);
+                res.status(400).send(e.message);
+            }
   });
 
 module.exports = router;
