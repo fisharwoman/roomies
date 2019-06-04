@@ -77,8 +77,15 @@ CREATE TABLE IF NOT EXISTS ExpenseCategories (
 CREATE TABLE IF NOT EXISTS ExpenseTypes (
 	expenseTypeID bigserial PRIMARY KEY,
 	description varchar(40) NOT NULL,
-	category bigserial REFERENCES ExpenseCategories(categoryID)
+	category bigserial REFERENCES ExpenseCategories(categoryID),
+	UNIQUE (description, category)
 );
+
+CREATE OR REPLACE FUNCTION validate_expense(houseID bigint, roommateID integer)
+RETURNS bool AS
+$func$
+SELECT EXISTS (SELECT * FROM Household_Roommates WHERE houseID = $1 AND roommateID = $2);
+$func$ LANGUAGE sql STABLE;
 
 CREATE TABLE IF NOT EXISTS Expenses(
 	expenseID bigserial PRIMARY KEY,
@@ -87,17 +94,26 @@ CREATE TABLE IF NOT EXISTS Expenses(
 	description varchar(40) DEFAULT 'No description',
 	createdBy integer REFERENCES Roommates(userID),
 	expenseType bigserial REFERENCES ExpenseTypes(expenseTypeID),
-	houseId bigserial REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE
+	houseId bigserial REFERENCES Households ON DELETE CASCADE ON UPDATE CASCADE,
+	CHECK (validate_expense(houseId, createdBy)) NOT valid
 );
 
+CREATE OR REPLACE FUNCTION validate_partial_expense(expenseID bigint, borrowerID bigint)
+RETURNS bool AS
+$func$
+SELECT EXISTS
+(SELECT * FROM Household_Roommates WHERE houseID = (SELECT houseID FROM Expenses WHERE expenseID = $1) AND roommateID = $2);
+$func$ LANGUAGE sql STABLE;
+
 CREATE TABLE IF NOT EXISTS PartialExpenses (
-	expenseID bigserial REFERENCES Expenses ON DELETE CASCADE ON UPDATE CASCADE,
-	lender bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
-	borrower bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	expenseID integer REFERENCES Expenses ON DELETE CASCADE ON UPDATE CASCADE,
+	lender integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+	borrower integer REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	amount money NOT NULL CHECK (amount >= money(0.0)),
 	dateSplit timestamptz NOT NULL,
 	datePaid timestamptz,
-	PRIMARY KEY (expenseID, borrower)
+	PRIMARY KEY (expenseID, borrower),
+	CHECK (validate_partial_expense(expenseID, borrower)) NOT valid
 );
 
 CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
@@ -108,4 +124,4 @@ CREATE TABLE IF NOT EXISTS Bulletin_isCreatedBy (
 	createdBy bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	assignedTo bigserial REFERENCES Roommates(userID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (bID, assignedTo)
-); 
+);

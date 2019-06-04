@@ -13,7 +13,6 @@ router
             let result = await db.any(query);
             result = result.map((value) => {
                 let id = value.houseid;
-                console.log(id);
                 return url + id;
             });
             res.status(200).json(result);
