@@ -178,6 +178,65 @@ router
         } catch (e) {
             res.status(400).send(e.message);
         }
+    })
+    /**
+     * Gets the expense category URIs
+     */
+    .get('/categories', async (req, res) => {
+        try {
+            const query = `SELECT categoryID FROM ExpenseCategories`;
+            let result = await db.any(query);
+            result = result.map((value) => {
+                return url + "categories/" + value.categoryid;
+            });
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Adds a category and returns the new URI
+     * body :{
+     *     description: string
+     * }
+     */
+    .post('/categories', async (req, res) => {
+        try {
+            const query = `INSERT INTO ExpenseCategories (description) VALUES ('${req.body.description}') RETURNING categoryID`;
+            let result = await db.one(query);
+            result = url + "categories/" + result.categoryid;
+            res.status(200).send(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Get the specified expense category
+     */
+    .get('/categories/:categoryID', async (req, res) => {
+        try {
+            const query = `SELECT * from ExpenseCategories WHERE categoryID = ${req.params.categoryID}`;
+            let result = await db.one(query);
+            res.status(200).send(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /**
+     * replaces the specified category ID with the one provided in the description
+     * body: {
+     *     description: string
+     * }
+     */
+    .put('/categories/:categoryID', async (req, res) => {
+        try {
+            const query = `UPDATE ExpenseCategories SET description = '${req.body.description}' `+
+                `WHERE categoryID = ${req.params.categoryID} RETURNING *`;
+            let result = await db.one(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
     });
 
 function calculateSplitCost(totalCost, proportion) {

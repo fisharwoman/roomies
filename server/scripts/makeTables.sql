@@ -71,7 +71,8 @@ CREATE TABLE IF NOT EXISTS Events_Located_In (
 
 CREATE TABLE IF NOT EXISTS ExpenseCategories (
     categoryID bigserial PRIMARY KEY,
-    description varchar(40) NOT NULL
+    description varchar(40) NOT NULL,
+    CHECK (LENGTH(description) > 0)
 );
 
 CREATE TABLE IF NOT EXISTS ExpenseTypes (
