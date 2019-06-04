@@ -52,11 +52,9 @@ router
     /* deletes contact based on contactsid */
     .delete('/:contactsid', async (req,res) => {
             try {
-                const original = await db.any(`SELECT * FROM Contacts WHERE contactsID = ${req.params.contactsid}`);
-                const query = `DELETE FROM Contacts WHERE contactsID = ${req.params.contactsid}`;
-                // const query = `DELETE FROM Contacts WHERE contactsID = 1`;
-                await db.any(query);
-                res.status(200).send( 'Following contactID ' + `${req.params.contactsid}` + ' deleted:\n' + JSON.stringify(original));
+                const query = `DELETE FROM Contacts WHERE contactsID = ${req.params.contactsid} RETURNING *`;
+                let result = await db.one(query);
+                res.status(200).json(result);
             } catch (e) {
                 console.log(e);
                 res.status(400).send(e.message);
