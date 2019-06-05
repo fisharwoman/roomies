@@ -14,12 +14,13 @@ const QueryUtil = {};
  * @param req = {
  *     startDate?: string,
  *     endDate?: string,
- *     amount?: {
- *         operation: 'GT'|'LT'|'EQ',
- *         value: number
- *     },
+ *     amount?: amountQuery[],
  *     types?: number[],
  *     categories?: number[]
+ * }
+ * amountQuery: {
+ *     operator: 'GT'|'LT'|'EQ',
+ *     value: number
  * }
  */
 QueryUtil.makeUserExpenseQuery = function(req) {
@@ -44,10 +45,11 @@ QueryUtil.makeHouseholdExpenseQuery = function(req) {
  *     groupBy?: string[],
  *     startDate?: string,
  *     endDate?: string,
- *     amount?: {
- *         operator: 'GT'|'LT'|'EQ',
- *         value: number
- *     }
+ *     amount?: amountQuery[]
+ * }
+ * amountQuery: {
+ *     operator: 'GT'|'LT'|'EQ',
+ *     value: number
  * }
  */
 QueryUtil.makeUserExpenseSummary = function(req) {
@@ -81,7 +83,7 @@ function getAmountOperator(amount) {
     } else if (amount.operator === 'LT') {
         return `< '${amount.value}'`;
     } else if (amount.operator === 'EQ') {
-        return `== '${amount.value}'`;
+        return `= '${amount.value}'`;
     } else {
         throw new Error("Invalid operator passed to filter by amount");
     }
@@ -90,7 +92,11 @@ function getAmountOperator(amount) {
 function makeExpenseQuery(req, query) {
     if (req.startDate) query = query + ` AND expenseDate >= '${req.startDate}'`;
     if (req.endDate) query = query + ` AND expenseDate <= '${req.endDate}'`;
-    if (req.amount) query = query + " AND amount "+ getAmountOperator(req.amount);
+    if (req.amount) {
+        req.amount.forEach((obj) => {
+            query = query + " AND amount "+ getAmountOperator(obj);
+        });
+    }
     if (req.types) {
         let typeValues = req.types.toString();
         query = query + ` AND expensetypeid IN (${typeValues})`;
@@ -106,7 +112,11 @@ function makeExpenseSummary(req, query) {
     let groupBy = req.groupBy;
     if (req.startDate) query = query + ` AND expenseDate >= ${req.startDate}`;
     if (req.endDate) query = query + ` AND expenseDate <= ${req.endDate}`;
-    if (req.amount) query = query + ' AND amount ' + getAmountOperator(req.amount);
+    if (req.amount) {
+        req.amount.forEach((obj) => {
+            query = query + ' AND amount ' + getAmountOperator(obj);
+        });
+    }
     if (groupBy) query = query + ` GROUP BY ${groupBy.toString()}`;
     return query;
 }
