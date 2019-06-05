@@ -23,9 +23,9 @@ router
       })
 
     /* GET contact based on contactsid. */
-    .get('/:contactsid', async (req,res) => {
+    .get('/:contactsID', async (req,res) => {
         try {
-            const query = `SELECT * FROM Contacts WHERE contactsID = ${req.params.contactsid}`;
+            const query = `SELECT * FROM Contacts WHERE contactsID = ${req.params.contactsID}`;
             let result = await db.any(query);
             res.status(200).json(result);
         } catch (e) {
@@ -50,9 +50,9 @@ router
     })
 
     /* deletes contact based on contactsid */
-    .delete('/:contactsid', async (req,res) => {
+    .delete('/:contactsID', async (req,res) => {
             try {
-                const query = `DELETE FROM Contacts WHERE contactsID = ${req.params.contactsid} RETURNING *`;
+                const query = `DELETE FROM Contacts WHERE contactsID = ${req.params.contactsID} RETURNING *`;
                 let result = await db.one(query);
                 res.status(200).json(result);
             } catch (e) {
@@ -62,17 +62,14 @@ router
     })
     
     /* updates contact for one or more of the attributes */
-    .patch('/:contactsid', async (req,res) => {
+    .put('/:contactsID', async (req,res) => {
             try {
-                const query = `UPDATE Contacts SET name = ${req.params.name},
-                    phoneNo = ${req.params.phoneNo}, relationship = ${req.params.relationship}, 
-                    listedBy = ${req.params.listedby} WHERE contactsid = ${req.params.contactsid} RETURNING contactsid, name, phoneNo, relationship, listedBy`;
-                    // const query = `UPDATE Contacts SET name = 'john legend',
-                    //     phoneNo = '12345', relationship = 'brother', listedBy = 2 WHERE contactsid = ${req.params.contactsid} 
-                    //     RETURNING contactsid, name, phoneNo, relationship, listedBy`;
+                const query = `UPDATE Contacts SET 
+                    name = '${req.body.name}',
+                    phoneNo = '${req.body.phoneNo}', relationship = '${req.body.relationship}',
+                    listedBy = '${req.body.listedby}' ` + `WHERE contactsid = '${req.params.contactsID}' RETURNING *`;
                 result = await db.any(query);
-                res.status(200).send( 'Following contactID ' + `${req.params.contactsid}` + 
-                    ' updated:\n' + JSON.stringify(result));
+                res.status(200).json(result);
             } catch (e) {
                 console.log(e);
                 res.status(400).send(e.message);

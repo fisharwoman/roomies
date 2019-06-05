@@ -32,7 +32,8 @@ insert into Contacts (name, phoneNo, relationship, listedBy) values
 ('Cosmo Kramer', '778-888-4444', 'Plumber', 3),
 ('George Costanza', '999-555-2222', 'Father', 3),
 ('Jerry Seinfeld', '777-666-5555', '', 4),
-('Elaine Benes', '123-456-7890', 'Landlord', 5);
+('Elaine Benes', '123-456-7890', 'Landlord', 5),
+('James Bond', '123-555-7890', 'Sister', 1);
 
 insert into Reminders (title, reminderDate, creator) values
 ('bake lasagna', '2019-06-22 19:15:00-07', 2),
