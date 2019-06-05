@@ -239,7 +239,7 @@ router
         }
     })
     /**
-     * Get an expense summary for a particular user
+     * Apply a search criteria for a user's expenses
      */
     .post('/roommates/:userID/search', async (req,res) => {
         try {
@@ -252,6 +252,9 @@ router
             res.status(400).send(e.message);
         }
     })
+    /**
+     * Apply an aggregate query to a user's particular expenses
+     */
     .post('/roommates/:userID/summary', async (req, res) => {
         try {
             req.body.userID = req.params.userID;
@@ -263,6 +266,9 @@ router
             res.status(400).send(e.message);
         }
     })
+    /**
+     * Apply a search query to a household's particular expenses
+     */
     .post('/households/:houseID/search', async (req,res) => {
         try {
             req.body.houseID = req.params.houseID;
@@ -275,6 +281,9 @@ router
             res.status(400).send(e.message);
         }
     })
+    /**
+     * Apply an aggregate search query to a household's particular expenses
+     */
     .post('/households/:houseID/summary', async (req,res) => {
         try {
             req.body.houseID = req.params.houseID;
@@ -289,9 +298,5 @@ router
 function calculateSplitCost(totalCost, proportion) {
     return totalCost * proportion;
 }
-
-
-
-
 
 module.exports = router;

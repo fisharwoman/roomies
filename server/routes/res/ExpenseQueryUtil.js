@@ -1,19 +1,10 @@
 /**
- * Valid expense query
- * body :{
- *     startDate: string,
- *     endDate: string,
- *     amount: {
- *         operation: 'GT'|'LT'|'EQ',
- *         value: number
- *     },
- *     types: number[],
- *     categories: number[]
- * }
+ * A query generation object to produce the complex queries received from post requests
  */
 
-const aggreateOperators = ["count", "sum", "avg", "max", "min"];
-const amountOperators = ['GT','LT','EQ'];
+const aggreateOperators = [
+    "count", "sum", "avg", "max", "min"
+];
 
 
 const QueryUtil = {};
