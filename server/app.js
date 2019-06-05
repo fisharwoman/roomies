@@ -1,7 +1,10 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const passport = require('passport');
+const pass = require('./routes/res/auth');
 
 const db = require("./db");
 const pg = require('pg-promise');
@@ -16,6 +19,8 @@ const calendarRouter = require('./routes/calendar-entries');
 const expensesRouter = require('./routes/expenses');
 
 const app = express();
+
+
 
 setUp()
 .then(makeTables)
@@ -34,12 +39,15 @@ function setUp() {
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use(session({secret: '123'}));
+    app.use(passport.initialize());
+    app.use(passport.session());
     return Promise.resolve();
 }
 
 function loadRouter() {
     app.use('/', indexRouter);
-    app.use('/users', usersRouter);
+    app.use('/users', pass.isAuthenticated, usersRouter);
     app.use('/contacts', contactsRouter);
     app.use('/households', householdsRouter);
     app.use('/bulletins', bulletinsRouter);
@@ -47,6 +55,31 @@ function loadRouter() {
     app.use('/expenses', expensesRouter);
     return Promise.resolve();
 }
+
+// app.post('/login', passport.authenticate('local', {
+//     failureRedirect: '/failed',
+//     successRedirect: '/success'}),
+//     function(req,res) {
+//         res.redirect('/');
+// });
+// app.get('/logout', (req,res) =>{
+//     req.logout();
+//     res.redirect('/success');
+// });
+// app.get('/checkLogin', (req, res) => {
+//     console.log(req);
+//     if (req.isAuthenticated()) {
+//         res.redirect('/success');
+//     } else {
+//         res.redirect('/failed');
+//     }
+// });
+// app.get('/failed', (req, res) => {
+//     res.status(200).send('Failed');
+// });
+// app.get('/success', (req,res) => {
+//     res.status(200).send('Success');
+// });
 
 function sql(file) {
     const fullpath = path.join('../scripts/',file);
