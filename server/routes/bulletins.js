@@ -22,7 +22,7 @@ router
                 `RETURNING bID;`;
             let result = await db.any(query);
             console.log(result[0].bid);
-            res.status(200).send("http://localhost:3000/contacts/" + result[0].bid);
+            res.status(200).send("http://localhost:3000/bulletins/" + result[0].bid);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);
