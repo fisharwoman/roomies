@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-
+const QueryUtil = require('./res/ExpenseQueryUtil');
 const url = "http://localhost:3000/expenses/";
 
 router
@@ -241,25 +241,47 @@ router
     /**
      * Get an expense summary for a particular user
      */
-    .get('/roommates/:userID/summary', async (req,res) => {
+    .post('/roommates/:userID/search', async (req,res) => {
         try {
-            req.body.id = req.params.userID;
-            const query = makeUserSummaryQuery(req.body);
-            let result = await db.one(query);
+            req.body.userID = req.params.userID;
+            const query = QueryUtil.makeUserExpenseQuery(req.body);
+            console.log(query);
+            let result = await db.manyOrNone(query);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
         }
     })
-    .get('/households/:houseID/summary', async (req,res) => {
+    .post('/roommates/:userID/summary', async (req, res) => {
         try {
-            req.body.id = req.params.houseID;
-            const query = makeHouseholdSummaryQuery(req.body);
+            req.body.userID = req.params.userID;
+            const query = QueryUtil.makeUserExpenseSummary(req.body);
             console.log(query);
-            let result = await db.one(query);
+            let result = await db.manyOrNone(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    .post('/households/:houseID/search', async (req,res) => {
+        try {
+            req.body.houseID = req.params.houseID;
+            const query = QueryUtil.makeHouseholdExpenseQuery(req.body);
+            console.log(query);
+            let result = await db.manyOrNone(query);
             res.status(200).json(result);
         } catch (e) {
             console.log(e);
+            res.status(400).send(e.message);
+        }
+    })
+    .post('/households/:houseID/summary', async (req,res) => {
+        try {
+            req.body.houseID = req.params.houseID;
+            const query = QueryUtil.makeHouseholdExpenseSummary(req.body);
+            let result = await db.manyOrNone(query);
+            res.status(200).json(result);
+        } catch (e) {
             res.status(400).send(e.message);
         }
     });
@@ -268,41 +290,7 @@ function calculateSplitCost(totalCost, proportion) {
     return totalCost * proportion;
 }
 
-function makeUserSummaryQuery(req) {
-    return makeSummaryQuery(req, 'createdBy');
-}
 
-function makeHouseholdSummaryQuery(req) {
-    return makeSummaryQuery(req, 'houseid');
-}
-
-function makeSummaryQuery(req, summarizeFor) {
-    let type = req.type.toLowerCase();
-    if (type === 'sum' || type === 'avg' || type === 'count' || type === 'max') {
-        let sq = new summaryQuery(req, summarizeFor);
-        return sq.creatQuery();
-    } else {
-        throw new Error("Invalid request");
-    }
-}
-
-class summaryQuery {
-    constructor (req, summarizeFor) {
-        this.opp = req.type;
-        this.filter = ` WHERE ${summarizeFor} = ${req.id}`;
-        this.selection = `SELECT ${this.opp}(amount::numeric) FROM Expenses`;
-        if (req.startDate && req.endDate) {
-            this.filter =  this.filter + ` AND expenseDate >= '${req.startDate}' AND expenseDate <= '${req.endDate}'`;
-        } else if (req.startDate) {
-            this.filter = this.filter + ` AND expenseDate >= '${req.startDate}'`;
-        } else if (req.endDate) {
-            this.filter = this.filter + ` AND expenseDate <= '${req.endDate}'`;
-        }
-    }
-    creatQuery() {
-        return this.selection + this.filter;
-    }
-}
 
 
 

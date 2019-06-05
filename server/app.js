@@ -57,6 +57,7 @@ async function makeTables() {
     try {
         await db.none(sql('makeTables.sql'),{id:123});
         await db.none(sql('populateDB.sql'),{id:123});
+        await db.none(sql('makeViews.sql'),{id:123});
     } catch (err) {
         throw err;
     }
