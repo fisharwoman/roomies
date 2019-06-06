@@ -28,7 +28,7 @@ router
             const query = `SELECT * FROM Contacts WHERE contactsID = ${req.params.contactsID}`;
             let result = await db.any(query);
             res.status(200).json(result);
-        } catch (e) {
+        } catch (e) { 
             res.status(400).send(e.message);
         }
     })
