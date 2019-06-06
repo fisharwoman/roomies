@@ -23,21 +23,22 @@ export default class Main extends Component {
         return (
             <HashRouter>
                 <div>
-                    <BootStrap.Navbar bg="primary" expand="lg">
+                    <BootStrap.Navbar bg="light" expand="lg">
                         <BootStrap.Navbar.Brand href={'#'}>Roomies</BootStrap.Navbar.Brand>
                         <BootStrap.Navbar.Toggle aria-controls="basic-navbar-nav"/>
                         <BootStrap.Navbar.Collapse id="basic-navbar-nav">
                             <BootStrap.Nav className="mr-auto">
                                 <BootStrap.Nav.Link href="#contact">Contacts</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#expenses">Expenses</BootStrap.Nav.Link>
-                                <BootStrap.NavDropdown title="Household" id="basic-nav-dropdown">
-                                    {this.makeHouseholds()}
-                                </BootStrap.NavDropdown>
                             </BootStrap.Nav>
-                            <BootStrap.Form inline>
-                                <BootStrap.FormControl type="text" placeholder="Search" className="mr-sm-2"/>
-                                <BootStrap.Button variant="outline-success">Search</BootStrap.Button>
-                            </BootStrap.Form>
+                            <BootStrap.DropdownButton drop={'left'} title="Household" id="dropdown-basic-button">
+                                {this.makeHouseholds()}
+                            </BootStrap.DropdownButton>
+
+                            {/*<BootStrap.Form inline>*/}
+                                {/*<BootStrap.FormControl type="text" placeholder="Search" className="mr-sm-2"/>*/}
+                                {/*<BootStrap.Button variant="outline-success">Search</BootStrap.Button>*/}
+                            {/*</BootStrap.Form>*/}
                         </BootStrap.Navbar.Collapse>
                     </BootStrap.Navbar>
 
@@ -83,8 +84,10 @@ export default class Main extends Component {
 
     makeHouseholds() {
         let result = [];
+        result.push(<BootStrap.Dropdown.Item key={0.0}>Add Household...</BootStrap.Dropdown.Item>);
+        result.push(<BootStrap.Dropdown.Divider key={0.1}/>);
         this.state.households.forEach((value) => {
-            result.push(<BootStrap.NavDropdown.Item key={value.houseid}>{value.address}</BootStrap.NavDropdown.Item>);
+            result.push(<BootStrap.Dropdown.Item key={value.houseid}>{value.address}</BootStrap.Dropdown.Item>);
         });
         return result;
     }
