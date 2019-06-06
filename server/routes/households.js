@@ -4,18 +4,18 @@ const db = require('../db');
 const url = "http://localhost:3000/households/";
 
 router
-/**
- * Gets all household URIs
- */
+    /**
+     * Gets all household URIs
+     */
     .get("/", async (req,res) => {
         try {
             const query = "SELECT houseID FROM Households";
             let result = await db.any(query);
             result = result.map((value) => {
                 let id = value.houseid;
-                return url + id;
+                return "/households/" + id;
             });
-            res.status(200).json(result);
+            res.status(200).send(result);
         } catch (e) {
             res.status(400).send(e.message);
         }
@@ -39,8 +39,8 @@ router
     .get("/:houseID", async (req, res) => {
         try {
             const query = `SELECT * FROM Households WHERE houseID = ${req.params.houseID}`;
-            let result = await db.any(query);
-            if (!result || result.length === 0) res.status(204);
+            let result = await db.one(query);
+            if (!result) res.status(204);
             else res.status(200);
             res.json(result);
         } catch (e) {
