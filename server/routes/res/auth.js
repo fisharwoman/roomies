@@ -1,6 +1,9 @@
 const passport = require('passport');
 const LocalStrategy  = require('passport-local').Strategy;
 const db = require('../../db');
+const express = require('express');
+const router = express.Router();
+const path = require('path');
 
 passport.use(new LocalStrategy({passReqToCallback: false},
     async function(username, password, done) {
@@ -23,5 +26,23 @@ passport.deserializeUser(function(user,done) {
 
 exports.isAuthenticated = function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) return next();
-    else res.send("You need to login first");
+    else res.status(401).send("Please login first");
 };
+
+router
+    .post('/login', passport.authenticate('local', {
+        failureRedirect: '/failed',
+        successRedirect: '/users'}),
+        function(req,res) {
+            res.redirect('/user');
+    })
+    .get('/login', (req, res) => {
+        res.sendFile(path.join(__dirname, '../../public', 'login.html'));
+    })
+    .get('/logout', (req, res) => {
+        req.logout();
+        res.status(200).send("Logout successful");
+    });
+
+exports.authenticate = router;
+

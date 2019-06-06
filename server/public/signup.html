@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Roomies Sign Up</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+    <form>
+        <label for="name">Name:</label>
+        <input id="name" type="text" name="name" placeholder="Full Name">
+        <label for="phoneNo">Phone Number:</label>
+        <input id="phoneNo" type="text" name="phoneNo" placeholder="###-###-####">
+        <label for="email">Email:</label>
+        <input id="email" type="text" name="email" placeholder="johndoe@example.com">
+        <label for="password">Password:</label>
+        <input id="password" type="password" name="password">
+        <input id="submit-button" type="button" value="Sign Up">
+    </form>
+    <script type="text/javascript">
+        submitButton = document.getElementById('submit-button');
+
+        submitButton.addEventListener("click", signup);
+
+        function signup() {
+            let name = document.getElementById('name').value;
+            let phone = document.getElementById('phoneNo').value;
+            let email = document.getElementById('email').value;
+            let password = document.getElementById('password').value;
+            let newUser = {
+                name: name,
+                phoneNo: phone,
+                email: email,
+                password: password
+            };
+            newUser = JSON.stringify(newUser);
+            console.log(newUser);
+            fetch('http://localhost:3000/signup',{
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: newUser,
+                redirect: "follow"
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+                .catch(e => console.log(e));
+        };
+    </script>
+</body>
+</html>

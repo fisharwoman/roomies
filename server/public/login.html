@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login to Roomies</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+    <form>
+        <label for="email">Email:</label>
+        <input type="text" name="email" id="email" placeholder="johndoe@example.com">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password">
+        <input type="button" value="Login" id="login-button">
+    </form>
+    <script type="text/javascript">
+        loginButton = document.getElementById('login-button');
+        loginButton.addEventListener('click',login);
+
+        function login() {
+            let email = document.getElementById('email').value;
+            let password = document.getElementById('password').value;
+            let loginAttempt = {
+                username: email,
+                password: password
+            };
+            loginAttempt = JSON.stringify(loginAttempt);
+            fetch('http://localhost:3000/auth/login', {
+                method: 'POST',
+                mode: 'cors',
+                headers:{
+                    'content-type': 'application/json'
+                },
+                body: loginAttempt,
+                redirect: "follow"
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        console.log(response);
+                        window.location.href = response.url;
+                    }
+                })
+                .catch(e => console.log(e));
+        };
+    </script>
+</body>
+</html>

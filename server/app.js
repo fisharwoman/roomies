@@ -17,7 +17,7 @@ const householdsRouter = require('./routes/households');
 const bulletinsRouter = require('./routes/bulletins');
 const calendarRouter = require('./routes/calendar-entries');
 const expensesRouter = require('./routes/expenses');
-
+const signupRouter = require('./routes/signup');
 const app = express();
 
 
@@ -42,44 +42,45 @@ function setUp() {
     app.use(session({secret: '123'}));
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(require('body-parser').json());
+    app.use(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
     return Promise.resolve();
 }
 
 function loadRouter() {
     app.use('/', indexRouter);
+    app.use('/auth', pass.authenticate);
+    app.use('/signup', signupRouter);
     app.use('/users', pass.isAuthenticated, usersRouter);
-    app.use('/contacts', contactsRouter);
-    app.use('/households', householdsRouter);
-    app.use('/bulletins', bulletinsRouter);
-    app.use('/calendar-entries', calendarRouter);
-    app.use('/expenses', expensesRouter);
+    app.use('/contacts', pass.isAuthenticated, contactsRouter);
+    app.use('/households', pass.isAuthenticated, householdsRouter);
+    app.use('/bulletins', pass.isAuthenticated, bulletinsRouter);
+    app.use('/calendar-entries', pass.isAuthenticated, calendarRouter);
+    app.use('/expenses', pass.isAuthenticated, expensesRouter);
     return Promise.resolve();
 }
 
-// app.post('/login', passport.authenticate('local', {
-//     failureRedirect: '/failed',
-//     successRedirect: '/success'}),
-//     function(req,res) {
-//         res.redirect('/');
-// });
-// app.get('/logout', (req,res) =>{
-//     req.logout();
-//     res.redirect('/success');
-// });
-// app.get('/checkLogin', (req, res) => {
-//     console.log(req);
-//     if (req.isAuthenticated()) {
-//         res.redirect('/success');
-//     } else {
-//         res.redirect('/failed');
-//     }
-// });
-// app.get('/failed', (req, res) => {
-//     res.status(200).send('Failed');
-// });
-// app.get('/success', (req,res) => {
-//     res.status(200).send('Success');
-// });
+app.get('/logout', (req,res) =>{
+    req.logout();
+    res.redirect('/success');
+});
+app.get('/checkLogin', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.redirect('/success');
+    } else {
+        res.redirect('/failed');
+    }
+});
+app.get('/failed', (req, res) => {
+    res.status(200).send('Failed');
+});
+app.get('/success', (req,res) => {
+    res.status(200).send('Success');
+});
 
 function sql(file) {
     const fullpath = path.join('../scripts/',file);
