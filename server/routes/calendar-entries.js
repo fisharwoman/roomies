@@ -54,14 +54,13 @@ router
         }
     })
 
+    /* adds a new reminder. */
     .post('/reminders', async (req,res) => {
         try {
             const query = `INSERT INTO Reminders (title, reminderDate, creator)` +
                 `VALUES ('${req.body.title}', '${req.body.reminderDate}', '${req.body.creator}')` +
                 `RETURNING reminderID;`;
-                // console.log (query);
             let result = await db.any(query);
-            // console.log(result[0].reminderid);
             res.status(200).send("http://localhost:3000/reminders/" + result[0].reminderid);
         } catch (e) {
             console.log(e);
@@ -69,6 +68,7 @@ router
         }
     })
 
+    /* update reminder. */
     .patch('/reminders/:reminderID', async (req,res) => {
         try {
             const query = `UPDATE Reminders SET
@@ -81,8 +81,6 @@ router
             res.status(400).send(e.message);
         }
     })
-
-
 
     /* selects all events for specified houseID only */
     .get('/events/houses/:houseID', async (req,res) => {
@@ -113,7 +111,7 @@ router
         }
     })
 
-    /* GET reminders based on creator. */
+    /* GET reminders based on creator AND houseID. */
     .get('/events/houses/:houseID/creator/:creator', async (req,res) => {
         try {
             const query1 = `CREATE OR REPLACE VIEW RemindersByHouseID AS
@@ -132,6 +130,7 @@ router
         }
     })
 
+    /* adds a new event. */
     .post('/events', async (req,res) => {
         try {
             const query = `INSERT INTO Events (title, startDate, endDate, creator)` +
@@ -145,6 +144,7 @@ router
         }
     })
 
+    /* update reminder. */
     .patch('/events/:eventID', async (req,res) => {
         try {
             const query = `UPDATE Events SET
@@ -157,6 +157,62 @@ router
             res.status(400).send(e.message);
         }
     })
+
+    /* GET ALL events_located_in based on specified houseID */
+    .get('/eventslocated/house/:houseID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM Events_Located_In WHERE houseID = ${req.params.houseID}
+            ORDER BY eventID`;
+            let result = await db.any(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+
+    /* GET events locations located in based on eventID & houseID only*/
+    .get('/eventslocated/:eventID/house/:houseID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM Events_Located_In 
+            WHERE eventID = ${req.params.eventID} AND houseID = ${req.params.houseID};`
+            console.log(query)
+            let result = await db.any(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+
+    /* GET joined events details AND location based on houseID */
+    .get('/eventsdetails/house/:houseID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM (
+                SELECT * FROM Events_Located_In WHERE houseID = '${req.params.houseID}') eventHouse
+            JOIN Events
+            ON Events.eventID = eventHouse.eventID
+            ORDER BY Events.eventID;`
+            let result = await db.any(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+
+     /* adds new events located information */
+     .post('/eventslocated/', async (req,res) => {
+        try {
+            const query = `INSERT INTO Events_Located_In (eventID, houseID, roomName)
+                VALUES ('${req.body.eventID}', '${req.body.houseID}', '${req.body.roomName}') 
+                RETURNING *;`
+                console.log(query)
+            let result = await db.any(query);
+            res.status(200).send("http://localhost:3000/eventslocated/" + result[0].eventid + "/" + result[0].houseid + "/"  + result[0].roomname);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+
+
 
 
 module.exports = router;
