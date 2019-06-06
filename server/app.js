@@ -79,7 +79,8 @@ app.get('/failed', (req, res) => {
     res.status(200).send('Failed');
 });
 app.get('/success', (req,res) => {
-    res.status(200).send('Success');
+    console.log(req.user);
+    res.status(200).json({userid: req.user});
 });
 
 function sql(file) {

@@ -1,13 +1,19 @@
 import React, {Component} from "react";
+import ReactDOM from 'react-dom';
 import {
     Route,
     NavLink,
     HashRouter
 } from "react-router-dom";
+
+import Login from './Login';
+
 import Home from "../components/Home";
 import Calendar from "../components/Calendar";
 import Contact from "../components/Contact";
 import Expenses from "../components/Expenses";
+import Management from '../components/Management';
+
 
 import * as BootStrap from 'react-bootstrap';
 
@@ -24,16 +30,20 @@ export default class Main extends Component {
             <HashRouter>
                 <div>
                     <BootStrap.Navbar bg="light" expand="lg">
-                        <BootStrap.Navbar.Brand href={'#'}>Roomies</BootStrap.Navbar.Brand>
+                        <BootStrap.Navbar.Brand href={'#home'}>Roomies</BootStrap.Navbar.Brand>
                         <BootStrap.Navbar.Toggle aria-controls="basic-navbar-nav"/>
                         <BootStrap.Navbar.Collapse id="basic-navbar-nav">
                             <BootStrap.Nav className="mr-auto">
+                                <BootStrap.Nav.Link href="#dashboard">Dashboard</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#contact">Contacts</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#expenses">Expenses</BootStrap.Nav.Link>
+                                <BootStrap.Nav.Link href="#calendar">Calendar</BootStrap.Nav.Link>
+                                <BootStrap.Nav.Link href="#management">Manage House</BootStrap.Nav.Link>
                             </BootStrap.Nav>
-                            <BootStrap.DropdownButton drop={'left'} title="Household" id="dropdown-basic-button">
+                            <BootStrap.DropdownButton drop={'left'} title="Select House" id="dropdown-basic-button">
                                 {this.makeHouseholds()}
                             </BootStrap.DropdownButton>
+                            <BootStrap.Button variant={'outline-dark'} onClick={this.logout}>Logout</BootStrap.Button>
 
                             {/*<BootStrap.Form inline>*/}
                                 {/*<BootStrap.FormControl type="text" placeholder="Search" className="mr-sm-2"/>*/}
@@ -43,10 +53,11 @@ export default class Main extends Component {
                     </BootStrap.Navbar>
 
                     <div className="content">
-                        <Route exact path="/" component={Home}/>
-                        <Route path="/stuff" component={Calendar}/>
+                        <Route exact path="/dashboard" component={Home}/>
+                        <Route path="/calendar" component={Calendar}/>
                         <Route path="/contact" component={Contact}/>
                         <Route path={'/expenses'} component={Expenses}/>
+                        <Route path={'/management'} component={Management}/>
 
                     </div>
 
@@ -90,6 +101,22 @@ export default class Main extends Component {
             result.push(<BootStrap.Dropdown.Item key={value.houseid}>{value.address}</BootStrap.Dropdown.Item>);
         });
         return result;
+    }
+
+    async logout() {
+        try {
+            const response = await fetch('/auth/logout', {
+                method: 'GET',
+                headers: {
+                    "content-type": 'application/json'
+                }
+            });
+            if (response.status === 200) {
+                ReactDOM.render(<Login/>,document.getElementById('root'));
+            }
+        } catch (e) {
+            console.log(e);
+        }
     }
 
 }

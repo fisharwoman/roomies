@@ -44,7 +44,9 @@ export default class LoginComponent extends React.Component {
                 },
                 body: JSON.stringify(login)
             });
+            const data = await response.json();
             if (response.status === 200) {
+                window.sessionStorage.setItem('userid',data.userid);
                 ReactDOM.render(<Main/>, document.getElementById('root'));
             }
             else {alert('Login failed'); return;}
