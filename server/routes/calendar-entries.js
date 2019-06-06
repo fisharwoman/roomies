@@ -56,12 +56,26 @@ router
 
     .post('/reminders', async (req,res) => {
         try {
-            const query = `INSERT INTO Reminders (title, body, reminderDate, creator)` +
+            const query = `INSERT INTO Reminders (title, reminderDate, creator)` +
                 `VALUES ('${req.body.title}', '${req.body.reminderDate}', '${req.body.creator}')` +
                 `RETURNING reminderID;`;
+                // console.log (query);
             let result = await db.any(query);
-            console.log(result[0].bid);
-            res.status(200).send("http://localhost:3000/reminders/" + result[0].reminderID);
+            // console.log(result[0].reminderid);
+            res.status(200).send("http://localhost:3000/reminders/" + result[0].reminderid);
+        } catch (e) {
+            console.log(e);
+            res.status(400).send(e.message);
+        }
+    })
+
+    .patch('/reminders/:reminderID', async (req,res) => {
+        try {
+            const query = `UPDATE Reminders SET
+            title = '${req.body.title}', reminderDate = '${req.body.reminderDate}', creator = '${req.body.creator}'` +
+            `WHERE reminderID = '${req.params.reminderID}' RETURNING * ;`
+            let result = await db.any(query);
+            res.status(200).send(result);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);
@@ -114,6 +128,32 @@ router
             let result = await db.any(query);
             res.status(200).json(result);
         } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+
+    .post('/events', async (req,res) => {
+        try {
+            const query = `INSERT INTO Events (title, startDate, endDate, creator)` +
+                `VALUES ('${req.body.title}', '${req.body.startDate}', '${req.body.endDate}', '${req.body.creator}')` +
+                `RETURNING eventID;`;
+            let result = await db.any(query);
+            res.status(200).send("http://localhost:3000/events/" + result[0].eventid);
+        } catch (e) {
+            console.log(e);
+            res.status(400).send(e.message);
+        }
+    })
+
+    .patch('/events/:eventID', async (req,res) => {
+        try {
+            const query = `UPDATE Events SET
+            title = '${req.body.title}', startDate = '${req.body.startDate}', endDate = '${req.body.endDate}', creator = '${req.body.creator}'` +
+            `WHERE eventID = '${req.params.eventID}' RETURNING * ;`
+            let result = await db.any(query);
+            res.status(200).send(result);
+        } catch (e) {
+            console.log(e);
             res.status(400).send(e.message);
         }
     })
