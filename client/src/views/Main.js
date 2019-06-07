@@ -17,7 +17,6 @@ import Management from '../components/Management';
 import '../index.css';
 
 import * as BootStrap from 'react-bootstrap';
-import { get } from "https";
 
 export default class Main extends Component {
     constructor(props) {
