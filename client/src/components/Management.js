@@ -3,6 +3,7 @@ import Collapsible from "./Collapsible";
 import Button from "react-bootstrap/Button";
 import './Management.css';
 import HouseholdManagementHouse from "./HouseholdManagementHouse";
+import RemovableContent from "./RemovableContent";
 
 
 export default class Management extends React.Component {
@@ -10,14 +11,22 @@ export default class Management extends React.Component {
         super(props);
         this.state = {
             showAddCollapsible: false,
+            displayRemoveSelectables: false,
             householdComponents: [],
         };
         this.onAddClick = this.onAddClick.bind(this);
+        this.onRemoveClick = this.onRemoveClick.bind(this);
     }
 
     onAddClick() {
         this.setState(prevState => ({
             showAddCollapsible: !prevState.showAddCollapsible
+        }));
+    }
+
+    onRemoveClick() {
+        this.setState(prevState => ({
+            displayRemoveSelectables: !prevState.displayRemoveSelectables
         }));
     }
 
@@ -27,11 +36,15 @@ export default class Management extends React.Component {
                 <div className={"Hop"}>
                     <h2 className={'title'}>Households</h2>
                     <Button className={'ab'} variant={"outline-dark"} onClick={this.onAddClick.bind(this)}>Add</Button>
-                    <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Remove</Button>
+                    <Button className={'ab'} variant={"outline-dark"} onClick={this.onRemoveClick.bind(this)}>Remove</Button>
                     <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Edit</Button>
                     <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Search</Button>
                     {this.state.showAddCollapsible ?
                         <Collapsible/> :
+                        null
+                    }
+                    {this.state.displayRemoveSelectables ?
+                        <RemovableContent/> :
                         null
                     }
                 </div>

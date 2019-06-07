@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import './Management.css';
+import Management from "./Management";
 
 /**
  * A component to encapsulate one manageable household
@@ -28,7 +29,9 @@ export default class HouseholdManagementHouse extends React.Component {
             <div id={'houseComponent'}>
                 <Row>
                     <Col>
-                        <h3>{this.state.houseName}</h3>
+                        <h3>{this.state.houseName}
+                        <Button variant={"outline-dark"} className={"hh"} onClick={this.handleRemoveHH}>-</Button>
+                        <Button variant={"outline-dark"} className={"hh"} onClick={this.handleEditHH}>^</Button> </h3>
                         <p>{this.state.address}</p>
                     </Col>
                     <Col>
@@ -78,6 +81,16 @@ export default class HouseholdManagementHouse extends React.Component {
                 </tr>
             );
         });
+    }
+
+
+    handleRemoveHH(){
+        alert("action remove");
+
+    }
+
+    handleEditHH(){
+        alert("action edit");
     }
 
     handleRemoveClick() {
