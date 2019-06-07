@@ -30,17 +30,17 @@ export default class Main extends Component {
             <HashRouter>
                 <div>
                     <BootStrap.Navbar bg="light" expand="lg">
-                        <BootStrap.Navbar.Brand href={'#home'}>Roomies</BootStrap.Navbar.Brand>
+                        <BootStrap.Navbar.Brand id={'brand'} href={'#home'}>Roomies</BootStrap.Navbar.Brand>
                         <BootStrap.Navbar.Toggle aria-controls="basic-navbar-nav"/>
                         <BootStrap.Navbar.Collapse id="basic-navbar-nav">
                             <BootStrap.Nav className="mr-auto">
-                                <BootStrap.Nav.Link href="#dashboard">Dashboard</BootStrap.Nav.Link>
+                                <BootStrap.Nav.Link active={true} href="#dashboard">Dashboard</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#contact">Contacts</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#expenses">Expenses</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#calendar">Calendar</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#management">Manage House</BootStrap.Nav.Link>
                             </BootStrap.Nav>
-                            <BootStrap.DropdownButton drop={'left'} title="Select House" id="dropdown-basic-button">
+                            <BootStrap.DropdownButton drop={'down'} variant={'outline-dark'} title="Select House" id="dropdown-basic-button">
                                 {this.makeHouseholds()}
                             </BootStrap.DropdownButton>
                             <BootStrap.Button variant={'outline-dark'} onClick={this.logout}>Logout</BootStrap.Button>
