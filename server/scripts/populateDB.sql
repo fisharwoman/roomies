@@ -1,9 +1,9 @@
-insert into Households (address) values
-('10 buttertubs drive'),
-('277 twiggly wiggly road'),
-('1 the tragically hip way'),
-('4104 road to nowhere, iqaluit'),
-('3330 Dingle Bingle Hill Terrace');
+insert into Households (address, name) values
+('10 buttertubs drive', 'Buttertubs'),
+('277 twiggly wiggly road', 'Twiggly'),
+('1 the tragically hip way', 'Hip Way'),
+('4104 road to nowhere, iqaluit', 'Nowhere'),
+('3330 Dingle Bingle Hill Terrace', 'Dingle Bingle');
 
 insert into Roommates(name, phoneNo, password, email) values
 ('Rachel Green', '604-999-9999', 'O3Kr3EaN9*','rachelgreen@gmail.com'),

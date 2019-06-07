@@ -45,13 +45,13 @@ export default class Main extends Component {
                                 <BootStrap.Nav.Link href="#contact">Contacts</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#expenses">Expenses</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#calendar">Calendar</BootStrap.Nav.Link>
-                                <BootStrap.Nav.Link href="#management">Manage House</BootStrap.Nav.Link>
+                                {/* <BootStrap.Nav.Link href="#management">Manage House</BootStrap.Nav.Link> */}
                             </BootStrap.Nav>
-                            <BootStrap.DropdownButton alignRight variant={'light'} title={this.state.selectedHousehold.address} id="dropdown-basic-button">
+                            <BootStrap.DropdownButton alignRight variant={'light'} title={this.state.selectedHousehold.name} id="dropdown-basic-button">
                                 {this.makeHouseholds()}
                             </BootStrap.DropdownButton>
                             <BootStrap.DropdownButton alignRight title={this.state.userName}>
-                                <BootStrap.Dropdown.Item key={0}>Manage Households...</BootStrap.Dropdown.Item>
+                                <BootStrap.Dropdown.Item key={0} href="/#/management">Manage Households...</BootStrap.Dropdown.Item>
                                 <BootStrap.Dropdown.Item key={1} onClick={this.logout}>Logout</BootStrap.Dropdown.Item>
                             </BootStrap.DropdownButton>
 
@@ -131,7 +131,7 @@ export default class Main extends Component {
         result.push(<BootStrap.Dropdown.Divider key={-1}/>);
         let key = 0;
         this.state.households.forEach((value) => {
-            result.push(<BootStrap.Dropdown.Item key={key} eventKey={key} onSelect={(evt) => this.switchHousehold(evt)}>{value.address}</BootStrap.Dropdown.Item>);
+            result.push(<BootStrap.Dropdown.Item key={key} eventKey={key} onSelect={(evt) => this.switchHousehold(evt)}>{value.name}</BootStrap.Dropdown.Item>);
             key++;
         });
         return result;

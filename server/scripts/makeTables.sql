@@ -5,7 +5,8 @@ GRANT ALL ON SCHEMA public TO public;
 
 CREATE TABLE IF NOT EXISTS Households(
 	houseID bigserial PRIMARY KEY,
-	address text
+	address text,
+	name text
 );
 
 CREATE TABLE IF NOT EXISTS Roommates(
