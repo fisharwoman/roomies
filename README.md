@@ -31,6 +31,7 @@ $ cd ../client
 $ yarn start
 ```
 (Note: Install npm if you haven’t already): `npm i`.
+
 6. When asked, would you like to open in another port, answer:: yes
 
 # DEMO
