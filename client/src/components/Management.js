@@ -7,6 +7,7 @@ import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import TableCont from './TableCont';
 
 
 export default class Management extends React.Component {
@@ -34,113 +35,16 @@ export default class Management extends React.Component {
                        value={"Edit"}/>
                 <input type={"button"} className={"rb"} name={"RemoveButton"} onClick={buttonAction.bind(this)}
                        value={"Remove"}/>
+                <input type={"button"} className={"sb"} name={"SearchButton"} onClick={buttonAction.bind(this)}
+                       value={"Search"}/>
                 {this.state.showAddCollapsible ?
                     <Collapsible/> :
                     null
                 }
 
-                {/* The following section is an example of displaying 2 single-column tables side by side.
-                I think that we could write loops or something to populate them from our database.
-                But this is kind of painful so maybe there is a better way?
-                */}
-                <Container>
-                    <Row> Household 1 <br/> </Row>
-                    <Row>
-                        <Col>
-                            <Table border hover size="sm">
-                                <thead>
-                                <tr>
-                                    <th>Roommates</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>1</td>
+            <TableCont/>
 
-                                </tr>
-                                <tr>
-                                    <td>2</td>
 
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                </tr>
-                                </tbody>
-                            </Table>
-                        </Col>
-                        <Col>
-                            <Table  border hover size="sm">
-                                <thead>
-                                <tr>
-                                    <th>Rooms</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>1</td>
-
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                </tr>
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-
-                    <Row> Household 2 <br/> </Row>
-                    <Row>
-                        <Col>
-                            <Table  border hover size="sm">
-                                <thead>
-                                <tr>
-                                    <th>Roommates</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>1</td>
-
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                </tr>
-                                </tbody>
-                            </Table>
-                        </Col>
-                        <Col>
-                            <Table  border hover size="sm">
-                                <thead>
-                                <tr>
-                                    <th>Rooms</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>1</td>
-
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                </tr>
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-                </Container>
-                {/* End of table container. */}
 
             </div>
 
