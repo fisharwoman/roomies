@@ -5,11 +5,12 @@ const url = "http://localhost:3000/households/";
 
 router
     /**
-     * Gets all household URIs
+     * Gets all household URIs relevant to the user
      */
     .get("/", async (req,res) => {
         try {
-            const query = "SELECT houseID FROM Households";
+            const query = `select houseid from households right join household_roommates using (houseid) where roommateid = ${req.user}`;
+            console.log(query);
             let result = await db.any(query);
             result = result.map((value) => {
                 let id = value.houseid;
@@ -25,9 +26,9 @@ router
      */
     .post("/", async (req,res) => {
         try {
-            const query = `INSERT INTO Households (address) VALUES ('${req.body.address}') RETURNING houseID`;
-            let result = await db.any(query);
-            result = url + result[0].houseid;
+            const query1 = `INSERT INTO Households (address) VALUES ('${req.body.address}') RETURNING houseID`;
+            let result = await db.one(query1);
+            result = url + result.houseid;
             res.status(200).send(result);
         } catch (e) {
             res.status(400).send(e.message);
