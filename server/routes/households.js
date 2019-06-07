@@ -115,6 +115,48 @@ router
         } catch (e) {
             res.status(400).send(e.message);
         }
+    })
+    /**
+     * Get the rooms of the specified house
+     */
+    .get('/:houseID/rooms', async (req, res) => {
+        try {
+            const query = `SELECT * FROM Rooms WHERE houseID = ${req.params.houseID}`;
+            let result = await db.any(query);
+            if (!result || result.length === 0) res.status(204);
+            else res.status(200);
+            res.json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Add a room of a given name to the specified house
+     */
+    .post('/:houseID/rooms/:roomName', async (req, res) => {
+        try {
+            const query = `INSERT INTO Rooms VALUES (${req.params.houseID}, '${req.params.roomName}')`;
+            await db.any(query);
+            res.status(200).send();
+        } catch (e) {
+            if (e.message.includes('duplicate')) res.status(409).send(e.message);
+            else res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Remove a room of the specified name from the house of the specified id
+     */
+    .delete('/:houseID/rooms/:roomName', async (req, res) => {
+        try {
+            const query =
+                `DELETE FROM Rooms where houseID = ${req.params.houseID} AND roomName = '${req.params.roomName}' RETURNING *`;
+            let result = await db.any(query);
+            if (!result || result.length === 0) res.status(204);
+            else res.status(200);
+            res.json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
     });
 
 module.exports = router;

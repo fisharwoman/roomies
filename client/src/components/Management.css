@@ -21,6 +21,7 @@
     border-bottom-style: solid;
     border-bottom-width: 3px;
     border-bottom-color: #f3f3f3;
+    position: sticky;
     /*background-color: #f3f3f3;*/
 }
 
@@ -37,3 +38,8 @@
     border-color: #b4b4b4;
     padding: 10px;
 }
+
+.remove {
+    float: right;
+}
+

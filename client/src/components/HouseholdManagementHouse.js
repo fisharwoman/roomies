@@ -3,6 +3,7 @@ import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import './Management.css';
 
 /**
  * A component to encapsulate one manageable household
@@ -74,10 +75,7 @@ export default class HouseholdManagementHouse extends React.Component {
         return this.state.rooms.map((value, key) => {
             return (
                 <tr key={key}>
-                    <td>
-                        {value}
-                        <td><Button variant={"dark"}onClick={this.handleRemoveClick.bind(this)}>Remove</Button></td>
-                    </td>
+                    <td>{value}<Button size={'sm'} className={'remove'} variant={"outline-danger"}onClick={this.handleRemoveClick.bind(this)}>Remove</Button></td>
                 </tr>
             );
         });

@@ -35,7 +35,9 @@ export default class Management extends React.Component {
                         null
                     }
                 </div>
-                {this.state.householdComponents}
+                <div className={'contentPanel'}>
+                    {this.state.householdComponents}
+                </div>
             </div>
 
 
@@ -92,7 +94,16 @@ export default class Management extends React.Component {
         } catch (e) {throw e;}
     }
     async getRooms(houseid) {
-        return Promise.resolve([]);
+        try {
+            const response = await fetch(`/households/${houseid}/rooms`, {
+                method: "GET"
+            });
+            let data = await response.json();
+            data = data.map((value) => {
+                return value.roomname;
+            });
+            return data;
+        } catch (e) {throw e;}
     }
 
     async getHouseholds() {

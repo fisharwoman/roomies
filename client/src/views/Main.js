@@ -13,6 +13,7 @@ import Calendar from "../components/Calendar";
 import Contact from "../components/Contact";
 import Expenses from "../components/Expenses";
 import Management from '../components/Management';
+import '../index.css';
 
 
 import * as BootStrap from 'react-bootstrap';
@@ -35,7 +36,7 @@ export default class Main extends Component {
         return (
             <HashRouter>
                 <div>
-                    <BootStrap.Navbar bg="light" expand="lg">
+                    <BootStrap.Navbar className={'sticky-top'} bg="light" expand="lg">
                         <BootStrap.Navbar.Brand id={'brand'} href={'#dashboard'}>Roomies</BootStrap.Navbar.Brand>
                         <BootStrap.Navbar.Toggle aria-controls="basic-navbar-nav"/>
                         <BootStrap.Navbar.Collapse id="basic-navbar-nav">
