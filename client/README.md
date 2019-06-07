@@ -66,3 +66,20 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+### Easy start instructions
+1. Start docker- make sure docker is ready.
+2. Start dbeaver.
+3. Cd into project’s server folder.
+4. In server folder:: docker-compose up -d
+5. In server folder:: npm run dev
+6. Open a new terminal window
+7. Cd into client folder
+(Note: Install npm if you haven’t already)
+8. In client folder:: yarn start
+9. When asked, would you like to open in another port, answer:: yes
+
+### Sample account for testing
+('Ross Geller', '604-987-5321', '3hDi7@Xub', 'Ross_geller@alumni.ubc.ca');
+
