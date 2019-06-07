@@ -13,7 +13,6 @@ export default class HouseholdManagementHouse extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(props.house);
         this.state = {
             houseName: this.props.house.name ? this.props.house.name : "House Name",
             address: this.props.house.address,
