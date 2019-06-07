@@ -16,8 +16,8 @@ import Expenses from "../components/Expenses";
 import Management from '../components/Management';
 import '../index.css';
 
-
 import * as BootStrap from 'react-bootstrap';
+import { get } from "https";
 
 export default class Main extends Component {
     constructor(props) {
@@ -49,7 +49,7 @@ export default class Main extends Component {
                                 <BootStrap.Nav.Link href="#calendar">Calendar</BootStrap.Nav.Link>
                                 {/* <BootStrap.Nav.Link href="#management">Manage House</BootStrap.Nav.Link> */}
                             </BootStrap.Nav>
-                            <BootStrap.DropdownButton alignRight variant={'light'} title={this.state.selectedHousehold.name} id="dropdown-basic-button">
+                            <BootStrap.DropdownButton alignRight variant={'light'} title={this.state.selectedHousehold.name || "No House Yet"} id="dropdown-basic-button">
                                 {this.makeHouseholds()}
                             </BootStrap.DropdownButton>
                             <BootStrap.DropdownButton alignRight title={this.state.userName}>

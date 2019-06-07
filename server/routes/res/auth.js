@@ -25,7 +25,7 @@ passport.deserializeUser(function(user,done) {
 });
 
 exports.isAuthenticated = function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) return next();
+    if (req.isAuthenticated() || sessionStorage.getItem(status)) return next();
     else res.status(401).send("Please login first");
 };
 
@@ -34,6 +34,7 @@ router
         failureRedirect: '/failed',
         successRedirect: '/success'}),
         function(req,res) {
+            sessionStorage.setItem('status', true);
             res.redirect('/user');
     })
     .get('/login', (req, res) => {
@@ -41,6 +42,7 @@ router
     })
     .get('/logout', (req, res) => {
         req.logout();
+        sessionStorage.setItem('status', false)
         res.status(200).send("Logout successful");
     });
 
