@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import ReactDOM from 'react-dom';
 import {
     Route,
+    Redirect,
     NavLink,
     HashRouter
 } from "react-router-dom";
@@ -26,7 +27,8 @@ export default class Main extends Component {
             userName: "User Name",
             selectedHousehold: {
                 houseid: 0,
-                address: "Address"
+                address: "Address",
+                name: ""
             }
         }
     }
@@ -37,11 +39,11 @@ export default class Main extends Component {
             <HashRouter>
                 <div>
                     <BootStrap.Navbar className={'sticky-top'} bg="light" expand="lg">
-                        <BootStrap.Navbar.Brand id={'brand'} href={'#dashboard'}>Roomies</BootStrap.Navbar.Brand>
+                        <BootStrap.Navbar.Brand id={'brand'}>Roomies</BootStrap.Navbar.Brand>
                         <BootStrap.Navbar.Toggle aria-controls="basic-navbar-nav"/>
                         <BootStrap.Navbar.Collapse id="basic-navbar-nav">
-                            <BootStrap.Nav className="mr-auto">
-                                <BootStrap.Nav.Link active={true} href="#dashboard">Dashboard</BootStrap.Nav.Link>
+                            <BootStrap.Nav defaultActiveKey={'#dashboard'} className="mr-auto">
+                                <BootStrap.Nav.Link default={true} href="#dashboard">Dashboard</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#contact">Contacts</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#expenses">Expenses</BootStrap.Nav.Link>
                                 <BootStrap.Nav.Link href="#calendar">Calendar</BootStrap.Nav.Link>
@@ -51,7 +53,7 @@ export default class Main extends Component {
                                 {this.makeHouseholds()}
                             </BootStrap.DropdownButton>
                             <BootStrap.DropdownButton alignRight title={this.state.userName}>
-                                <BootStrap.Dropdown.Item key={0} href="/#/management">Manage Households...</BootStrap.Dropdown.Item>
+                                <BootStrap.Dropdown.Item key={0} href="/#management">Manage Households...</BootStrap.Dropdown.Item>
                                 <BootStrap.Dropdown.Item key={1} onClick={this.logout}>Logout</BootStrap.Dropdown.Item>
                             </BootStrap.DropdownButton>
 
@@ -64,6 +66,7 @@ export default class Main extends Component {
                         <Route path="/contact" component={Contact}/>
                         <Route path='/expenses' component={Expenses}/>
                         <Route path='/management' component={Management}/>
+                        <Redirect from={'/'} to={'/dashboard'}/>
 
                     </div>
 
