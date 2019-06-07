@@ -8,7 +8,7 @@ import {
 
 import Login from './Login';
 
-import Home from "../components/Home";
+import Dashboard from "../components/Dashboard";
 import Calendar from "../components/Calendar";
 import Contact from "../components/Contact";
 import Expenses from "../components/Expenses";
@@ -30,7 +30,7 @@ export default class Main extends Component {
             <HashRouter>
                 <div>
                     <BootStrap.Navbar bg="light" expand="lg">
-                        <BootStrap.Navbar.Brand id={'brand'} href={'#home'}>Roomies</BootStrap.Navbar.Brand>
+                        <BootStrap.Navbar.Brand id={'brand'} href={'#dashboard'}>Roomies</BootStrap.Navbar.Brand>
                         <BootStrap.Navbar.Toggle aria-controls="basic-navbar-nav"/>
                         <BootStrap.Navbar.Collapse id="basic-navbar-nav">
                             <BootStrap.Nav className="mr-auto">
@@ -53,11 +53,11 @@ export default class Main extends Component {
                     </BootStrap.Navbar>
 
                     <div className="content">
-                        <Route exact path="/dashboard" component={Home}/>
+                        <Route path="/dashboard" component={Dashboard}/>
                         <Route path="/calendar" component={Calendar}/>
                         <Route path="/contact" component={Contact}/>
-                        <Route path={'/expenses'} component={Expenses}/>
-                        <Route path={'/management'} component={Management}/>
+                        <Route path='/expenses' component={Expenses}/>
+                        <Route path='/management' component={Management}/>
 
                     </div>
 

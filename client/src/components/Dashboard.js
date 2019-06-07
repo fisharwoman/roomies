@@ -5,14 +5,14 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
  
-class Home extends Component {
+class Dashboard extends Component {
   render() {
     return (
       <div>
-          <h2>Bulletins</h2>
+          <h2>Dashboard (and bulletin)</h2>
       </div>
     );
   }
 }
 
-export default Home;
+export default Dashboard;
