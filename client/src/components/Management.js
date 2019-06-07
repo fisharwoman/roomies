@@ -2,12 +2,6 @@ import React from 'react';
 import Collapsible from "./Collapsible";
 import Button from "react-bootstrap/Button";
 import './Management.css';
-import divWithClassName from "react-bootstrap/es/utils/divWithClassName";
-import Table from "react-bootstrap/Table";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import TableCont from './TableCont';
 import HouseholdManagementHouse from "./HouseholdManagementHouse";
 
 
@@ -30,16 +24,12 @@ export default class Management extends React.Component {
     render() {
         return (
             <div>
-                <h2>Households</h2>
                 <div className={"Hop"}>
-                    <input type={"button"} className={"ab"} name={"AddButton"} onClick={this.onAddClick.bind(this)}
-                           value={"Add"}/>
-                    <input type={"button"} className={"eb"} name={"EditButton"} onClick={buttonAction.bind(this)}
-                           value={"Edit"}/>
-                    <input type={"button"} className={"rb"} name={"RemoveButton"} onClick={buttonAction.bind(this)}
-                           value={"Remove"}/>
-                    <input type={"button"} className={"sb"} name={"SearchButton"} onClick={buttonAction.bind(this)}
-                           value={"Search"}/>
+                    <h2 className={'title'}>Households</h2>
+                    <Button className={'ab'} variant={"outline-dark"} onClick={this.onAddClick.bind(this)}>Add</Button>
+                    <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Remove</Button>
+                    <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Edit</Button>
+                    <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Search</Button>
                     {this.state.showAddCollapsible ?
                         <Collapsible/> :
                         null

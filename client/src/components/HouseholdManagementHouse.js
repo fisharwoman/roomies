@@ -2,6 +2,7 @@ import React from 'react';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 /**
  * A component to encapsulate one manageable household
@@ -24,21 +25,33 @@ export default class HouseholdManagementHouse extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id={'houseComponent'}>
                 <Row>
                     <Col>
                         <h3>{this.state.houseName}</h3>
                         <p>{this.state.address}</p>
                     </Col>
                     <Col>
-                        <Table>
-                            {this.makeRoommates()}
-                            <tr><input type={"button"} value={"Add"} onClick={this.handleAddRoommate}/></tr>
+                        <Table hover size={'sm'}>
+                            <thead><tr><th>Roommates</th></tr></thead>
+                            <tbody>
+                                {this.makeRoommates()}
+                            </tbody>
+                            <tfoot>
+                            <tr><td><Button variant={"outline-dark"} onClick={this.handleAddRoommate}>Add Roommate</Button></td></tr>
+                            </tfoot>
                         </Table>
                     </Col>
                     <Col>
-                        <ul>{this.makeRooms()}</ul>
-                        <input type={"button"} value={"Add Room"} onClick={this.handleAddRoom}/>
+                        <Table hover size={'sm'}>
+                            <thead><tr><th>Rooms</th></tr></thead>
+                            <tbody>
+                                {this.makeRooms()}
+                            </tbody>
+                            <tfoot>
+                            <tr><td><Button variant={"outline-dark"}onClick={this.handleAddRoom}>Add Room</Button></td></tr>
+                            </tfoot>
+                        </Table>
                     </Col>
                 </Row>
             </div>
@@ -49,7 +62,9 @@ export default class HouseholdManagementHouse extends React.Component {
         return this.state.roommates.map((value, key) => {
             return (
                 <tr key={key}>
-                    {value}
+                    <td>
+                        {value}
+                    </td>
                 </tr>
             );
         });
@@ -58,10 +73,12 @@ export default class HouseholdManagementHouse extends React.Component {
     makeRooms() {
         return this.state.rooms.map((value, key) => {
             return (
-                <li key={key}>
-                    {value}
-                    <input type={"button"} value={"Remove"} onClick={this.handleRemoveClick.bind(this)}/>
-                </li>
+                <tr key={key}>
+                    <td>
+                        {value}
+                        <td><Button variant={"dark"}onClick={this.handleRemoveClick.bind(this)}>Remove</Button></td>
+                    </td>
+                </tr>
             );
         });
     }
