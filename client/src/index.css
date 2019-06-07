@@ -38,3 +38,7 @@ ul.header li a {
   font-weight: bold;
   font-size: 150%;
 }
+
+.sticky-top {
+  position: sticky;
+}
