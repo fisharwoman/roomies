@@ -41,7 +41,7 @@ router
     .get('/:userID', async (req,res) => {
         try {
             const query = `SELECT * FROM Roommates WHERE userID = ${req.params.userID}`;
-            let result = await db.any(query);
+            let result = await db.one(query);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
