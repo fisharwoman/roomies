@@ -23,27 +23,21 @@ class Collapsible extends Component{
                 <Form className="form">
                     Add a Household <br/>
 
-                    <label htmlFor={"Address"}>Household Address: </label>
+                    <label htmlFor={"Address"}>Household Address: &nbsp;&nbsp; </label>
                     <input type={"text"} name={"address"} placeholder={"555 Some Street"}
                            onChange={event => {this.setState({address: event.target.value})}} /> <br/>
 
-                    <label htmlFor={"Name"}>Household Name: </label>
+                    <label htmlFor={"Name"}>Household Name: &nbsp;&nbsp; </label>
                     <input type={"text"} name={"name"} placeholder={"My Household"}
                            onChange={event => {this.setState({name: event.target.value})}} /> <br/>
 
-                    <label htmlFor={"Description"}>Household Description: </label>
+                    <label htmlFor={"Description"}>Household Description: &nbsp;&nbsp; </label>
                     <input type={"text"} name={"description"}
                            onChange={event => {this.setState({description: event.target.value})}} /> <br/>
 
                     <input type={"button"} name={"submitAddForm"} value={"+"}
                            onClick={this.submitAddForm.bind(this)} /> <br/>
                 </Form>
-
-                <Collapse in={this.state.open}>
-                    <div>
-                        <p>Content when the button is clicked</p>
-                    </div>
-                </Collapse>
 
             </div>
         );

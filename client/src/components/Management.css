@@ -1,0 +1,21 @@
+.input{
+    padding: 10px;
+    color: pink;
+}
+
+.button{
+    padding: 10px;
+    background-color: pink;
+}
+
+.ab, .eb, .rb{
+    padding: 5px;
+    background-color: white;
+    margin: 10px;
+    border-radius: 12px;
+}
+
+.Add{
+    padding: 10px;
+    background-color: #f3f3f3;
+}

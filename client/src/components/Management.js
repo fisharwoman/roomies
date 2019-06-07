@@ -1,7 +1,7 @@
 import React from 'react';
 import Collapsible from "./Collapsible";
-import LoginComponent from "./LoginComponent";
 import Button from "react-bootstrap/Button";
+import './Management.css';
 
 
 export default class Management extends React.Component {
@@ -14,18 +14,18 @@ export default class Management extends React.Component {
     }
 
     onAddClick() {
-        this.setState({
-            showAddCollapsible: true,
-        });
+        this.setState(prevState => ({
+            showAddCollapsible: !prevState.showAddCollapsible
+        }));
     }
 
     render() {
         return (
             <div className={"Add"}>
                 Households
-                <input type={"button"} name={"AddButton"} onClick={this.onAddClick.bind(this)} value={"Add"}/>
-                <input type={"button"} name={"EditButton"} onClick={buttonAction.bind(this)} value={"Edit"}/>
-                <input type={"button"} name={"RemoveButton"} onClick={buttonAction.bind(this)} value={"Remove"}/>
+                <input type={"button"} className={"ab"} name={"AddButton"} onClick={this.onAddClick.bind(this)} value={"Add"}/>
+                <input type={"button"} className={"eb"} name={"EditButton"} onClick={buttonAction.bind(this)} value={"Edit"}/>
+                <input type={"button"} className={"rb"} name={"RemoveButton"} onClick={buttonAction.bind(this)} value={"Remove"}/>
                 {this.state.showAddCollapsible ?
                     <Collapsible /> :
                     null
