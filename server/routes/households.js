@@ -4,18 +4,19 @@ const db = require('../db');
 const url = "http://localhost:3000/households/";
 
 router
-/**
- * Gets all household URIs
- */
+    /**
+     * Gets all household URIs relevant to the user
+     */
     .get("/", async (req,res) => {
         try {
-            const query = "SELECT houseID FROM Households";
+            const query = `select houseid from households right join household_roommates using (houseid) where roommateid = ${req.user}`;
+            console.log(query);
             let result = await db.any(query);
             result = result.map((value) => {
                 let id = value.houseid;
-                return url + id;
+                return "/households/" + id;
             });
-            res.status(200).json(result);
+            res.status(200).send(result);
         } catch (e) {
             res.status(400).send(e.message);
         }
@@ -25,9 +26,9 @@ router
      */
     .post("/", async (req,res) => {
         try {
-            const query = `INSERT INTO Households (address) VALUES ('${req.body.address}') RETURNING houseID`;
-            let result = await db.any(query);
-            result = url + result[0].houseid;
+            const query1 = `INSERT INTO Households (address) VALUES ('${req.body.address}') RETURNING houseID`;
+            let result = await db.one(query1);
+            result = url + result.houseid;
             res.status(200).send(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -39,8 +40,8 @@ router
     .get("/:houseID", async (req, res) => {
         try {
             const query = `SELECT * FROM Households WHERE houseID = ${req.params.houseID}`;
-            let result = await db.any(query);
-            if (!result || result.length === 0) res.status(204);
+            let result = await db.one(query);
+            if (!result) res.status(204);
             else res.status(200);
             res.json(result);
         } catch (e) {
@@ -111,6 +112,48 @@ router
             if (!result || result.length !== 1) res.status(204);
             else res.status(200);
             res.send();
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Get the rooms of the specified house
+     */
+    .get('/:houseID/rooms', async (req, res) => {
+        try {
+            const query = `SELECT * FROM Rooms WHERE houseID = ${req.params.houseID}`;
+            let result = await db.any(query);
+            if (!result || result.length === 0) res.status(204);
+            else res.status(200);
+            res.json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Add a room of a given name to the specified house
+     */
+    .post('/:houseID/rooms/:roomName', async (req, res) => {
+        try {
+            const query = `INSERT INTO Rooms VALUES (${req.params.houseID}, '${req.params.roomName}')`;
+            await db.any(query);
+            res.status(200).send();
+        } catch (e) {
+            if (e.message.includes('duplicate')) res.status(409).send(e.message);
+            else res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Remove a room of the specified name from the house of the specified id
+     */
+    .delete('/:houseID/rooms/:roomName', async (req, res) => {
+        try {
+            const query =
+                `DELETE FROM Rooms where houseID = ${req.params.houseID} AND roomName = '${req.params.roomName}' RETURNING *`;
+            let result = await db.any(query);
+            if (!result || result.length === 0) res.status(204);
+            else res.status(200);
+            res.json(result);
         } catch (e) {
             res.status(400).send(e.message);
         }

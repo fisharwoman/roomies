@@ -32,7 +32,7 @@ exports.isAuthenticated = function isAuthenticated(req, res, next) {
 router
     .post('/login', passport.authenticate('local', {
         failureRedirect: '/failed',
-        successRedirect: '/users'}),
+        successRedirect: '/success'}),
         function(req,res) {
             res.redirect('/user');
     })
