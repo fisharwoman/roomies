@@ -11,10 +11,10 @@ router.post('/', async (req,res,next) => {
             let email = req.body.email;
             let password = req.body.password;
             const query = `INSERT INTO Roommates (name, phoneno, email, password)` +
-                ` VALUES ('${name}', '${phoneNo}', '${email}', '${password}')`;
-            await db.none(query);
-            res.redirect('/auth/login');
-            next();
+                ` VALUES ('${name}', '${phoneNo}', '${email}', '${password}') RETURNING userid`;
+            let result = await db.one(query);
+            res.status(200).send(result);
+            // next();
         } catch (e) {
             res.status(400).send(e.message);
         }

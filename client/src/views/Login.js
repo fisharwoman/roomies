@@ -19,7 +19,7 @@ export default class Login extends React.Component {
     render() {
         return (
             <div className={'container h-100'}>
-                <div class={"row h-100 align-items-center"}>
+                <div className={"row h-100 align-items-center"}>
                     <Card className={"card .mx-auto"}>
                         <Card.Header id={"card-header"}>Roomies</Card.Header>
                         {this.renderForm()}

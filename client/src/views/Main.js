@@ -26,8 +26,8 @@ export default class Main extends Component {
             userName: "User Name",
             selectedHousehold: {
                 houseid: 0,
-                address: "Address",
-                name: ""
+                address: "-",
+                name: "You aren't in a house yet!"
             }
         }
     }
@@ -83,7 +83,7 @@ export default class Main extends Component {
             this.setState({
                 households: data,
                 userName: name,
-                selectedHousehold: data[0]
+                selectedHousehold: data[0] ? data[0] : this.state.selectedHousehold
             })
         } catch (e) {
             console.log(e.message);
