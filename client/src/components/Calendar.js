@@ -39,7 +39,7 @@ export default class Calendar extends Component {
         <Paper>
           <Scheduler data={data}>
           <ViewState 
-              defaultCurrentViewName="Week"
+              defaultCurrentViewName="Month"
               currentDate={currentDate}
               onCurrentDateChange={this.currentDateChange}/>
               <DayView
@@ -84,8 +84,6 @@ export default class Calendar extends Component {
         
         console.log(reminders);
         this.setState({ data: reminders })
-        Object.
-
       }
     } catch (e) {
       console.log("strange error");

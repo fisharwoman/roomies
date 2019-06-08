@@ -26,7 +26,7 @@ router
      */
     .post("/", async (req,res) => {
         try {
-            const query1 = `INSERT INTO Households (address) VALUES ('${req.body.address}') RETURNING houseID`;
+            const query1 = `INSERT INTO Households (address, name ) VALUES ('${req.body.address}','${req.body.name}') RETURNING houseID`;
             let result = await db.one(query1);
             result = url + result.houseid;
             res.status(200).send(result);
