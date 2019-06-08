@@ -62,8 +62,8 @@ export default class Calendar extends Component {
     try {
       let houseID = this.props.selectedHousehold;
       if (houseID && houseID.houseid > 0){
-        let events = await this.getEvents(houseID.houseid);
-        let reminders = await events.json();
+        let appt1 = await this.getReminders(houseID.houseid);
+        let reminders = await appt1.json();
         reminders = reminders.reduce((acc, reminder) => {
           if (!reminder.reminderid) {
             return acc;
@@ -72,42 +72,59 @@ export default class Calendar extends Component {
           const endDateHr = endDate.getHours();
           endDate.setHours(endDateHr + 1);
           
-          const obj = {
+          const obj1 = {
             title: reminder.title,
             startDate: new Date(reminder.reminderdate),
             endDate,
             id: reminder.reminderid,
-            location: "unknown"
+            location: "nil"
+          }
+          return acc.concat(obj1);
+        }, [])
+        let appt2 = await this.getEvents(houseID.houseid);
+        let events = await appt2.json();
+        events = events.reduce((acc, event) => {
+          if (!event.eventid) {
+            return acc;
+          }
+          const endDate = new Date(event.enddate);
+          const endDateHr = endDate.getHours();
+          endDate.setHours(endDateHr + 1);
+          
+          const obj = {
+            title: event.title,
+            startDate: new Date(event.startdate),
+            endDate,
+            id: event.eventid,
+            location: event.roomname
           }
           return acc.concat(obj);
         }, [])
-        
-        console.log(reminders);
-        this.setState({ data: reminders })
+
+        let appts = reminders.concat(events);
+        this.setState({ data: appts })
       }
     } catch (e) {
       console.log("strange error");
     }
   }
 
-  // async getAppointment() {
-  //   try {
-  //     if (this.props.selectedHouseHolds){
-  //       console.log("maybe?" + houseID);
-  //       let houseID = this.props.selectedHouseHolds.houseID;
-  //       console.log("maybe?" + houseID);
-  //       if (houseID.houseID >0 ){
-  //         let events = this.getEvents(houseID);
-  //         console.log(events);
-  //       }
-  //     }
-      
-  //   } catch (e) {throw e;}
-  // }
 
-  getEvents = async (houseid) => {
+  getReminders = async (houseid) => {
     try {
       return fetch('/calendar-entries/reminders/houses/'+ houseid, {
+        method: 'GET',
+        headers: {
+            "content-type": 'application/json'
+        }
+      });
+    } catch (e) {throw e;}
+  }
+
+  
+  getEvents = async (houseid) => {
+    try {
+      return fetch('/calendar-entries/events/houses/'+ houseid, {
         method: 'GET',
         headers: {
             "content-type": 'application/json'

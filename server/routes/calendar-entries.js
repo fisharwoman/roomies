@@ -85,20 +85,12 @@ router
     /* selects all events for specified houseID only */
     .get('/events/houses/:houseID', async (req,res) => {
         try {
-            const query = `CREATE OR REPLACE VIEW EventsByLoc AS
-            SELECT * FROM Events
-            RIGHT JOIN (SELECT * FROM Events_Located_In WHERE 
-                Events_Located_In.houseID = ${req.params.houseID}) AS derivedTable1
-            ON derivedTable.eventID = Events.eventID`;
-            
-            const query1 = `CREATE OR REPLACE VIEW EventsByHouseID AS
-            SELECT * FROM EventsByLoc
-           WHERE EventsByLoc.houseID = ${req.params.houseID})`;
-  
-            const query2 = `SELECT eventID, title, startDate, endDate, creator FROM EventsByHouseID`;
-            await db.any(query);
-            await db.any(query1);
-            let result = await db.any(query2);
+            const query1 = `SELECT * FROM  Events
+            RIGHT JOIN ( SELECT eventID, roomName  FROM Events_Located_In
+                WHERE houseID = ${req.params.houseID}) AS derivedTable
+            on derivedTable.eventID = Events.eventID`;
+            let result = await db.any(query1);
+            console.log(result)
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -119,7 +111,7 @@ router
     /* GET reminders based on creator AND houseID. */
     .get('/events/houses/:houseID/creator/:creator', async (req,res) => {
         try {
-            const query1 = `CREATE OR REPLACE VIEW RemindersByHouseID AS
+            const query1 = `CREATE OR REPLACE VIEW EventsByHouseID AS
             SELECT * FROM Events
             RIGHT JOIN (SELECT * FROM Household_Roommates WHERE 
               Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
