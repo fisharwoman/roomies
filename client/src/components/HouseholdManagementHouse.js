@@ -34,7 +34,7 @@ export default class HouseholdManagementHouse extends React.Component {
                         <h3>{this.state.houseName}
                             <br/>
                             <Button variant={"outline-dark"} className={"hh"}
-                                    onClick={this.handleRemoveHH.bind(this.state.houseid, this.state.roommateid)}>Remove</Button>
+                                    onClick={() => this.props.removeHousehold(this.state.houseid)}>Remove</Button>
                             <Button variant={"outline-dark"} className={"hh"}
                                     onClick={this.handleEditHH.bind()}>Edit</Button></h3>
                         <p>{this.state.address}</p>
@@ -99,7 +99,7 @@ export default class HouseholdManagementHouse extends React.Component {
                         size={'sm'}
                         className={'remove'}
                         variant={"outline-danger"}
-                        onClick={this.handleRemoveRoom.bind(this, this.state.houseid, value)}>Remove</Button>
+                        onClick={this.handleRemoveRoom.bind(this, value)}>Remove</Button>
                     </td>
                 </tr>
             );
@@ -111,13 +111,19 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     //households/:houseID/rooms/:roomName
-    async handleRemoveRoom(houseid, godd) {
-
+    async handleRemoveRoom(roomname) {
         try {
-            var test = await fetch(`/households/${houseid}/rooms/${godd}`, {
+            await fetch(`/households/${this.state.houseid}/rooms/${roomname}`, {
                 method: "DELETE"
             });
-            console.log(test);
+            let rooms = this.state.rooms;
+            for (let i in rooms) {
+                if (rooms[i] === roomname) {
+                    rooms.splice(i,1);
+                    break;
+                }
+            }
+            this.setState({rooms: rooms});
         } catch (e) {
             throw e;
         }
@@ -132,17 +138,19 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     // households/:houseID/roommates/:roommateID
-    async handleRemoveHH(houseid, roommateid) {
-        alert("on delete");
-        // roommate id is an object
-        let userid = window.sessionStorage.getItem('userid');
-        // console.log(userid); // returns 204 success but db does not change
-        try {
-            await fetch(`/households/${houseid}/roommates/${userid}`, {
-                method: "DELETE"
-            });
-        } catch (e) {
-            throw e;
-        }
+    async handleRemoveHH() {
+        // let userid = window.sessionStorage.getItem('userid');
+        // try {
+        //     let response = await fetch(`/households/${this.state.houseid}/roommates/${userid}`, {
+        //         method: "DELETE",
+        //         headers: {
+        //             'content-type': 'application/json'
+        //         }
+        //     });
+        //     this.props.update();
+        // } catch (e) {
+        //     throw e;
+        // }
+        this.props.removeHousehold.bind(this.props.houseid);
     }
 }

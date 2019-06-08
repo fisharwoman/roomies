@@ -70,18 +70,15 @@ export default class Management extends React.Component {
     async generateHouseholdComponents() {
         try {
             let data = await this.getHouseholds();
-            console.log(data);
             data = await Promise.all(data.map(async (value) => {
                 let roommates = await this.getRoommates(value.houseid);
                 let rooms = await this.getRooms(value.houseid);
-                console.log("abc", rooms);
                 value.roommates = roommates;
                 value.rooms = rooms;
-                console.log(value);
                 return value;
             }));
-            data = data.map((value, key) => {
-                return <HouseholdManagementHouse key={key} house={value}/>
+            data = data.map((value) => {
+                return <HouseholdManagementHouse key={value.houseid} house={value} removeHousehold={this.removeHousehold.bind(this)}/>
             });
             this.setState({householdComponents: data});
         } catch (e) {
@@ -146,6 +143,21 @@ export default class Management extends React.Component {
             }));
             return data;
         } catch (e) {throw e;}
+    }
+
+    async removeHousehold(houseid) {
+        let userid = window.sessionStorage.getItem('userid');
+        try {
+            let response = await fetch(`/households/${houseid}/roommates/${userid}`, {
+                method: "DELETE",
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+            await this.generateHouseholdComponents();
+        } catch (e) {
+            throw e;
+        }
     }
 
 }
