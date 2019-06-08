@@ -19,19 +19,22 @@ export default class HouseholdManagementHouse extends React.Component {
             address: this.props.house.address,
             roommates: this.props.house.roommates,
             rooms: this.props.house.rooms,
-            houseid: this.props.house.houseid
+            houseid: this.props.house.houseid,
+            roommateid: window.sessionStorage.getItem('userid'),
         }
     }
 
-
+// this.handleRemoveHH(this.state.houseid, this.state.roommateid)
     render() {
         return (
             <div id={'houseComponent'}>
                 <Row>
                     <Col>
                         <h3>{this.state.houseName}
-                        <Button variant={"outline-dark"} className={"hh"} onClick={this.handleRemoveHH}>-</Button>
-                        <Button variant={"outline-dark"} className={"hh"} onClick={this.handleEditHH}>^</Button> </h3>
+                        <Button variant={"outline-dark"} className={"hh"}
+                                onClick={this.handleRemoveHH}>Remove</Button>
+                        <Button variant={"outline-dark"} className={"hh"}
+                                onClick={this.handleEditHH}>Edit</Button> </h3>
                         <p>{this.state.address}</p>
                     </Col>
                     <Col>
@@ -77,23 +80,17 @@ export default class HouseholdManagementHouse extends React.Component {
         return this.state.rooms.map((value, key) => {
             return (
                 <tr key={key}>
-                    <td>{value}<Button size={'sm'} className={'remove'} variant={"outline-danger"}onClick={this.handleRemoveClick.bind(this)}>Remove</Button></td>
+                    <td>{value}<Button size={'sm'} className={'remove'} variant={"outline-danger"}onClick={this.handleRemoveRoom.bind(this)}>Remove</Button></td>
                 </tr>
             );
         });
-    }
-
-
-    handleRemoveHH(){
-        alert("action remove");
-
     }
 
     handleEditHH(){
         alert("action edit");
     }
 
-    handleRemoveClick() {
+    handleRemoveRoom() {
         alert("You tried to delete a room");
     }
 
@@ -103,5 +100,16 @@ export default class HouseholdManagementHouse extends React.Component {
 
     handleAddRoom() {
         alert("Attempting to add a room");
+    }
+
+    // households/:houseID/roommates/:roommateID
+    async handleRemoveHH(houseid, roommateid) {
+
+        try {
+            await fetch(`/households/${houseid}/roommates/${roommateid}`, {
+                method: "DELETE"
+            });
+
+        } catch (e) {throw e;}
     }
 }

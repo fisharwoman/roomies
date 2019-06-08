@@ -70,6 +70,7 @@ export default class Management extends React.Component {
     async generateHouseholdComponents() {
         try {
             let data = await this.getHouseholds();
+            console.log(data);
             data = await Promise.all(data.map(async (value) => {
                 let roommates = await this.getRoommates(value.houseid);
                 let rooms = await this.getRooms(value.houseid);
@@ -94,6 +95,7 @@ export default class Management extends React.Component {
                     'content-type': 'application/json'
                 }
             });
+
             let data = await response.json();
             data = Promise.all(data.map(async (value) => {
                 const resp = await fetch(`/users/${value.roommateid}`, {

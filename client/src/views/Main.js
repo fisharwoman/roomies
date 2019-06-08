@@ -80,12 +80,27 @@ export default class Main extends Component {
     async componentDidMount() {
         try {
             let data = await this.getHouseholds();
-            let name = await this.getUserName();
-            this.setState({
-                households: data,
-                userName: name,
-                selectedHousehold: data[0]
-            })
+            console.log(data);
+            if(data != []){
+                let name = await this.getUserName();
+                console.log("looj here");
+                console.log(data);
+                console.log(name);
+                this.setState({
+                    households: data,
+                    userName: name,
+                    selectedHousehold: data[0]
+                })
+            } else {
+                console.log('we here');
+                console.log();
+                this.setState({
+                    households: '',
+                    userName: '',
+                    selectedHousehold: ''
+                })
+            }
+
         } catch (e) {
             console.log(e.message);
         }
