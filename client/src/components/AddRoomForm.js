@@ -1,7 +1,4 @@
 import React, {Component} from 'react';
-import {Button, Collapse} from 'react-bootstrap';
-import Form from "react-bootstrap/Form";
-import HouseholdManagementHouse from "./HouseholdManagementHouse";
 
 class AddRoomForm extends Component{
 
@@ -15,20 +12,18 @@ class AddRoomForm extends Component{
     }
 
     handleAddNewRoom(){
-        console.log(this.state.roomname);
+        // console.log(this.state.roomname);
         this.props.addNew(this.state.roomname);
     }
 
     render(){
         return (
             <div className="add-room-form">
-
                 Add a Room <br/>
                 <label htmlFor={"roomname"}>Room Name: &nbsp;&nbsp; </label>
                 <input type={"text"} name={"roomname"} placeholder={"room name goes here"}
                        onChange={event => {this.setState({roomname: event.target.value})}}/>
                 <input type={"button"} name={"submitAddForm"} value={"+"} onClick={this.handleAddNewRoom} />
-
             </div>
         );
     }

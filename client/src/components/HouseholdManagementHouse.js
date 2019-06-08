@@ -26,23 +26,10 @@ export default class HouseholdManagementHouse extends React.Component {
             showAddRoomForm: false
         };
         //  console.log(JSON.stringify(this.state));
-        this.handleAddRoom = this.handleAddRoom.bind(this); // possibly need this TODO
+        this.handleAddRoom = this.handleAddRoom.bind(this); // may or may not need this
         this.addNewRoom = this.addNewRoom.bind(this);
     }
 
-    addNewRoom(newRoomName) {
-        console.log(newRoomName);
-        console.log(this.state.rooms);
-        let houseid = this.state.houseid;
-        this.addRoom(houseid, newRoomName);
-
-        this.setState((state => ({
-            rooms: state.rooms.concat([newRoomName])
-        })))
-        console.log(this.state.rooms);
-    }
-
-// this.handleRemoveHH(this.state.houseid, this.state.roommateid)
     render() {
         return (
             <div id={'houseComponent'}>
@@ -114,7 +101,6 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     makeRooms() {
-        console.log(JSON.stringify(this.state.rooms));
         return this.state.rooms.map((value, key) => {
             return (
                 <tr key={key}>
@@ -149,35 +135,31 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     handleAddRoommate() {
-        // alert("Attempting to add a roommate");
+        alert("Attempting to add a roommate");
         // console.log("Attempting to add a roommate");
     }
 
-    // displays a form that shows upon click of add room button
-    // takes in a room name
-    // has submit button for on click events
+    // shows the collapsible form
     handleAddRoom() {
-        // alert("add room pressed");
         this.setState(prevState => ({
             showAddRoomForm: !prevState.showAddRoomForm
         }));
-
     }
 
-    handleAddRoomClick() {
+    // makes the api call; if successful adds new room name to frontend table display
+    addNewRoom(newRoomName) {
+        let houseid = this.state.houseid; // todo houseid for adding rooms
+        this.addRoom(houseid, newRoomName);
 
+        // todo add an if statement here for possible error handling
+        this.setState((state => ({
+            rooms: state.rooms.concat([newRoomName])
+        })))
     }
 
-    // alright, this hard-coded kind of works upon refresh...
-    // need to get house id from the current table
-    // need to get roomname from the user input form
-    // need to make a user input form
-    // on submit, send user input "roomname" as param to this function
     // households/:houseID/rooms/:roomName
+    // does the actual api call for adding rooms
     async addRoom(houseid, roomname) {
-        // alert("Attempting to add a room");
-        // houseid = this.state.houseid; // hardcoded for testing
-        // roomname = "Office";
         try {
             const response = await fetch(`/households/${houseid}/rooms/${roomname}`, {
                 method: "POST",
@@ -185,32 +167,14 @@ export default class HouseholdManagementHouse extends React.Component {
                     "content-type": 'application/json'
                 }
             });
-            // let data = await response.json();
-            // data = data.map((value) => {
-            //      console.log(data);
-            //     console.log(value.roomname);
-            // });
-            // return data;
+            console.log(response);
         } catch (e) {
             throw e;
         }
     }
 
-
     // households/:houseID/roommates/:roommateID
     async handleRemoveHH() {
-        // let userid = window.sessionStorage.getItem('userid');
-        // try {
-        //     let response = await fetch(`/households/${this.state.houseid}/roommates/${userid}`, {
-        //         method: "DELETE",
-        //         headers: {
-        //             'content-type': 'application/json'
-        //         }
-        //     });
-        //     this.props.update();
-        // } catch (e) {
-        //     throw e;
-        // }
         this.props.removeHousehold.bind(this.props.houseid);
     }
 
