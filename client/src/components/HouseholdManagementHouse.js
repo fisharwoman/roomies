@@ -4,7 +4,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import './Management.css';
-import Management from "./Management";
+import AddRoomForm from "./AddRoomForm";
+
 
 /**
  * A component to encapsulate one manageable household
@@ -21,8 +22,10 @@ export default class HouseholdManagementHouse extends React.Component {
             rooms: this.props.house.rooms,
             houseid: this.props.house.houseid,
             roommateid: window.sessionStorage.getItem('userid'),
-            roomname: "living room"
+            roomname: "",
+            showAddRoomForm: false
         }
+        this.handleAddRoom= this.handleAddRoom.bind(this); // possibly need this TODO
     }
 
 // this.handleRemoveHH(this.state.houseid, this.state.roommateid)
@@ -69,8 +72,12 @@ export default class HouseholdManagementHouse extends React.Component {
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoom}>Add Room</Button></td>
+                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoom.bind(this)}>Add Room</Button></td>
                             </tr>
+                            {this.state.showAddRoomForm ?
+                                <AddRoomForm/> :
+                                null
+                            }
                             </tfoot>
                         </Table>
                     </Col>
@@ -106,10 +113,6 @@ export default class HouseholdManagementHouse extends React.Component {
         });
     }
 
-    handleEditHH() {
-        alert("action edit");
-    }
-
     //households/:houseID/rooms/:roomName
     async handleRemoveRoom(roomname) {
         try {
@@ -119,7 +122,7 @@ export default class HouseholdManagementHouse extends React.Component {
             let rooms = this.state.rooms;
             for (let i in rooms) {
                 if (rooms[i] === roomname) {
-                    rooms.splice(i,1);
+                    rooms.splice(i, 1);
                     break;
                 }
             }
@@ -130,12 +133,55 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     handleAddRoommate() {
-        alert("Attempting to add a roommate");
+        // alert("Attempting to add a roommate");
+        // console.log("Attempting to add a roommate");
     }
 
+    // displays a form that shows upon click of add room button
+    // takes in a room name
+    // has submit button for on click events
     handleAddRoom() {
-        alert("Attempting to add a room");
+        // alert("add room pressed");
+        this.handleAddRoomClick()
+        let roomname = "Cafe";
+        let houseid = this.state.houseid;
+        this.addRoom(houseid, roomname);
     }
+
+    handleAddRoomClick() {
+        this.setState(prevState => ({
+            showAddRoomForm: !prevState.showAddRoomForm
+        }));
+    }
+
+    // alright, this hard-coded kind of works upon refresh...
+    // need to get house id from the current table
+    // need to get roomname from the user input form
+    // need to make a user input form
+    // on submit, send user input "roomname" as param to this function
+    // households/:houseID/rooms/:roomName
+    async addRoom(houseid, roomname) {
+        // alert("Attempting to add a room");
+        // houseid = this.state.houseid; // hardcoded for testing
+        // roomname = "Office";
+        try {
+            const response = await fetch(`/households/${houseid}/rooms/${roomname}`, {
+                method: "POST",
+                headers: {
+                    "content-type": 'application/json'
+                }
+            });
+            // let data = await response.json();
+            // data = data.map((value) => {
+            //      console.log(data);
+            //     console.log(value.roomname);
+            // });
+            // return data;
+        } catch (e) {
+            throw e;
+        }
+    }
+
 
     // households/:houseID/roommates/:roommateID
     async handleRemoveHH() {
@@ -153,4 +199,9 @@ export default class HouseholdManagementHouse extends React.Component {
         // }
         this.props.removeHousehold.bind(this.props.houseid);
     }
+
+    handleEditHH() {
+        alert("action edit");
+    }
+
 }
