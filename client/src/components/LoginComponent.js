@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Main from '../views/Main';
+import { Button, Form, Card} from 'react-bootstrap';
+import './styles/Login.css';
 
 
 export default class LoginComponent extends React.Component {
@@ -13,28 +15,41 @@ export default class LoginComponent extends React.Component {
         }
     }
 
+
     render() {
         return (
-            <div className={"App"}>
-                <label htmlFor={"username"}>Email: </label>
-                <input type={"text"} name={"username"} placeholder={"jondoe@example.com"}
-                    onChange={event => {this.setState({email: event.target.value})}}
-                /><br/>
-                <label htmlFor={"password"}>Password: </label>
-                <input type={"password"} name={"placeholder"}
-                    onChange={event => {this.setState({password: event.target.value})}}
-                />
-                <input type={"button"} name={"login"} value={"Login"} onClick={this.tryToLogin.bind(this)}/>
-            </div>
-        );
+                <Form onSubmit={this.handleSubmit.bind(this)}>
+                    <Form.Group>
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                            type={'email'} placeholder={"johndoe@example.com"}
+                            onChange={event => {this.setState({email: event.target.value})}}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control
+                            onChange={event => {this.setState({password: event.target.value})}}
+                            type={'password'} placeholder={'Password'}/>
+                    </Form.Group>
+                    <Button block variant={'primary'} type={'Submit'}>Log In</Button>
+                </Form>
+        )
     }
 
+    async handleSubmit(e) {
+        e.preventDefault();
+        try {
+            await this.tryToLogin();
+        } catch (e) {
+            alert(e);
+        }
+    }
     async tryToLogin() {
         const login = {
             username: this.state.email,
             password: this.state.password
         };
-
         if (!login.username || !login.password) return;
         try {
             const response = await fetch('/auth/login', {

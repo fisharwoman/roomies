@@ -40,6 +40,25 @@ ul.header li a {
   padding: 0;
 }
 
+#card-header {
+  font-size: 300%;
+  font-family: 'Baumans', cursive;
+  font-weight: bold;
+  text-align: center;
+  padding: 0;
+}
+
+.card {
+  display: block;
+  margin: 100px auto;
+  float: none;
+  width: 25em;
+}
+
+Button {
+  padding: 20px;
+}
+
 /*.sticky-top {*/
   /*position: sticky;*/
 /*}*/
