@@ -24,8 +24,22 @@ export default class HouseholdManagementHouse extends React.Component {
             roommateid: window.sessionStorage.getItem('userid'),
             roomname: "",
             showAddRoomForm: false
-        }
-        this.handleAddRoom= this.handleAddRoom.bind(this); // possibly need this TODO
+        };
+        //  console.log(JSON.stringify(this.state));
+        this.handleAddRoom = this.handleAddRoom.bind(this); // possibly need this TODO
+        this.addNewRoom = this.addNewRoom.bind(this);
+    }
+
+    addNewRoom(newRoomName) {
+        console.log(newRoomName);
+        console.log(this.state.rooms);
+        let houseid = this.state.houseid;
+        this.addRoom(houseid, newRoomName);
+
+        this.setState((state => ({
+            rooms: state.rooms.concat([newRoomName])
+        })))
+        console.log(this.state.rooms);
     }
 
 // this.handleRemoveHH(this.state.houseid, this.state.roommateid)
@@ -72,14 +86,15 @@ export default class HouseholdManagementHouse extends React.Component {
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoom.bind(this)}>Add Room</Button></td>
+                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoom.bind(this)}>Add
+                                    Room</Button></td>
                             </tr>
-                            {this.state.showAddRoomForm ?
-                                <AddRoomForm/> :
-                                null
-                            }
                             </tfoot>
                         </Table>
+                        {this.state.showAddRoomForm ?
+                            <AddRoomForm addNew={this.addNewRoom}/> :
+                            null
+                        }
                     </Col>
                 </Row>
             </div>
@@ -99,6 +114,7 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     makeRooms() {
+        console.log(JSON.stringify(this.state.rooms));
         return this.state.rooms.map((value, key) => {
             return (
                 <tr key={key}>
@@ -142,16 +158,14 @@ export default class HouseholdManagementHouse extends React.Component {
     // has submit button for on click events
     handleAddRoom() {
         // alert("add room pressed");
-        this.handleAddRoomClick()
-        let roomname = "Cafe";
-        let houseid = this.state.houseid;
-        this.addRoom(houseid, roomname);
-    }
-
-    handleAddRoomClick() {
         this.setState(prevState => ({
             showAddRoomForm: !prevState.showAddRoomForm
         }));
+
+    }
+
+    handleAddRoomClick() {
+
     }
 
     // alright, this hard-coded kind of works upon refresh...
