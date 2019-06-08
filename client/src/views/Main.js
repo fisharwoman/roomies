@@ -17,7 +17,6 @@ import Management from '../components/Management';
 import '../index.css';
 
 import * as BootStrap from 'react-bootstrap';
-import { get } from "https";
 
 export default class Main extends Component {
     constructor(props) {
@@ -27,8 +26,8 @@ export default class Main extends Component {
             userName: "User Name",
             selectedHousehold: {
                 houseid: 0,
-                address: "Address",
-                name: ""
+                address: "-",
+                name: "You aren't in a house yet!"
             }
         }
     }
@@ -61,7 +60,8 @@ export default class Main extends Component {
                     </BootStrap.Navbar>
 
                     <div className="content">
-                        <Route path="/dashboard" component={Dashboard}/>
+                        {/*TODO: change the component back to Dashboard*/}
+                        <Route path="/dashboard" component={Management}/>
                         <Route path="/calendar" component={Calendar}/>
                         <Route path="/contact" component={Contact}/>
                         <Route path='/expenses' component={Expenses}/>
@@ -80,26 +80,13 @@ export default class Main extends Component {
     async componentDidMount() {
         try {
             let data = await this.getHouseholds();
-            console.log(data);
-            if(data != []){
-                let name = await this.getUserName();
-                console.log("looj here");
-                console.log(data);
-                console.log(name);
-                this.setState({
-                    households: data,
-                    userName: name,
-                    selectedHousehold: data[0]
-                })
-            } else {
-                console.log('we here');
-                console.log();
-                this.setState({
-                    households: '',
-                    userName: '',
-                    selectedHousehold: ''
-                })
-            }
+
+            let name = await this.getUserName();
+            this.setState({
+                households: data,
+                userName: name,
+                selectedHousehold: data[0] ? data[0] : this.state.selectedHousehold
+            })
 
         } catch (e) {
             console.log(e.message);

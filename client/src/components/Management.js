@@ -74,8 +74,10 @@ export default class Management extends React.Component {
             data = await Promise.all(data.map(async (value) => {
                 let roommates = await this.getRoommates(value.houseid);
                 let rooms = await this.getRooms(value.houseid);
+                console.log("abc", rooms);
                 value.roommates = roommates;
                 value.rooms = rooms;
+                console.log(value);
                 return value;
             }));
             data = data.map((value, key) => {
@@ -115,7 +117,9 @@ export default class Management extends React.Component {
             });
             let data = await response.json();
             data = data.map((value) => {
+               // console.log(data);
                 return value.roomname;
+
             });
             return data;
         } catch (e) {throw e;}

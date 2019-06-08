@@ -21,6 +21,7 @@ export default class HouseholdManagementHouse extends React.Component {
             rooms: this.props.house.rooms,
             houseid: this.props.house.houseid,
             roommateid: window.sessionStorage.getItem('userid'),
+            roomname: "living room"
         }
     }
 
@@ -31,31 +32,45 @@ export default class HouseholdManagementHouse extends React.Component {
                 <Row>
                     <Col>
                         <h3>{this.state.houseName}
-                        <Button variant={"outline-dark"} className={"hh"}
-                                onClick={this.handleRemoveHH}>Remove</Button>
-                        <Button variant={"outline-dark"} className={"hh"}
-                                onClick={this.handleEditHH}>Edit</Button> </h3>
+                            <br/>
+                            <Button variant={"outline-dark"} className={"hh"}
+                                    onClick={this.handleRemoveHH.bind(this.state.houseid, this.state.roommateid)}>Remove</Button>
+                            <Button variant={"outline-dark"} className={"hh"}
+                                    onClick={this.handleEditHH.bind()}>Edit</Button></h3>
                         <p>{this.state.address}</p>
                     </Col>
                     <Col>
                         <Table hover size={'sm'}>
-                            <thead><tr><th>Roommates</th></tr></thead>
+                            <thead>
+                            <tr>
+                                <th>Roommates</th>
+                            </tr>
+                            </thead>
                             <tbody>
-                                {this.makeRoommates()}
+                            {this.makeRoommates()}
                             </tbody>
                             <tfoot>
-                            <tr><td><Button variant={"outline-dark"} onClick={this.handleAddRoommate}>Add Roommate</Button></td></tr>
+                            <tr>
+                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoommate}>Add
+                                    Roommate</Button></td>
+                            </tr>
                             </tfoot>
                         </Table>
                     </Col>
                     <Col>
                         <Table hover size={'sm'}>
-                            <thead><tr><th>Rooms</th></tr></thead>
+                            <thead>
+                            <tr>
+                                <th>Rooms</th>
+                            </tr>
+                            </thead>
                             <tbody>
-                                {this.makeRooms()}
+                            {this.makeRooms()}
                             </tbody>
                             <tfoot>
-                            <tr><td><Button variant={"outline-dark"}onClick={this.handleAddRoom}>Add Room</Button></td></tr>
+                            <tr>
+                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoom}>Add Room</Button></td>
+                            </tr>
                             </tfoot>
                         </Table>
                     </Col>
@@ -80,18 +95,32 @@ export default class HouseholdManagementHouse extends React.Component {
         return this.state.rooms.map((value, key) => {
             return (
                 <tr key={key}>
-                    <td>{value}<Button size={'sm'} className={'remove'} variant={"outline-danger"}onClick={this.handleRemoveRoom.bind(this)}>Remove</Button></td>
+                    <td>{value}<Button
+                        size={'sm'}
+                        className={'remove'}
+                        variant={"outline-danger"}
+                        onClick={this.handleRemoveRoom.bind(this, this.state.houseid, value)}>Remove</Button>
+                    </td>
                 </tr>
             );
         });
     }
 
-    handleEditHH(){
+    handleEditHH() {
         alert("action edit");
     }
 
-    handleRemoveRoom() {
-        alert("You tried to delete a room");
+    //households/:houseID/rooms/:roomName
+    async handleRemoveRoom(houseid, godd) {
+
+        try {
+            var test = await fetch(`/households/${houseid}/rooms/${godd}`, {
+                method: "DELETE"
+            });
+            console.log(test);
+        } catch (e) {
+            throw e;
+        }
     }
 
     handleAddRoommate() {
@@ -104,12 +133,16 @@ export default class HouseholdManagementHouse extends React.Component {
 
     // households/:houseID/roommates/:roommateID
     async handleRemoveHH(houseid, roommateid) {
-
+        alert("on delete");
+        // roommate id is an object
+        let userid = window.sessionStorage.getItem('userid');
+        // console.log(userid); // returns 204 success but db does not change
         try {
-            await fetch(`/households/${houseid}/roommates/${roommateid}`, {
+            await fetch(`/households/${houseid}/roommates/${userid}`, {
                 method: "DELETE"
             });
-
-        } catch (e) {throw e;}
+        } catch (e) {
+            throw e;
+        }
     }
 }

@@ -25,24 +25,19 @@ passport.deserializeUser(function(user,done) {
 });
 
 exports.isAuthenticated = function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated() || sessionStorage.getItem(status)) return next();
+    if (req.isAuthenticated()) return next();
     else res.status(401).send("Please login first");
 };
 
 router
     .post('/login', passport.authenticate('local', {
         failureRedirect: '/failed',
-        successRedirect: '/success'}),
-        function(req,res) {
-            sessionStorage.setItem('status', true);
-            res.redirect('/user');
-    })
+        successRedirect: '/success'}))
     .get('/login', (req, res) => {
         res.sendFile(path.join(__dirname, '../../public', 'login.html'));
     })
     .get('/logout', (req, res) => {
         req.logout();
-        sessionStorage.setItem('status', false)
         res.status(200).send("Logout successful");
     });
 
