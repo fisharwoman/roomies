@@ -8,16 +8,9 @@ const url = "http://localhost:3000/calendar-entries/";
 router
     .get('/reminders/houses/:houseID', async (req,res) => {
         try {
-            const query1 = `CREATE OR REPLACE VIEW RemindersByHouseID AS
-            SELECT * FROM Reminders
-            RIGHT JOIN (SELECT * FROM Household_Roommates WHERE 
-              Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
-            ON derivedTable.roommateID = Reminders.creator`;
-  
-            const query2 = `SELECT reminderID, title, reminderdate, creator FROM RemindersByHouseID
-            ORDER BY reminderdate`;
-            await db.any(query1);
-            let result = await db.any(query2);
+            const query = `select * from `+
+                `(select * from roommate_reminders left join reminders using (reminderid)) as tbl where usertoremind = ${req.user} ORDER BY reminderdate`;
+            let result = await db.any(query);
             console.log(result);
             res.status(200).json(result);
         } catch (e) {

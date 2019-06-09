@@ -24,6 +24,7 @@ export default class Calendar extends React.Component {
     super(props);
 
     this.state = {
+      selectedHousehold: this.props.selectedHousehold,
       data: [],
       currentDate: new Date(),
       isAddingEvent: false,
@@ -53,7 +54,7 @@ export default class Calendar extends React.Component {
 
   async addCalendarEntryCallback(calEntry) {
     try {
-      calEntry.houseid = this.props.selectedHousehold.houseid;
+      calEntry.houseid = this.state.selectedHousehold.houseid;
       if (calEntry.type === 'event') {
         let response = await fetch('/calendar-entries/events', {
           method: 'POST',
@@ -86,15 +87,17 @@ export default class Calendar extends React.Component {
     } catch (e) {console.log(e.message);}
   }
 
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      selectedHousehold: nextProps.selectedHousehold
+    }, this.componentDidMount);
+  }
 
 
   render() {
     let data = this.state.data;
     const currentDate = this.state.currentDate;
-    let addEntryData = {
-      roommates: this.state.roommates,
-      roomnames: this.state.roomnames
-    };
+
     return (
           <MuiThemeProvider theme={theme}>
             <Paper>
@@ -129,10 +132,11 @@ export default class Calendar extends React.Component {
 
   async componentDidMount() {
     try {
-      let houseID = this.props.selectedHousehold;
+      let houseID = this.state.selectedHousehold;
       if (!houseID) return;
       else {
         let data = await this.loadData(houseID);
+        console.log(data);
         let roomnames = await this.getRoomnamesOfHousehold();
         let roommates = await this.getRoommatesOfHousehold();
         this.setState({
@@ -148,6 +152,7 @@ export default class Calendar extends React.Component {
 
   async loadData(houseID) {
     houseID = houseID.houseid;
+    console.log(houseID);
     let reminders = await this.getReminders(houseID);
     let events = await this.getEvents(houseID);
     let data = reminders.concat(events);
@@ -207,7 +212,7 @@ export default class Calendar extends React.Component {
   /* Gets the roomnames of a given household */
   async getRoomnamesOfHousehold() {
     try {
-      let houseid = this.props.selectedHousehold.houseid;
+      let houseid = this.state.selectedHousehold.houseid;
       let response = await fetch(`/households/${houseid}/rooms`, {
         method: 'GET',
         headers: {
@@ -223,7 +228,7 @@ export default class Calendar extends React.Component {
   /* Gets info on the roommates of a given household */
   async getRoommatesOfHousehold() {
     try {
-      let houseid = this.props.selectedHousehold.houseid;
+      let houseid = this.state.selectedHousehold.houseid;
       let response = await fetch(`/households/${houseid}/roommates`,{
         method:'GET',
         headers: {
