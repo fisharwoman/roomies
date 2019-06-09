@@ -18,6 +18,7 @@ router
             ORDER BY reminderdate`;
             await db.any(query1);
             let result = await db.any(query2);
+            console.log(result);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -90,7 +91,7 @@ router
                 WHERE houseID = ${req.params.houseID}) AS derivedTable
             on derivedTable.eventID = Events.eventID`;
             let result = await db.any(query1);
-            console.log(result)
+            console.log(result);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
