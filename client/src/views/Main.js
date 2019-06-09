@@ -28,12 +28,13 @@ export default class Main extends Component {
                 houseid: 0,
                 address: "-",
                 name: "You aren't in a house yet!"
-            }
+            },
+            isLoading: true
         }
     }
 
     render() {
-
+        if (this.state.isLoading) return(<div></div>);
         return (
             <HashRouter>
                 <div>
@@ -60,9 +61,8 @@ export default class Main extends Component {
                     </BootStrap.Navbar>
 
                     <div className="content">
-                        {/*TODO: change the component back to Dashboard*/}
-                        <Route path="/dashboard" component={Management}/>
-                        <Route path="/calendar" component={Calendar}/>
+                        <Route path="/dashboard" component={Dashboard}/>
+                        <Route path="/calendar" render={(props) => <Calendar selectedHousehold = {this.state.selectedHousehold} />} />
                         <Route path="/contact" component={Contact}/>
                         <Route path='/expenses' component={Expenses}/>
                         <Route path='/management' component={Management}/>
@@ -85,9 +85,9 @@ export default class Main extends Component {
             this.setState({
                 households: data,
                 userName: name,
-                selectedHousehold: data[0] ? data[0] : this.state.selectedHousehold
-            })
-
+                selectedHousehold: data[0] ? data[0] : this.state.selectedHousehold,
+                isLoading: false
+            });
         } catch (e) {
             console.log(e.message);
         }
@@ -151,6 +151,7 @@ export default class Main extends Component {
                 }
             });
             if (response.status === 200) {
+                window.sessionStorage.removeItem('userid');
                 ReactDOM.render(<Login/>,document.getElementById('root'));
             }
         } catch (e) {

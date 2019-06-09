@@ -27,7 +27,7 @@ $ npm run dev
 4. Open a new terminal window for running client
 5. Cd into client folder, & start client:
 ```sh
-$ cd ../client
+$ cd client
 $ yarn start
 ```
 (Note: Install npm if you haven’t already): `npm i`.

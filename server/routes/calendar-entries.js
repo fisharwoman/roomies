@@ -18,6 +18,7 @@ router
             ORDER BY reminderdate`;
             await db.any(query1);
             let result = await db.any(query2);
+            console.log(result);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -29,6 +30,16 @@ router
         try {
             const query = `SELECT * FROM Reminders WHERE reminderID = ${req.params.reminderID}`;
             let result = await db.any(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /* DELETE a reminder of reminderID */
+    .delete('/reminders/:reminderID', async (req,res) => {
+        try {
+            const query = `DELETE FROM Reminders WHERE reminderID = ${req.params.reminderID} RETURNING *`;
+            let result = await db.one(query);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -58,10 +69,14 @@ router
     .post('/reminders', async (req,res) => {
         try {
             const query = `INSERT INTO Reminders (title, reminderDate, creator)` +
-                `VALUES ('${req.body.title}', '${req.body.reminderDate}', '${req.body.creator}')` +
+                `VALUES ('${req.body.title}', '${req.body.reminderDate}', '${req.user}')` +
                 `RETURNING reminderID;`;
-            let result = await db.any(query);
-            res.status(200).send("http://localhost:3000/reminders/" + result[0].reminderid);
+            let result = await db.one(query);
+            for (let id of req.body.reminding) {
+                const subquery = `INSERT INTO Roommate_Reminders VALUES (${result.reminderid}, ${id})`;
+                await db.none(subquery);
+            }
+            res.status(200).send("http://localhost:3000/reminders/" + result.reminderid);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);
@@ -85,15 +100,12 @@ router
     /* selects all events for specified houseID only */
     .get('/events/houses/:houseID', async (req,res) => {
         try {
-            const query1 = `CREATE OR REPLACE VIEW EventsByHouseID AS
-            SELECT * FROM Events
-            RIGHT JOIN (SELECT * FROM Household_Roommates WHERE 
-              Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
-            ON derivedTable.roommateID = Events.creator`;
-  
-            const query2 = `SELECT eventID, title, startDate, endDate, creator FROM EventsByHouseID`;
-            await db.any(query1);
-            let result = await db.any(query2);
+            const query1 = `SELECT * FROM  Events
+            RIGHT JOIN ( SELECT eventID, roomName  FROM Events_Located_In
+                WHERE houseID = ${req.params.houseID}) AS derivedTable
+            on derivedTable.eventID = Events.eventID`;
+            let result = await db.any(query1);
+            console.log(result);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -110,11 +122,21 @@ router
             res.status(400).send(e.message);
         }
     })
+    /* DELETE an event*/
+    .delete('/events/:eventID', async (req, res) => {
+        try {
+            const query = `DELETE FROM Events WHERE eventID = ${req.params.eventID} RETURNING *`;
+            let result = await db.one(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
 
     /* GET reminders based on creator AND houseID. */
     .get('/events/houses/:houseID/creator/:creator', async (req,res) => {
         try {
-            const query1 = `CREATE OR REPLACE VIEW RemindersByHouseID AS
+            const query1 = `CREATE OR REPLACE VIEW EventsByHouseID AS
             SELECT * FROM Events
             RIGHT JOIN (SELECT * FROM Household_Roommates WHERE 
               Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
@@ -134,10 +156,12 @@ router
     .post('/events', async (req,res) => {
         try {
             const query = `INSERT INTO Events (title, startDate, endDate, creator)` +
-                `VALUES ('${req.body.title}', '${req.body.startDate}', '${req.body.endDate}', '${req.body.creator}')` +
+                `VALUES ('${req.body.title}', '${req.body.startDate}', '${req.body.endDate}', '${req.user}')` +
                 `RETURNING eventID;`;
-            let result = await db.any(query);
-            res.status(200).send("http://localhost:3000/events/" + result[0].eventid);
+            let result = await db.one(query);
+            const query2 = `INSERT INTO Events_Located_IN VALUES(${result.eventid}, ${req.body.houseid}, '${req.body.location}')`;
+            await db.none(query2);
+            res.status(200).json(result);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);
@@ -211,6 +235,7 @@ router
             res.status(400).send(e.message);
         }
     })
+
 
 
 

@@ -1,4 +1,6 @@
 import React from "react";
+import ReactDOM from 'react-dom';
+import Main from './Main';
 import {Card, Button} from 'react-bootstrap';
 import '../index.css';
 import LoginComponent from "../components/LoginComponent";
@@ -10,6 +12,9 @@ export default class Login extends React.Component {
 
     constructor(props) {
         super(props);
+        if (window.sessionStorage.getItem('userid')) {
+            ReactDOM.render(<Main/>, document.getElementById('root'));
+        }
         this.state = {
             isLoginWindow: true,
             switchViewLabel: SIGN_UP_TEXT

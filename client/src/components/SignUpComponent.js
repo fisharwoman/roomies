@@ -121,7 +121,9 @@ export default class SignUpComponent extends React.Component {
                         password: newUser.password
                     })
                 });
-                if (lResp.status === 200) window.sessionStorage.setItem('userid',data.userid);
+                if (lResp.status === 200) {
+                    window.sessionStorage.setItem('userid',data.userid);
+                }
                 else {
                     alert('Error with signup');
                     return;
