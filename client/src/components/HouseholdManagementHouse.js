@@ -36,38 +36,56 @@ export default class HouseholdManagementHouse extends React.Component {
 
     // first get RM Name from user id
     // GET RM NAME USING GET /user/:userID
-    // then post RM to household database using POST households/:houseID/roommates/:roommateID
+    // then post RM to household database using
     // then add UserName to display (Q: roommates = [] of string rm names)?
     async addNewRM(rmid) {
-        let rmname = await this.addRMAPI(rmid); // possibly need to change call
+        let rmname = await this.getRMName(rmid);
+        this.postRMName(this.state.houseid, rmid);
 
+        // todo make sure that if duplicate, the front end also doesn't add and alerts error
         this.setState((state => ({
-            roommates: state.roommates.concat([rmname])
+            roommates: state.roommates.concat([rmname]) // this is client side
         })));
         // console.log(this.state.roommates);
     }
 
     // makes a GET request for rm name given rmid,
     // then makes a POST request to add rm to Household
-    async addRMAPI(rmid){
-            try {
-                const response = await fetch(`/users/${rmid}`, {
-                    method: 'GET',
-                    headers: {
-                        "content-type": 'application/json'
-                    }
-                });
-                let data = await response.json();
-                console.log(data.name);
-                return data.name;
-            } catch (e) {throw e;}
+    async getRMName(rmid) {
+        try {
+            const response = await fetch(`/users/${rmid}`, {
+                method: 'GET',
+                headers: {
+                    "content-type": 'application/json'
+                }
+            });
+            let data = await response.json();
+            console.log(data.name);
+            return data.name;
+        } catch (e) {
+            throw e;
         }
+    }
+
+    // POST households/:houseID/roommates/:roommateID
+    async postRMName(houseid, rmid){
+        try {
+            console.log(houseid, rmid);
+            const response = await fetch(`/households/${houseid}/roommates/${rmid}`, {
+                method: 'POST',
+                headers: {
+                    "content-type": 'application/json'
+                }
+            });
+            console.log(response);
+        } catch (e) {throw e;}
+    }
 
 
     handleAddRM() {
-       this.setState(prevState => ({
-           showAddRMForm: !prevState.showAddRMForm
-       }));
+        this.setState(prevState => ({
+            showAddRMForm: !prevState.showAddRMForm
+        }));
     }
 
     render() {

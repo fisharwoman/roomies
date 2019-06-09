@@ -110,6 +110,7 @@ export default class Management extends React.Component {
             return data;
         } catch (e) {throw e;}
     }
+
     async getRooms(houseid) {
         try {
             const response = await fetch(`/households/${houseid}/rooms`, {
