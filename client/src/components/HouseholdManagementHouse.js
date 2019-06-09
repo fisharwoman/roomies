@@ -34,15 +34,35 @@ export default class HouseholdManagementHouse extends React.Component {
         this.addNewRM = this.addNewRM.bind(this);
     }
 
-    addNewRM(rmname, rmid) {
-        console.log("add new rm");
-
-        // this.addRMAPI(rmname, rmid); // possibly need to change call
+    // first get RM Name from user id
+    // GET RM NAME USING GET /user/:userID
+    // then post RM to household database using POST households/:houseID/roommates/:roommateID
+    // then add UserName to display (Q: roommates = [] of string rm names)?
+    async addNewRM(rmid) {
+        let rmname = await this.addRMAPI(rmid); // possibly need to change call
 
         this.setState((state => ({
-            roommates: state.roommates.concat([rmid])
-        })))
+            roommates: state.roommates.concat([rmname])
+        })));
+        // console.log(this.state.roommates);
     }
+
+    // makes a GET request for rm name given rmid,
+    // then makes a POST request to add rm to Household
+    async addRMAPI(rmid){
+            try {
+                const response = await fetch(`/users/${rmid}`, {
+                    method: 'GET',
+                    headers: {
+                        "content-type": 'application/json'
+                    }
+                });
+                let data = await response.json();
+                console.log(data.name);
+                return data.name;
+            } catch (e) {throw e;}
+        }
+
 
     handleAddRM() {
        this.setState(prevState => ({
