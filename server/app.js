@@ -59,7 +59,7 @@ function loadRouter() {
     app.use('/contacts', pass.isAuthenticated, contactsRouter);
     app.use('/households', pass.isAuthenticated, householdsRouter); // TODO add authentication
     app.use('/bulletins', pass.isAuthenticated, bulletinsRouter);
-    app.use('/calendar-entries', pass.isAuthenticated, calendarRouter);
+    app.use('/calendar-entries',pass.isAuthenticated, calendarRouter);
     app.use('/expenses', pass.isAuthenticated, expensesRouter);
     return Promise.resolve();
 }

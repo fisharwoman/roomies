@@ -26,7 +26,7 @@ router
      */
     .post("/", async (req,res) => {
         try {
-            const query1 = `INSERT INTO Households (address) VALUES ('${req.body.address}') RETURNING houseID`;
+            const query1 = `INSERT INTO Households (address, name) VALUES ('${req.body.address}','${req.body.name}') RETURNING houseID`;
             let result = await db.one(query1);
             result = url + result.houseid;
             res.status(200).send(result);
@@ -75,11 +75,13 @@ router
         }
     })
     /**
-     * Get the userIDs of all the roommates in a given household
+     * Get the userID, name, email, of all the roommates in a given household
      */
     .get('/:houseID/roommates', async (req, res) => {
         try {
-            const query = `SELECT roommateID FROM Household_Roommates WHERE houseID = ${req.params.houseID}`;
+            const query = `select userid, name, email from `+
+                `(select * from household_roommates right join roommates on household_roommates.roommateid = roommates.userid) as tbl where houseid = ${req.params.houseID}`;
+            console.log(query);
             let result = await db.any(query);
             if (!result || result.length === 0) res.status(204);
             else res.status(200);
