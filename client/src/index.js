@@ -4,4 +4,3 @@ import './index.css';
 import Login from "./views/Login";
 
 ReactDOM.render(<Login />, document.getElementById('root'));
-

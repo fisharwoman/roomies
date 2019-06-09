@@ -15,10 +15,9 @@ import {
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { blue } from "@material-ui/core/colors";
 import './styles/calendar.css';
-import {Button} from 'react-bootstrap';
+import {Button, Form, Col} from 'react-bootstrap';
 
 const theme = createMuiTheme({ palette: { type: "light", primary: blue } });
-
 
 export default class Calendar extends React.Component {
   constructor(props) {
@@ -26,7 +25,9 @@ export default class Calendar extends React.Component {
 
     this.state = {
       data: [],
-      currentDate: new Date()
+      currentDate: new Date(),
+      isAddingEvent: false,
+      isAddingReminder: false
     };
   }
 
@@ -34,6 +35,27 @@ export default class Calendar extends React.Component {
     this.setState({ currentDate: currentDate })
   };
 
+  addReminder() {
+    this.setState({
+      isAddingEvent: false,
+      isAddingReminder: !this.state.isAddingReminder
+    });
+  }
+
+  addEvent() {
+    this.setState({
+      isAddingEvent: !this.state.isAddingEvent,
+      isAddingReminder: false
+    });
+  }
+
+  addCalendarEntryCallback(calEntry) {
+    alert("Submitted Event of "+JSON.stringify(calEntry));
+    this.setState({
+      isAddingEvent: false,
+      isAddingReminder: false
+    });
+  }
 
 
 
@@ -42,8 +64,9 @@ export default class Calendar extends React.Component {
     return (
           <MuiThemeProvider theme={theme}>
             <Paper>
-              <Button size={'sm'} className={'calendar-button'} variant={'outline-primary'}>Add Event</Button>
-              <Button size={'sm'} className={'calendar-button'} variant={'outline-primary'}>Add Reminder</Button>
+              <Button inline size={'sm'} className={'calendar-button'} variant={'outline-primary'} onClick={()=>this.addEvent()}>Add Event</Button>
+              <Button inline size={'sm'} className={'calendar-button'} variant={'outline-primary'} onClick={() => this.addReminder()}>Add Reminder</Button>
+              <AddCalendarEvent callback={this.addCalendarEntryCallback.bind(this)} isReminder={this.state.isAddingReminder} isEvent={this.state.isAddingEvent}/>
                 <Scheduler data={data}>
                   <ViewState
                       defaultCurrentViewName="Month"
@@ -152,6 +175,84 @@ export default class Calendar extends React.Component {
         data = data.filter(appt => appt.id !== deleted);
         this.setState({data: data});
       } catch (e) {console.log(e.message);}
+    }
+  }
+}
+
+class AddCalendarEvent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: "",
+      startDate: "",
+      endDate: "",
+      reminderDate: "",
+      location: "",
+      reminding: []
+    }
+  }
+
+  render() {
+    if (this.props.isReminder) {
+      return (
+          <Form onSubmit={e=>this.handleSubmit(e,'reminder')}>
+            <Form.Row>
+              <Form.Group as={Col}>
+                <Form.Label>Title</Form.Label>
+                <Form.Control onChange={e=>this.setState({title: e.target.value})} placeholder={"Title"}/>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Reminder Date</Form.Label>
+                <Form.Control onChange={e=>this.setState({reminderDate: e.target.value})} type={'datetime-local'}/>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Control type={'submit'}/>
+              </Form.Group>
+            </Form.Row>
+          </Form>
+      )
+    } else if (this.props.isEvent) {
+      return (
+          <Form onSubmit={(e) => this.handleSubmit(e, 'event')}>
+              <Form.Group as={Col}>
+                <Form.Label>Title</Form.Label>
+                <Form.Control onChange={e=>this.setState({title: e.target.value})} placeholder={"Title"}/>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Start</Form.Label>
+                <Form.Control onChange={e=>this.setState({startDate: e.target.value})} type={'datetime-local'}/>
+                <Form.Label>End</Form.Label>
+                <Form.Control onChange={e=>this.setState({endDate: e.target.value})} type={'datetime-local'}/>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Location</Form.Label>
+                <Form.Control onChange={e=>this.setState({location: e.target.value})} placeholder={"Location"}/>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Control type={'submit'}/>
+              </Form.Group>
+          </Form>
+      )
+    } else {
+      return (null);
+    }
+  }
+
+  handleSubmit(e,type) {
+    e.preventDefault();
+    if (type === 'event') {
+      this.props.callback({
+        title: this.state.title,
+        startDate: this.state.startDate,
+        endDate: this.state.endDate,
+        location: this.state.location,
+      });
+    } else {
+      this.props.callback({
+        title: this.state.title,
+        reminderDate: this.state.reminderDate,
+        reminding: this.state.reminding
+      });
     }
   }
 }
