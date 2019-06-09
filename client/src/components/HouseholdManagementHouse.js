@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import './Management.css';
 import AddRoomForm from "./AddRoomForm";
 import AddRMForm from "./AddRMForm";
+import EditHouseForm from "./EditHouseForm"
 
 /**
  * A component to encapsulate one manageable household
@@ -24,18 +25,59 @@ export default class HouseholdManagementHouse extends React.Component {
             roommateid: window.sessionStorage.getItem('userid'),
             roomname: "",
             showAddRoomForm: false,
-            showAddRMForm: false
+            showAddRMForm: false,
+            showEditHouseForm: false
         };
         //  console.log(JSON.stringify(this.state));
         this.handleAddRoom = this.handleAddRoom.bind(this); // may or may not need this
         this.addNewRoom = this.addNewRoom.bind(this);
         this.handleAddRM = this.handleAddRM.bind(this); // may not need this
         this.addNewRM = this.addNewRM.bind(this);
+        this.editHouse = this.editHouse.bind(this);
     }
 
-    // households/:houseID/ TODO
-    handleEditHH() {
-        alert("action edit");
+    // updates house address by calling the api and updating front end if successful
+    async editHouse(newaddr) {
+        try {
+            let houseid = this.state.houseid;
+            let resp = await this.patchHouse(newaddr, houseid);
+
+            if (resp.status === 200) {
+                this.setState(prevState => ({
+                    address: newaddr
+                }));
+            } else {
+                alert("Error. System error for editing household address.");
+            }
+        } catch(e){
+            alert("Error.");
+        }
+    }
+
+    // todo works in front end, returns status 200, but changes to undefined in db.
+    // PATCH households/:houseID/ (for editing house address)
+    async patchHouse(newaddr, houseid) {
+        try {
+            const response = await fetch(`/households/${houseid}/`, {
+                method: "PATCH",
+                headers: {
+                    "content-type": 'application/json'
+                },
+                body: JSON.stringify({Address: newaddr})
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    // toogles edit household form
+    onEditClick() {
+        this.setState(prevState => ({
+            showEditHouseForm: !prevState.showEditHouseForm
+        }));
     }
 
     render() {
@@ -48,8 +90,12 @@ export default class HouseholdManagementHouse extends React.Component {
                             <Button variant={"outline-danger"} className={"rh"}
                                     onClick={() => this.props.removeHousehold(this.state.houseid)}>Remove</Button>
                             <Button variant={"outline-info"} className={"eh"}
-                                    onClick={this.handleEditHH.bind()}>Edit</Button></h3>
+                                    onClick={this.onEditClick.bind(this)}>Edit</Button></h3>
                         <p>{this.state.address}</p>
+                        {this.state.showEditHouseForm ?
+                            <EditHouseForm editHouse={this.editHouse}/> :
+                            null
+                        }
                     </Col>
                     <Col>
                         <Table hover size={'sm'}>
