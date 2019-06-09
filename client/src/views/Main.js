@@ -80,6 +80,7 @@ export default class Main extends Component {
     async componentDidMount() {
         try {
             let data = await this.getHouseholds();
+
             let name = await this.getUserName();
             this.setState({
                 households: data,

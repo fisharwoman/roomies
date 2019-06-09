@@ -28,8 +28,8 @@ router
         try {
             const query1 = `INSERT INTO Households (address, name) VALUES ('${req.body.address}','${req.body.name}') RETURNING houseID`;
             let result = await db.one(query1);
-            result = url + result.houseid;
-            res.status(200).send(result);
+            result = result.houseid;
+            res.status(200).send({hid:result});
         } catch (e) {
             res.status(400).send(e.message);
         }
@@ -110,10 +110,9 @@ router
         try {
             const query =
                 `DELETE FROM Household_Roommates WHERE houseID = ${req.params.houseID} AND roommateID = ${req.params.roommateID} RETURNING *`;
-            let result = await db.any(query);
-            if (!result || result.length !== 1) res.status(204);
-            else res.status(200);
-            res.send();
+            console.log(query);
+            let result = await db.one(query);
+            res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
         }
