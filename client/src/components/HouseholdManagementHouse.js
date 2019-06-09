@@ -256,6 +256,7 @@ export default class HouseholdManagementHouse extends React.Component {
     // GET /user/:userID
     async getRMName(rmid) {
         try {
+            console.log(rmid);
             const response = await fetch(`/users/${rmid}`, {
                 method: 'GET',
                 headers: {

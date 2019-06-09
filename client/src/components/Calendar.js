@@ -139,6 +139,7 @@ export default class Calendar extends React.Component {
         console.log(data);
         let roomnames = await this.getRoomnamesOfHousehold();
         let roommates = await this.getRoommatesOfHousehold();
+        console.log(data);
         this.setState({
           data: data,
           roommates: roommates,

@@ -76,7 +76,7 @@ export default class Management extends React.Component {
 
             let data = await response.json();
             data = Promise.all(data.map(async (value) => {
-                const resp = await fetch(`/users/${value.roommateid}`, {
+                const resp = await fetch(`/users/${value.userid}`, {
                     method: 'GET'
                 });
                 let d = await resp.json();
