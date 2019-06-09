@@ -15,7 +15,7 @@
     width: 85px;
 }
 
-.Hop{
+.Cop{
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom-style: solid;
@@ -30,7 +30,12 @@
     vertical-align: bottom;
 }
 
-#houseComponent {
+
+.remove {
+    float: right;
+}
+
+.table {
     margin-bottom: 10px;
     border-radius: 5px;
     border-style: solid;
@@ -38,8 +43,3 @@
     border-color: #b4b4b4;
     padding: 10px;
 }
-
-.remove {
-    float: right;
-}
-

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Collapse} from 'react-bootstrap';
-import './AddHouseForm.css';
+import './Form.css';
 import Form from "react-bootstrap/Form";
 
 class AddHouseForm extends Component{

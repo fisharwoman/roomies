@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import Button from "react-bootstrap/Button";
-import './Management.css';
+import './Contact.css';
 import ContactsTable from "./ContactsTable";
 import AddHouseForm from "./Management";
 import AddContactForm from "./AddContactForm";
@@ -32,12 +32,18 @@ class Contact extends Component {
     // name, phone number, relationship
     render() {
         return (
-            <div className={"Hop"}>
-                <h2 className={'title'}>Contacts</h2>
-                <Button className={'ab'} variant={"outline-success"} onClick={this.onAddClick.bind(this)}>Add</Button>
-                <Button className={'ab'} variant={"outline-info"} onClick={this.onEditClick.bind(this)}>Edit</Button>
-                <Button className={'ab'} variant={"outline-danger"}
-                        onClick={this.onRemoveClick.bind(this)}>Remove</Button>
+            <div >
+                <div className={"Cop"}>
+
+                    <h2 className={'title'}>Contacts</h2>
+                    <Button className={'ab'} variant={"outline-success"}
+                            onClick={this.onAddClick.bind(this)}>Add</Button>
+                    <Button className={'ab'} variant={"outline-info"}
+                            onClick={this.onEditClick.bind(this)}>Edit</Button>
+                    <Button className={'ab'} variant={"outline-danger"}
+                            onClick={this.onRemoveClick.bind(this)}>Remove</Button>
+
+                </div>
                 {this.state.showAddCollapsible ?
                     <AddContactForm/> :
                     null
@@ -45,7 +51,6 @@ class Contact extends Component {
                 <div className={'contentPanel'}>
                     <ContactsTable/>
                 </div>
-
             </div>
         );
     }
