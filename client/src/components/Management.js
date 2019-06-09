@@ -40,12 +40,6 @@ export default class Management extends React.Component {
                 </div>
             </div>
         );
-
-
-        function buttonAction() {
-            console.log("button pressed console");
-            alert("button pressed alert");
-        }
     }
 
     async componentDidMount() {
