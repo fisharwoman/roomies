@@ -27,7 +27,9 @@ export default class Calendar extends React.Component {
       data: [],
       currentDate: new Date(),
       isAddingEvent: false,
-      isAddingReminder: false
+      isAddingReminder: false,
+      roomnames: [],
+      roommates: [],
     };
   }
 
@@ -49,24 +51,58 @@ export default class Calendar extends React.Component {
     });
   }
 
-  addCalendarEntryCallback(calEntry) {
-    alert("Submitted Event of "+JSON.stringify(calEntry));
-    this.setState({
-      isAddingEvent: false,
-      isAddingReminder: false
-    });
+  async addCalendarEntryCallback(calEntry) {
+    try {
+      calEntry.houseid = this.props.selectedHousehold.houseid;
+      if (calEntry.type === 'event') {
+        let response = await fetch('/calendar-entries/events', {
+          method: 'POST',
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(calEntry)
+        });
+        if (response.status === 200) {
+          this.setState({
+            isAddingEvent: false,
+            isAddingReminder: false
+          }, this.componentDidMount);
+        }
+      } else {
+          let response = await fetch('/calendar-entries/reminders', {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json'
+            },
+            body: JSON.stringify(calEntry)
+          });
+          if (response.status === 200) {
+            this.setState({
+              isAddingEvent: false,
+              isAddingReminder: false
+            }, this.componentDidMount);
+          }
+      }
+    } catch (e) {console.log(e.message);}
   }
 
 
 
   render() {
-    const { data, currentDate } = this.state;
+    let data = this.state.data;
+    const currentDate = this.state.currentDate;
+    let addEntryData = {
+      roommates: this.state.roommates,
+      roomnames: this.state.roomnames
+    };
     return (
           <MuiThemeProvider theme={theme}>
             <Paper>
               <Button inline size={'sm'} className={'calendar-button'} variant={'outline-primary'} onClick={()=>this.addEvent()}>Add Event</Button>
               <Button inline size={'sm'} className={'calendar-button'} variant={'outline-primary'} onClick={() => this.addReminder()}>Add Reminder</Button>
-              <AddCalendarEvent callback={this.addCalendarEntryCallback.bind(this)} isReminder={this.state.isAddingReminder} isEvent={this.state.isAddingEvent}/>
+              <AddCalendarEvent callback={this.addCalendarEntryCallback.bind(this)}
+                                roommates = {this.state.roommates} roomnames={this.state.roomnames}
+                                isReminder={this.state.isAddingReminder} isEvent={this.state.isAddingEvent}/>
                 <Scheduler data={data}>
                   <ViewState
                       defaultCurrentViewName="Month"
@@ -96,16 +132,26 @@ export default class Calendar extends React.Component {
       let houseID = this.props.selectedHousehold;
       if (!houseID) return;
       else {
-        houseID = houseID.houseid;
-        let reminders = await this.getReminders(houseID);
-        let events = await this.getEvents(houseID);
-        let data = reminders.concat(events);
-        console.log(data);
-        this.setState({data: data});
+        let data = await this.loadData(houseID);
+        let roomnames = await this.getRoomnamesOfHousehold();
+        let roommates = await this.getRoommatesOfHousehold();
+        this.setState({
+          data: data,
+          roommates: roommates,
+          roomnames: roomnames
+        });
       }
     } catch (e) {
       console.log(e.message);
     }
+  }
+
+  async loadData(houseID) {
+    houseID = houseID.houseid;
+    let reminders = await this.getReminders(houseID);
+    let events = await this.getEvents(houseID);
+    let data = reminders.concat(events);
+    return data;
   }
 
 
@@ -158,6 +204,37 @@ export default class Calendar extends React.Component {
     } catch (e) {throw e;}
   }
 
+  /* Gets the roomnames of a given household */
+  async getRoomnamesOfHousehold() {
+    try {
+      let houseid = this.props.selectedHousehold.houseid;
+      let response = await fetch(`/households/${houseid}/rooms`, {
+        method: 'GET',
+        headers: {
+          "content-type": 'application/json'
+        }
+      });
+      let data = await response.json();
+      data = data.map(value => {return value.roomname});
+      return data;
+    } catch (e) {console.log(e);}
+  }
+
+  /* Gets info on the roommates of a given household */
+  async getRoommatesOfHousehold() {
+    try {
+      let houseid = this.props.selectedHousehold.houseid;
+      let response = await fetch(`/households/${houseid}/roommates`,{
+        method:'GET',
+        headers: {
+          "content-type": 'application/json'
+        }
+      });
+      let data = await response.json();
+      return data;
+    } catch (e) {console.log(e);}
+  }
+
   async commitChanges({added, changed, deleted}) {
     let data = this.state.data;
     if (deleted) {
@@ -179,6 +256,11 @@ export default class Calendar extends React.Component {
   }
 }
 
+
+/**
+ * A form to add an element to the calendar
+ */
+
 class AddCalendarEvent extends React.Component {
   constructor(props) {
     super(props);
@@ -188,24 +270,31 @@ class AddCalendarEvent extends React.Component {
       endDate: "",
       reminderDate: "",
       location: "",
-      reminding: []
+      reminding: [],
+      roommates: this.props.roommates,
+      roomnames: this.props.roomnames,
     }
   }
 
   render() {
     if (this.props.isReminder) {
       return (
-          <Form onSubmit={e=>this.handleSubmit(e,'reminder')}>
+          <Form style={{display: 'inline'}} onSubmit={e=>this.handleSubmit(e,'reminder')}>
             <Form.Row>
               <Form.Group as={Col}>
                 <Form.Label>Title</Form.Label>
                 <Form.Control onChange={e=>this.setState({title: e.target.value})} placeholder={"Title"}/>
-              </Form.Group>
-              <Form.Group as={Col}>
                 <Form.Label>Reminder Date</Form.Label>
                 <Form.Control onChange={e=>this.setState({reminderDate: e.target.value})} type={'datetime-local'}/>
               </Form.Group>
               <Form.Group as={Col}>
+                <Form.Label>Which roommates should be reminded</Form.Label>
+                <Form.Control onChange={e=>{this.handleRoommateSelect(e.target.options);}} size={'sm'} as={'select'} multiple>
+                  {this.makeRoommates()}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Create Reminder</Form.Label>
                 <Form.Control type={'submit'}/>
               </Form.Group>
             </Form.Row>
@@ -213,10 +302,16 @@ class AddCalendarEvent extends React.Component {
       )
     } else if (this.props.isEvent) {
       return (
-          <Form onSubmit={(e) => this.handleSubmit(e, 'event')}>
+          <Form style={{display: 'inline'}} onSubmit={(e) => this.handleSubmit(e, 'event')}>
+            <Form.Row>
               <Form.Group as={Col}>
                 <Form.Label>Title</Form.Label>
                 <Form.Control onChange={e=>this.setState({title: e.target.value})} placeholder={"Title"}/>
+                <Form.Label>Location</Form.Label>
+                <Form.Control onChange={e=>this.setState({location: e.target.value})} as={'select'}>
+                  <option>Select a location...</option>
+                  {this.makeLocations()}
+                </Form.Control>
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Start</Form.Label>
@@ -225,17 +320,27 @@ class AddCalendarEvent extends React.Component {
                 <Form.Control onChange={e=>this.setState({endDate: e.target.value})} type={'datetime-local'}/>
               </Form.Group>
               <Form.Group as={Col}>
-                <Form.Label>Location</Form.Label>
-                <Form.Control onChange={e=>this.setState({location: e.target.value})} placeholder={"Location"}/>
-              </Form.Group>
-              <Form.Group as={Col}>
+                <Form.Label>Create Event</Form.Label>
                 <Form.Control type={'submit'}/>
               </Form.Group>
+            </Form.Row>
           </Form>
       )
     } else {
       return (null);
     }
+  }
+
+  makeLocations() {
+    return this.state.roomnames.map((value) => {
+      return (<option value={value}>{value}</option>)
+    });
+  }
+
+  makeRoommates() {
+    return this.state.roommates.map((value) => {
+      return(<option value={value.userid}>{value.name}</option>);
+    });
   }
 
   handleSubmit(e,type) {
@@ -246,13 +351,31 @@ class AddCalendarEvent extends React.Component {
         startDate: this.state.startDate,
         endDate: this.state.endDate,
         location: this.state.location,
+        type: type
       });
     } else {
       this.props.callback({
         title: this.state.title,
         reminderDate: this.state.reminderDate,
-        reminding: this.state.reminding
+        reminding: this.state.reminding,
+        type: type
       });
     }
+  }
+
+  handleRoommateSelect(options) {
+    let data = [];
+    for (let o of options) {
+      if (o.selected) data.push(o.value);
+    }
+    this.setState({reminding: data});
+
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      roomnames: nextProps.roomnames,
+      roommates: nextProps.roommates
+    });
   }
 }

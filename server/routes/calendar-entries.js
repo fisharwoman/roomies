@@ -69,10 +69,14 @@ router
     .post('/reminders', async (req,res) => {
         try {
             const query = `INSERT INTO Reminders (title, reminderDate, creator)` +
-                `VALUES ('${req.body.title}', '${req.body.reminderDate}', '${req.body.creator}')` +
+                `VALUES ('${req.body.title}', '${req.body.reminderDate}', '${req.user}')` +
                 `RETURNING reminderID;`;
-            let result = await db.any(query);
-            res.status(200).send("http://localhost:3000/reminders/" + result[0].reminderid);
+            let result = await db.one(query);
+            for (let id of req.body.reminding) {
+                const subquery = `INSERT INTO Roommate_Reminders VALUES (${result.reminderid}, ${id})`;
+                await db.none(subquery);
+            }
+            res.status(200).send("http://localhost:3000/reminders/" + result.reminderid);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);
@@ -152,10 +156,12 @@ router
     .post('/events', async (req,res) => {
         try {
             const query = `INSERT INTO Events (title, startDate, endDate, creator)` +
-                `VALUES ('${req.body.title}', '${req.body.startDate}', '${req.body.endDate}', '${req.body.creator}')` +
+                `VALUES ('${req.body.title}', '${req.body.startDate}', '${req.body.endDate}', '${req.user}')` +
                 `RETURNING eventID;`;
-            let result = await db.any(query);
-            res.status(200).send("http://localhost:3000/events/" + result[0].eventid);
+            let result = await db.one(query);
+            const query2 = `INSERT INTO Events_Located_IN VALUES(${result.eventid}, ${req.body.houseid}, '${req.body.location}')`;
+            await db.none(query2);
+            res.status(200).json(result);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);
