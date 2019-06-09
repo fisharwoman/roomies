@@ -35,6 +35,16 @@ router
             res.status(400).send(e.message);
         }
     })
+    /* DELETE a reminder of reminderID */
+    .delete('/reminders/:reminderID', async (req,res) => {
+        try {
+            const query = `DELETE FROM Reminders WHERE reminderID = ${req.params.reminderID} RETURNING *`;
+            let result = await db.one(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
 
      /* GET reminders based on creator. */
      .get('/reminders/houses/:houseID/creator/:creator', async (req,res) => {
@@ -103,6 +113,16 @@ router
         try {
             const query = `SELECT * FROM Events WHERE eventID = ${req.params.eventID}`;
             let result = await db.any(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /* DELETE an event*/
+    .delete('/events/:eventID', async (req, res) => {
+        try {
+            const query = `DELETE FROM Events WHERE eventID = ${req.params.eventID} RETURNING *`;
+            let result = await db.one(query);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -209,6 +229,7 @@ router
             res.status(400).send(e.message);
         }
     })
+
 
 
 
