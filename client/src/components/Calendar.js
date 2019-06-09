@@ -141,14 +141,3 @@ export default class Calendar extends React.Component {
     }
   }
 }
-
-
-class CustomLayout extends React.Component {
-  render() {
-    return (
-        <AppointmentTooltip.LayoutProps
-          onClick={e=>{alert('clicked');}}
-        />
-    )
-  }
-}
