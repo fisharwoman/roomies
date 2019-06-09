@@ -49,7 +49,7 @@ export default class ContactsTable extends React.Component {
                                 <th>Owner</th>
                             </tr>
                             </thead>
-                            <tbody> {this.makeContacts()} </tbody>
+                            <tbody>{this.makeContacts()}</tbody>
                             <tfoot></tfoot>
                         </Table>
 

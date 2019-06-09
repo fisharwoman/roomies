@@ -33,58 +33,9 @@ export default class HouseholdManagementHouse extends React.Component {
         this.addNewRM = this.addNewRM.bind(this);
     }
 
-    // first get RM Name from user id
-    // GET RM NAME USING GET /user/:userID
-    // then post RM to household database using
-    // then add UserName to display (Q: roommates = [] of string rm names)?
-    async addNewRM(rmid) {
-        let rmname = await this.getRMName(rmid);
-        this.postRMName(this.state.houseid, rmid);
-
-        // todo make sure that if duplicate, the front end also doesn't add and alerts error
-        this.setState((state => ({
-            roommates: state.roommates.concat([rmname]) // this is client side
-        })));
-        // console.log(this.state.roommates);
-    }
-
-    // makes a GET request for rm name given rmid,
-    // then makes a POST request to add rm to Household
-    async getRMName(rmid) {
-        try {
-            const response = await fetch(`/users/${rmid}`, {
-                method: 'GET',
-                headers: {
-                    "content-type": 'application/json'
-                }
-            });
-            let data = await response.json();
-            console.log(data.name);
-            return data.name;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    // POST households/:houseID/roommates/:roommateID
-    async postRMName(houseid, rmid){
-        try {
-            console.log(houseid, rmid);
-            const response = await fetch(`/households/${houseid}/roommates/${rmid}`, {
-                method: 'POST',
-                headers: {
-                    "content-type": 'application/json'
-                }
-            });
-            console.log(response);
-        } catch (e) {throw e;}
-    }
-
-
-    handleAddRM() {
-        this.setState(prevState => ({
-            showAddRMForm: !prevState.showAddRMForm
-        }));
+    // households/:houseID/ TODO
+    handleEditHH() {
+        alert("action edit");
     }
 
     render() {
@@ -203,18 +154,25 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     // makes the api call and if successful adds new room name to frontend table display
-    addNewRoom(newRoomName) {
-        let houseid = this.state.houseid; // todo houseid for adding rooms
-        this.addRoomAPI(houseid, newRoomName);
+    async addNewRoom(newRoomName) {
+        try {
+            let houseid = this.state.houseid;
+            console.log(houseid);
+            let postResp = await this.addRoomAPI(houseid, newRoomName);
+            if (postResp.status === 200) {
+                this.setState((state => ({
+                    rooms: state.rooms.concat([newRoomName])
+                })))
+            } else {
+                alert("Error. This room has already been added.");
+            }
+        } catch (e) {
+            alert("Error. Something unexpected happened in our system!");
+        }
 
-        // todo add an if statement here for possible error handling
-        this.setState((state => ({
-            rooms: state.rooms.concat([newRoomName])
-        })))
     }
 
-    // households/:houseID/rooms/:roomName
-    // does the actual api call for adding rooms
+    // POST households/:houseID/rooms/:roomName
     async addRoomAPI(houseid, roomname) {
         try {
             const response = await fetch(`/households/${houseid}/rooms/${roomname}`, {
@@ -224,19 +182,70 @@ export default class HouseholdManagementHouse extends React.Component {
                 }
             });
             console.log(response);
+            return response;
         } catch (e) {
             throw e;
         }
     }
 
-    // don't think this is needed anymore
-    // households/:houseID/roommates/:roommateID
-    async handleRemoveHH() {
-        this.props.removeHousehold.bind(this.props.houseid);
+    // GET RM name, POST RM to household database, display RM if success
+    async addNewRM(rmid) {
+        try {
+            let rmname = await this.getRMName(rmid);
+            let postResp = await this.postRMName(this.state.houseid, rmid);
+
+            if (postResp.status === 200) {
+                this.setState((state => ({
+                    roommates: state.roommates.concat([rmname]) // this is client side
+                })));
+            } else {
+                alert("Error. This roommate has already been added."); // duplicate roommate, or roommate that doesn't exist
+            }
+        } catch (e) {
+            alert("Error. This roommate doesn't exist in our system.")
+        }
+        // console.log(this.state.roommates);
     }
 
-    handleEditHH() {
-        alert("action edit");
+    // GET /user/:userID
+    async getRMName(rmid) {
+        try {
+            const response = await fetch(`/users/${rmid}`, {
+                method: 'GET',
+                headers: {
+                    "content-type": 'application/json'
+                }
+            });
+            let data = await response.json();
+            console.log(data.name);
+            return data.name;
+        } catch (e) {
+            throw e;
+        }
     }
+
+    // POST households/:houseID/roommates/:roommateID
+    async postRMName(houseid, rmid) {
+        try {
+            console.log(houseid, rmid);
+            const response = await fetch(`/households/${houseid}/roommates/${rmid}`, {
+                method: 'POST',
+                headers: {
+                    "content-type": 'application/json'
+                }
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    handleAddRM() {
+        this.setState(prevState => ({
+            showAddRMForm: !prevState.showAddRMForm
+        }));
+    }
+
 
 }

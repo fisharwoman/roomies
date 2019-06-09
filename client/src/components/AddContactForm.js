@@ -18,7 +18,7 @@ class AddContactForm extends Component{
     }
 
     handleAddNewContact() {
-        console.log("form submitted");
+        alert("form submitted");
     }
 
     render(){
