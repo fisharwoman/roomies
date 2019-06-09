@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import './Management.css';
 import AddRoomForm from "./AddRoomForm";
 import AddRMForm from "./AddRMForm";
-
+import './HouseholdManagement.css';
 
 /**
  * A component to encapsulate one manageable household
@@ -94,10 +94,10 @@ export default class HouseholdManagementHouse extends React.Component {
                 <Row>
                     <Col>
                         <h3>{this.state.houseName}
-                            <br/>
-                            <Button variant={"outline-dark"} className={"hh"}
+
+                            <Button variant={"outline-danger"} className={"rh"}
                                     onClick={() => this.props.removeHousehold(this.state.houseid)}>Remove</Button>
-                            <Button variant={"outline-dark"} className={"hh"}
+                            <Button variant={"outline-info"} className={"eh"}
                                     onClick={this.handleEditHH.bind()}>Edit</Button></h3>
                         <p>{this.state.address}</p>
                     </Col>
@@ -113,7 +113,7 @@ export default class HouseholdManagementHouse extends React.Component {
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td><Button variant={"outline-dark"} onClick={this.handleAddRM.bind(this)}>Add
+                                <td><Button variant={"outline-success"} onClick={this.handleAddRM.bind(this)}>Add
                                     Roommate</Button></td>
                             </tr>
                             </tfoot>
@@ -135,7 +135,7 @@ export default class HouseholdManagementHouse extends React.Component {
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoom.bind(this)}>Add
+                                <td><Button variant={"outline-success"} onClick={this.handleAddRoom.bind(this)}>Add
                                     Room</Button></td>
                             </tr>
                             </tfoot>

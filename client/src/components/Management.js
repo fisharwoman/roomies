@@ -3,7 +3,6 @@ import AddHouseForm from "./AddHouseForm";
 import Button from "react-bootstrap/Button";
 import './Management.css';
 import HouseholdManagementHouse from "./HouseholdManagementHouse";
-import RemovableContent from "./RemovableContent";
 
 
 export default class Management extends React.Component {
@@ -11,11 +10,9 @@ export default class Management extends React.Component {
         super(props);
         this.state = {
             showAddCollapsible: false,
-            displayRemoveSelectables: false,
             householdComponents: []
         };
         this.onAddClick = this.onAddClick.bind(this);
-        this.onRemoveClick = this.onRemoveClick.bind(this);
         this.addNewHouse = this.addNewHouse.bind(this);
     }
 
@@ -26,27 +23,15 @@ export default class Management extends React.Component {
         }));
     }
 
-    onRemoveClick() {
-        this.setState(prevState => ({
-            displayRemoveSelectables: !prevState.displayRemoveSelectables
-        }));
-    }
 
     render() {
         return (
             <div>
                 <div className={"Hop"}>
                     <h2 className={'title'}>Households</h2>
-                    <Button className={'ab'} variant={"outline-dark"} onClick={this.onAddClick.bind(this)}>Add</Button>
-                    <Button className={'ab'} variant={"outline-dark"} onClick={this.onRemoveClick.bind(this)}>Remove</Button>
-                    <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Edit</Button>
-                    <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Search</Button>
+                    <Button className={'ab'} variant={"outline-success"} onClick={this.onAddClick.bind(this)}>Add</Button>
                     {this.state.showAddCollapsible ?
                         <AddHouseForm addNew={this.addNewHouse}/> :
-                        null
-                    }
-                    {this.state.displayRemoveSelectables ?
-                        <RemovableContent/> :
                         null
                     }
                 </div>
