@@ -1,5 +1,5 @@
 import React from 'react';
-import Collapsible from "./Collapsible";
+import AddHouseForm from "./AddHouseForm";
 import Button from "react-bootstrap/Button";
 import './Management.css';
 import HouseholdManagementHouse from "./HouseholdManagementHouse";
@@ -12,10 +12,39 @@ export default class Management extends React.Component {
         this.state = {
             showAddCollapsible: false,
             displayRemoveSelectables: false,
-            householdComponents: [],
+            householdComponents: []
         };
         this.onAddClick = this.onAddClick.bind(this);
         this.onRemoveClick = this.onRemoveClick.bind(this);
+        this.addNewHouse = this.addNewHouse.bind(this);
+    }
+
+    // adds newly generated household component obj to household component
+    async addNewHouse(newaddr, newname) {
+        // console.log("hhh:" + newaddr );
+        // console.log("hhh:" + newname );
+
+        let o = {};
+        o.address = newaddr;
+        o.name = newname;
+        o.roommates = [];
+        o.rooms = [];
+        o.houseid = 100; // todo use real houseid from api post response
+        let data = [];
+        data.push(o);
+
+        await this.addHouseAPI(newaddr, newname);
+
+        data = data.map((value) => {
+            return <HouseholdManagementHouse key={value.houseid} house={value} />
+        });
+        //console.log(JSON.stringify(data));
+
+        //   this.state.householdComponents.push(o)
+
+        this.setState((state)=>({
+            householdComponents: this.state.householdComponents.concat(data)
+        }));
     }
 
     onAddClick() {
@@ -40,7 +69,7 @@ export default class Management extends React.Component {
                     <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Edit</Button>
                     <Button className={'ab'} variant={"outline-dark"} onClick={buttonAction.bind(this)}>Search</Button>
                     {this.state.showAddCollapsible ?
-                        <Collapsible/> :
+                        <AddHouseForm addNew={this.addNewHouse}/> :
                         null
                     }
                     {this.state.displayRemoveSelectables ?
@@ -77,10 +106,13 @@ export default class Management extends React.Component {
                 value.rooms = rooms;
                 return value;
             }));
+            console.log(JSON.stringify(data));
             data = data.map((value) => {
                 return <HouseholdManagementHouse key={value.houseid} house={value} removeHousehold={this.removeHousehold.bind(this)}/>
             });
             this.setState({householdComponents: data});
+            // console.log(JSON.stringify(data));
+
         } catch (e) {
             console.log(e.message);
         }
@@ -158,6 +190,26 @@ export default class Management extends React.Component {
         } catch (e) {
             throw e;
         }
+    }
+
+    // makes the api call for adding a household
+    // todo double check this hooks up properly
+    async addHouseAPI(address, name){
+            console.log("add hh api call");
+        try {
+            const response = await fetch(`/households/`, {
+                method: "POST",
+                headers: {
+                    "content-type": 'application/json',
+                    "address": address,
+                    "name": name
+                }
+            });
+            console.log(response); // todo find a way to get household id from response and add it to household info
+        } catch (e) {
+            throw e;
+        }
+
     }
 
 }

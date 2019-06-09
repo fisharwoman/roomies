@@ -23,7 +23,7 @@ class AddRoomForm extends Component{
                 <label htmlFor={"roomname"}>Room Name: &nbsp;&nbsp; </label>
                 <input type={"text"} name={"roomname"} placeholder={"room name goes here"}
                        onChange={event => {this.setState({roomname: event.target.value})}}/>
-                <input type={"button"} name={"submitAddForm"} value={"+"} onClick={this.handleAddNewRoom} />
+                <input type={"button"} name={"handleNewAddRoom"} value={"+"} onClick={this.handleAddNewRoom} />
             </div>
         );
     }

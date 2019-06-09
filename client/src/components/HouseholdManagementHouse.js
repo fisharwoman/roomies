@@ -146,10 +146,10 @@ export default class HouseholdManagementHouse extends React.Component {
         }));
     }
 
-    // makes the api call; if successful adds new room name to frontend table display
+    // makes the api call and if successful adds new room name to frontend table display
     addNewRoom(newRoomName) {
         let houseid = this.state.houseid; // todo houseid for adding rooms
-        this.addRoom(houseid, newRoomName);
+        this.addRoomAPI(houseid, newRoomName);
 
         // todo add an if statement here for possible error handling
         this.setState((state => ({
@@ -159,7 +159,7 @@ export default class HouseholdManagementHouse extends React.Component {
 
     // households/:houseID/rooms/:roomName
     // does the actual api call for adding rooms
-    async addRoom(houseid, roomname) {
+    async addRoomAPI(houseid, roomname) {
         try {
             const response = await fetch(`/households/${houseid}/rooms/${roomname}`, {
                 method: "POST",
@@ -173,6 +173,7 @@ export default class HouseholdManagementHouse extends React.Component {
         }
     }
 
+    // don't think this is needed anymore
     // households/:houseID/roommates/:roommateID
     async handleRemoveHH() {
         this.props.removeHousehold.bind(this.props.houseid);

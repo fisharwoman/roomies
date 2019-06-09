@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Collapse} from 'react-bootstrap';
-import './Collapsible.css';
+import './AddHouseForm.css';
 import Form from "react-bootstrap/Form";
 
 class RemovableContent extends Component{
