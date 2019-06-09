@@ -26,11 +26,12 @@ router
      */
     .post("/", async (req,res) => {
         try {
+            console.log(req.body.name); // todo this prints properly but is not added to our database
+            console.log(req.body.address);
             const query1 = `INSERT INTO Households (address, name ) VALUES ('${req.body.address}','${req.body.name}') RETURNING houseID`;
             let result = await db.one(query1);
-            result = url + result.houseid;
-            console.log("HI "+result.houseid);
-            res.status(200).send(result);
+            result = result.houseid;
+            res.status(200).send({hid:result});
         } catch (e) {
             res.status(400).send(e.message);
         }

@@ -19,33 +19,6 @@ export default class Management extends React.Component {
         this.addNewHouse = this.addNewHouse.bind(this);
     }
 
-    // adds newly generated household component obj to household component
-    async addNewHouse(newaddr, newname) {
-        // console.log("hhh:" + newaddr );
-        // console.log("hhh:" + newname );
-
-        let o = {};
-        o.address = newaddr;
-        o.name = newname;
-        o.roommates = [];
-        o.rooms = [];
-        o.houseid = 100; // todo use real houseid from api post response
-        let data = [];
-        data.push(o);
-
-        await this.addHouseAPI(newaddr, newname);
-
-        data = data.map((value) => {
-            return <HouseholdManagementHouse key={value.houseid} house={value} />
-        });
-        //console.log(JSON.stringify(data));
-
-        //   this.state.householdComponents.push(o)
-
-        this.setState((state)=>({
-            householdComponents: this.state.householdComponents.concat(data)
-        }));
-    }
 
     onAddClick() {
         this.setState(prevState => ({
@@ -106,7 +79,7 @@ export default class Management extends React.Component {
                 value.rooms = rooms;
                 return value;
             }));
-            console.log(JSON.stringify(data));
+           // console.log(JSON.stringify(data));
             data = data.map((value) => {
                 return <HouseholdManagementHouse key={value.houseid} house={value} removeHousehold={this.removeHousehold.bind(this)}/>
             });
@@ -163,6 +136,8 @@ export default class Management extends React.Component {
                 }
             });
             let data = await response.json();
+           // console.log(response);
+           // console.log(data);
             data = await Promise.all(data.map(async (value) => {
                 const r = await fetch(value, {
                     method: 'GET',
@@ -192,20 +167,50 @@ export default class Management extends React.Component {
         }
     }
 
+    // adds newly generated household component obj to household component
+    async addNewHouse(newaddr, newname) {
+        // console.log("hhh:" + newaddr );
+        // console.log("hhh:" + newname );
+
+        let hid = await this.addHouseAPI(newaddr, newname);
+
+        // console.log("HID"+hid);
+
+        let o = {};
+        o.address = newaddr;
+        o.name = newname;
+        o.roommates = [];
+        o.rooms = [];
+        o.houseid = hid;
+        let data = [];
+        data.push(o);
+
+        data = data.map((value) => {
+            return <HouseholdManagementHouse key={value.houseid} house={value} removeHousehold={this.removeHousehold.bind(this)} />
+        });
+        //console.log(JSON.stringify(data));
+
+        this.setState((state)=>({
+            householdComponents: this.state.householdComponents.concat(data)
+        }));
+
+        // console.log("DATA"+ JSON.stringify(this.state.householdComponents)); // can set hid properly now
+    }
+
     // makes the api call for adding a household
-    // todo double check this hooks up properly
     async addHouseAPI(address, name){
-            console.log("add hh api call");
+          //  console.log("add hh api call");
         try {
             const response = await fetch(`/households/`, {
                 method: "POST",
                 headers: {
-                    "content-type": 'application/json',
-                    "address": address,
-                    "name": name
-                }
+                    "content-type": 'application/json'
+                },
+                body: JSON.stringify({address: address, name: name})
             });
-            console.log(response); // todo find a way to get household id from response and add it to household info
+            let data = await response.json();
+            return data.hid;
+
         } catch (e) {
             throw e;
         }
