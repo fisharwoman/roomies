@@ -19,17 +19,8 @@ class AddHouseForm extends Component{
 
     handleNewAddHouse() {
         // console.log("form submitted");
-        // this.createNewHouseComp();
 
        this.props.addNew(this.state.address, this.state.name);
-      //  console.log(JSON.stringify(o));
-    }
-
-    createNewHouseComp(){
-        // let name = this.state.name;
-        // let address = this.state.address;
-        // let obj = {name, address};
-        // this.setState({newHouseComp: obj});
     }
 
     render(){

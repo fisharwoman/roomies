@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Form from "react-bootstrap/Form";
 
 class AddRoomForm extends Component{
 
@@ -18,13 +19,13 @@ class AddRoomForm extends Component{
 
     render(){
         return (
-            <div className="add-room-form">
+            <Form className="add-room-form">
                 Add a Room <br/>
                 <label htmlFor={"roomname"}>Room Name: &nbsp;&nbsp; </label>
                 <input type={"text"} name={"roomname"} placeholder={"room name goes here"}
                        onChange={event => {this.setState({roomname: event.target.value})}}/>
                 <input type={"button"} name={"handleNewAddRoom"} value={"+"} onClick={this.handleAddNewRoom} />
-            </div>
+            </Form>
         );
     }
 

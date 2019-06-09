@@ -54,8 +54,6 @@ export default class Management extends React.Component {
                     {this.state.householdComponents}
                 </div>
             </div>
-
-
         );
 
 
@@ -182,6 +180,7 @@ export default class Management extends React.Component {
         o.roommates = [];
         o.rooms = [];
         o.houseid = hid;
+
         let data = [];
         data.push(o);
 

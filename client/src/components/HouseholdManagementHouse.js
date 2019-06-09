@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import './Management.css';
 import AddRoomForm from "./AddRoomForm";
+import AddRMForm from "./AddRMForm";
 
 
 /**
@@ -23,11 +24,30 @@ export default class HouseholdManagementHouse extends React.Component {
             houseid: this.props.house.houseid,
             roommateid: window.sessionStorage.getItem('userid'),
             roomname: "",
-            showAddRoomForm: false
+            showAddRoomForm: false,
+            showAddRMForm: false
         };
         //  console.log(JSON.stringify(this.state));
         this.handleAddRoom = this.handleAddRoom.bind(this); // may or may not need this
         this.addNewRoom = this.addNewRoom.bind(this);
+        this.handleAddRM = this.handleAddRM.bind(this); // may not need this
+        this.addNewRM = this.addNewRM.bind(this);
+    }
+
+    addNewRM(rmname, rmid) {
+        console.log("add new rm");
+
+        // this.addRMAPI(rmname, rmid); // possibly need to change call
+
+        this.setState((state => ({
+            roommates: state.roommates.concat([rmid])
+        })))
+    }
+
+    handleAddRM() {
+       this.setState(prevState => ({
+           showAddRMForm: !prevState.showAddRMForm
+       }));
     }
 
     render() {
@@ -55,11 +75,15 @@ export default class HouseholdManagementHouse extends React.Component {
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td><Button variant={"outline-dark"} onClick={this.handleAddRoommate}>Add
+                                <td><Button variant={"outline-dark"} onClick={this.handleAddRM.bind(this)}>Add
                                     Roommate</Button></td>
                             </tr>
                             </tfoot>
                         </Table>
+                        {this.state.showAddRMForm ?
+                            <AddRMForm addNew={this.addNewRM}/> :
+                            null
+                        }
                     </Col>
                     <Col>
                         <Table hover size={'sm'}>
@@ -132,11 +156,6 @@ export default class HouseholdManagementHouse extends React.Component {
         } catch (e) {
             throw e;
         }
-    }
-
-    handleAddRoommate() {
-        alert("Attempting to add a roommate");
-        // console.log("Attempting to add a roommate");
     }
 
     // shows the collapsible form
