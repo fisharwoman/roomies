@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button';
 import './Management.css';
 import AddRoomForm from "./AddRoomForm";
 import AddRMForm from "./AddRMForm";
-import './HouseholdManagement.css';
 
 /**
  * A component to encapsulate one manageable household
