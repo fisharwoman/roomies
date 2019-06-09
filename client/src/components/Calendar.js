@@ -12,6 +12,7 @@ import {
   MonthView,
   DateNavigator,
   ViewSwitcher,
+  AppointmentTooltip
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { blue } from "@material-ui/core/colors";
@@ -52,6 +53,8 @@ export default class Calendar extends Component {
             <DateNavigator />
             <ViewSwitcher />
             <Appointments />
+            <AppointmentTooltip showOpenButton showCloseButton/>
+            <AppointmentForm readOnly />
           </Scheduler>
         </Paper>
       </MuiThemeProvider>
