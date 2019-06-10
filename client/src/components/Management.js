@@ -200,6 +200,7 @@ export default class Management extends React.Component {
     // makes the api call for adding a household
     async addHouseAPI(address, name) {
         try {
+            let userid = window.sessionStorage.getItem('userid');
             const response = await fetch(`/households/`, {
                 method: "POST",
                 headers: {
@@ -208,6 +209,12 @@ export default class Management extends React.Component {
                 body: JSON.stringify({address: address, name: name})
             });
             let data = await response.json();
+            await fetch(`/households/${data.hid}/roommates/${userid}`,{
+                method: 'POST',
+                header:{
+                    'content-type': 'application/json'
+                }
+            });
             return data.hid;
 
         } catch (e) {
