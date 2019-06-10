@@ -1,23 +1,18 @@
 import React from 'react';
-import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
+import OwedExpenses from './OwedExpenses';
+import OwingExpenses from './OwingExpenses';
+import {
+    Button,
+    Table
+} from 'react-bootstrap';
 import AddRoomForm from "./AddRoomForm";
 
 export default class Expenses extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // houseName: this.props.house.name ? this.props.house.name : "House Name",
-            // address: this.props.house.address,
-            // roommates: this.props.house.roommates,
-            // rooms: this.props.house.rooms,
             houseid: props.selectedHousehold.houseid,
-            // roommateid: window.sessionStorage.getItem('userid'),
-            // roomname: "",
-            showAddRoomForm: false,
-            // showAddRMForm: false,
-            // showEditHouseForm: false,
-            expenses: []
+            isShowingOwed: true
         };
         // //  console.log(JSON.stringify(this.state));
         // this.handleAddRoom = this.handleAddRoom.bind(this); // may or may not need this
@@ -29,34 +24,27 @@ export default class Expenses extends React.Component {
 
     render() {
         return(
-        <div id={'expensesComponent'}>
-            <Table hover size={'sm'}>
-                <thead>
-                <tr>
-                    <th>Expenses</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.buildExpenseRows()}
-                </tbody>
-                <tfoot>
-                <tr>
-                </tr>
-                </tfoot>
-            </Table>
-            {this.state.showAddRoomForm ?
-                <AddRoomForm addNew={this.addNewRoom}/> :
-                null
-            }
-        </div>
-        );
+            <div id={'expensesComponent'}>
+                <h3>Expenses</h3>
+                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(true)}}>Owed</Button>
+                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(false)}}>Owing</Button>
+                {this.state.isShowingOwed ?
+                    <OwedExpenses/> :
+                    <OwingExpenses userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/>
+                }
+            </div>
+        )
     }
 
-    async componentDidMount() {
-        const data = await this.getHouseholdExpenses();
+    handleViewSwitcher(val) {
         this.setState({
-            expenses: data
+            isShowingOwed: val
         });
+    }
+
+
+    async componentDidMount() {
+       
     }
 
     async getHouseholdExpenses() {

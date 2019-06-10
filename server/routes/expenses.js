@@ -65,7 +65,7 @@ router
     /**
      * Get all the expenses tied to the specified household ID
      */
-    .get('/household/:houseID', async (req, res) => {
+    .get('/households/:houseID', async (req, res) => {
         try {
             const query = `SELECT expenseID FROM Expenses WHERE houseID = ${req.params.houseID}`;
             let result = await db.any(query);
@@ -90,6 +90,19 @@ router
             res.status(200).json(result);
         } catch (e) {
             res.status(200).send(e.message);
+        }
+    })
+    .get('/splits/borrower/:userID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` 
+            `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl ` +
+            `WHERE borrower=${req.params.userID}`;
+            console.log(query);
+            const response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).send(e.message);
         }
     })
     /**
