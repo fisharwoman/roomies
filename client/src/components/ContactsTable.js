@@ -10,7 +10,7 @@ export default class ContactsTable extends React.Component {
         super(props);
 
         this.state = {
-            houseid: null,
+            houseid: 1, //todo
             contacts: []
         }
     }
@@ -34,6 +34,14 @@ export default class ContactsTable extends React.Component {
                 </tr>
         );
     }
+
+
+    // first i need to do an api call to get the contacts info for the correct household
+    // then add it to an object or array to store the info
+    // then use the info to make each row
+    // append rows together into a table? or loop? or recurse
+    // make buttons work for add, edit, remove
+
 
     render() {
         return (

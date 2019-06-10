@@ -29,7 +29,48 @@ class Contact extends Component {
         alert("remove");
     }
 
-    // name, phone number, relationship
+    // this seems to work
+    // GET contacts listing based on householdID. .get('/houses/:houseID'
+    async getContactsFromHouse(houseid) {
+        try {
+            const response = await fetch(`/contacts/houses/${houseid}`, {
+                method: "GET"
+            });
+            let data = await response.json();
+            data = data.map((value) => {
+                console.log(data);
+            });
+            console.log(response);
+            // return data;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    // this seems to work
+    // GET contacts info from contact id .get('/:contactsID'
+    async getEachContact(contactsid){
+        try {
+            const response = await fetch(`/contacts/${contactsid}`, {
+                method: "GET"
+            });
+            let data = await response.json();
+            data = data.map((value) => {
+                console.log(data);
+            });
+            console.log(response);
+            // return data;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    getInfo(){
+        this.getContactsFromHouse(2);
+        this.getEachContact(1);
+    }
+
+    // name, phone number, relationship, owner
     render() {
         return (
             <div >
@@ -49,7 +90,7 @@ class Contact extends Component {
                     null
                 }
                 <div className={'contentPanel'}>
-                    <ContactsTable/>
+                    {this.getInfo()}
                 </div>
             </div>
         );
