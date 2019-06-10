@@ -96,7 +96,7 @@ router
     .post('/:houseID/roommates/:roommateID', async (req, res) => {
         try {
             const query = `INSERT INTO Household_Roommates VALUES (${req.params.houseID}, ${req.params.roommateID})`;
-            await db.any(query);
+            await db.none(query);
             res.status(200).send();
         } catch (e) {
             if (e.message.indexOf("duplicate") !== -1) res.status(409).send(e.message);
@@ -124,9 +124,7 @@ router
         try {
             const query = `SELECT * FROM Rooms WHERE houseID = ${req.params.houseID}`;
             let result = await db.any(query);
-            if (!result || result.length === 0) res.status(204);
-            else res.status(200);
-            res.json(result);
+            res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
         }
