@@ -94,7 +94,7 @@ router
     })
     .get('/splits/borrower/:userID', async (req,res) => {
         try {
-            const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` 
+            const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` +
             `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl ` +
             `WHERE borrower=${req.params.userID}`;
             console.log(query);
