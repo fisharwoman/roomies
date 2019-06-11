@@ -63,6 +63,20 @@ router
         }
     })
     /**
+     * Pay a partial expense
+     */
+    .patch('/expense/splits/pay/:expenseID/:userID', async (req, res) => {
+        try {
+            const query = `UPDATE PartialExpenses SET datepaid=CURRENT_TIMESTAMP WHERE expenseid = ${req.params.expenseID} AND borrower=${req.params.userID} RETURNING datepaid`;
+            let result = await db.one(query);
+            console.log('done');
+            res.status(200).json(result);
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).send();
+        }
+    })
+    /**
      * Get all the expenses tied to the specified household ID
      */
     .get('/households/:houseID', async (req, res) => {

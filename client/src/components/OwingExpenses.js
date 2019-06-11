@@ -12,6 +12,9 @@ export default class OwingExpenses extends React.Component {
         }
     }
     render() {
+        if (this.state.expenses.length === 0) {
+            return (<div></div>);
+        }
         return (
             <div>
                 <h3>Owing expenses</h3>
@@ -21,8 +24,8 @@ export default class OwingExpenses extends React.Component {
                             <td>Description</td>
                             <td>Amount</td>
                             <td>Roommate Owed</td>
-                            <td>Paid?</td>
-                            <td>asdfasd</td>
+                            <td>Date Paid</td>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -32,7 +35,6 @@ export default class OwingExpenses extends React.Component {
                         <tr>
                             <td>Total Money Owing:</td>
                             {this.sumOwing()}
-                            <td></td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -45,7 +47,7 @@ export default class OwingExpenses extends React.Component {
 
     async componentDidMount() {
         let data = await this.getPartialExpenses();
-        console.log(data);
+        // TODO Convert lender ID to name
         this.setState({
             expenses: data
         });
@@ -64,15 +66,46 @@ export default class OwingExpenses extends React.Component {
     }
 
     makePartialExpenses() {
-        return (
-            <tr>
-                <td>Test data</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        )
+       return this.state.expenses.map((value) => {
+           return (
+               <tr key={value.expenseid}>
+                   <td>{value.description}</td>
+                   <td>{value.amount}</td>
+                   <td>{value.lender}</td>
+                   <td>
+                       {value.datepaid !== null ? 
+                       value.datepaid : 
+                       <Button value={value.expenseid} onClick={e => this.makePayment(e)} variant={'outline-success'}>Pay</Button>
+                       }
+                    </td>
+               </tr>
+           )
+       })
+    }
+
+    async makePayment(e) {
+       let expenseid = e.target.value;
+        try {
+            const response = await fetch(`/expenses/expense/splits/pay/${expenseid}/${this.props.userid}`, {
+                method: 'PATCH',
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+            const date = await response.json();
+            let data = this.state.expenses;
+            for (let o of data) {
+                console.log(o);
+                if (o.expenseid === expenseid) {
+                    o.datepaid = date.datepaid
+                }
+            }
+            this.setState({
+                expenses: data
+            });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     sumOwing() {
