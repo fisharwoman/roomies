@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/Widgets.css';
+import {Button} from 'react-bootstrap';
 
 export default class WidgetBulletin extends React.Component {
 
@@ -10,9 +11,17 @@ export default class WidgetBulletin extends React.Component {
             bulletins: [
                 {
                     title: "Pizza in the fridge",
-                    body: "lorem ipsum doler",
-                    creator: "Ross Geller",
-                    datecreated: '2019-06-14 07:00'
+                        body: "Happiness happens when you shape music so sincerely that whatsoever you are growing is your meditation. One must synthesise the wind in order to emerge the spirit of unconditional dimension.",
+                    name: "RG",
+                    datecreated: '2019-06-14 07:00',
+                    createdby: 3
+                },
+                {
+                    title: "I'm cooking dinner",
+                    body: "Mix each side of the pickles with one jar of carrots.",
+                    name: "MG",
+                    datecreated: '2019-06-14 12:00',
+                    createdby: 2
                 }
             ]
         }
@@ -32,6 +41,7 @@ export default class WidgetBulletin extends React.Component {
                     <ul>
                         {this.makeBulletins()}
                     </ul>
+                    <Button>Create Post</Button>
                 </div>
             )
         }
@@ -39,7 +49,7 @@ export default class WidgetBulletin extends React.Component {
 
     makeBulletins() {
         return this.state.bulletins.map((value,index) => {
-            return(<li className={'bulletin-object'} key={index}><BulletinPost data={value}/></li>);
+            return(<li  key={index}><BulletinPost data={value} userid={2}/></li>);
         })
     }
 }
@@ -47,10 +57,17 @@ export default class WidgetBulletin extends React.Component {
 class BulletinPost extends React.Component {
     render() {
         return (
-            <div>
-                <h5>{this.props.data.title}</h5>
-                <p>{this.props.data.body}</p>
-                <small><em>{"Posted by: " + this.props.data.creator + " on " + this.props.data.datecreated}</em></small>
+            <div style={{display: 'inline-block'}}>
+                <div id={'bulletin-creator'}>{this.props.data.name}</div>
+                <div className={'talk-bubble tri-right left-top'}>
+                    <h5>{this.props.data.title}</h5>
+                    <p>{this.props.data.body}</p>
+                    <small><em>{"Posted: " + this.props.data.datecreated}</em></small>
+                    {this.props.data.createdby === this.props.userid ?
+                        <Button style={{float: 'right'}} size={'sm'} variant={'outline-danger'}>Remove</Button> :
+                        null
+                    }
+                </div>
             </div>
         )
     }
