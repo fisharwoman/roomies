@@ -1,0 +1,20 @@
+ul {
+    list-style-type: none;
+    margin: 10px 10px 10px -15px;
+}
+
+.content-window {
+    border-width: 1px;
+    border-color: #b4b4b4;
+    border-radius: 5px;
+    border-style: solid;
+    float: left;
+    margin: 10px;
+    padding: 10px;
+}
+
+.bulletin-object {
+    background-color: rgba(66, 139, 202, 0.43);
+    border-radius: 10px;
+    padding: 5px;
+}
