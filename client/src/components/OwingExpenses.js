@@ -12,9 +12,6 @@ export default class OwingExpenses extends React.Component {
         }
     }
     render() {
-        if (this.state.expenses.length === 0) {
-            return (<div></div>);
-        }
         return (
             <div>
                 <h3>Owing expenses</h3>
@@ -25,7 +22,6 @@ export default class OwingExpenses extends React.Component {
                             <td>Amount</td>
                             <td>Roommate Owed</td>
                             <td>Date Paid</td>
-                            
                         </tr>
                     </thead>
                     <tbody>

@@ -17,26 +17,51 @@ export default class OwedExpenses extends React.Component {
     render() {
         return (
             <div>
-                <h3>Owed expenses</h3>
-                <Table>
-                    <thead>
-                        <tr>
-                            <td>Date</td>
-                            <td>Description</td>
-                            <td>Amount</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.makeExpenses()}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td>Total Money Owing:</td>
-                            {this.sumOwing()}
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </Table>
+                <div>
+                    <h3>Owed expenses</h3>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <td>Date</td>
+                                <td>Description</td>
+                                <td>Amount</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.makeExpenses()}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Total Money Owing:</td>
+                                {this.sumOwing()}
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </Table>
+                </div>
+
+                <div>
+                <h3>Expense #{this.state.selectedExpenseID} Splits</h3>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <td>Date</td>
+                                <td>Description</td>
+                                <td>Amount</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.makePartialExpenses()}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Total Money Owing:</td>
+                                {this.sumOwing()}
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </Table>
+                </div>
             </div>
         )
     }
@@ -64,24 +89,24 @@ export default class OwedExpenses extends React.Component {
         }
     }
 
-    // async getPartialExpenses() {
-    //     try {
-    //         let response = await fetch(`expenses/splits/lender/${this.props.userid}`, {
-    //             method: "GET"
-    //         });
-    //         let data = await response.json(); 
-    //         return data;
-    //     } catch (e) {
-    //         throw e;
-    //     }
-    // }
+    async getPartialExpenses() {
+        try {
+            let response = await fetch(`expenses/splits/${this.state.selectedExpenseID}`, {
+                method: "GET"
+            });
+            let data = await response.json(); 
+            return data;
+        } catch (e) {
+            throw e;
+        }
+    }
 
     makeExpenses() {
         return this.state.expenses.map((value) => {
             return (
                 <tr style={this.state.selectedExpenseID === value.expenseid ? 
                 { backgroundColor:'#007bff',
-                  color: 'white' } : {}} key={value.expenseid} onClick={e => this.selectExpense(value.expenseid)}>
+                  color: 'white' } : {}} key={value.expenseid} onClick={() => this.selectExpense(value.expenseid)}>
                     <td>{value.expensedate}</td>
                     <td>{value.description}</td>
                     <td>{value.amount}</td>
@@ -90,24 +115,40 @@ export default class OwedExpenses extends React.Component {
         })
     }
 
-    selectExpense(e) {
-        this.setState({
+    async selectExpense(e) {
+        await this.setState({
             selectedExpenseID: e
+
         })
-        console.log(this.state.selectedExpenseID);
+
+        try {
+            this.setState({
+
+            })
+            let result = await this.getPartialExpenses();
+            console.log(result);
+        } catch (e) {
+            console.log("helloooo");
+        }
+
+        // try {
+        //     let partials = await fetch
+        // } catch (e) {
+
+        // }
     }
 
-    // makePartialExpenses() {
-    //     return this.state.expenses.map((value) => {
-    //         return (
-    //             <tr key={value.expenseid}>
-    //                 <td>{value.date}</td>
-    //                 <td>{value.description}</td>
-    //                 <td>{value.amount}</td>
-    //             </tr>
-    //         )
-    //     })
-    //  }
+    makePartialExpenses() {
+        return this.state.expenses.map((value) => {
+            return (
+                <tr key={value.expenseid}>
+                    <td>{value.date}</td>
+                    <td>{value.description}</td>
+                    <td>{value.amount}</td>
+                </tr>
+            )
+        })
+    }
 
     sumOwing() {
         return (
