@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import WidgetBulletin from './DashboardWidgets/Widget-Bulletin';
 import WidgetExpenses from './DashboardWidgets/Widget-Expenses';
-
+import WidgetReminders from './DashboardWidgets/Widget-Reminders';
  
 class Dashboard extends Component {
 
@@ -9,6 +9,7 @@ class Dashboard extends Component {
         super(props);
         this.state = {
             houseid: this.props.houseid,
+            housename: this.props.housename,
         };
         this.observers = [];
     }
@@ -22,6 +23,7 @@ class Dashboard extends Component {
                 </div>
                 <div style={{float: 'left', width: "30%"}}>
                     {/*Put other widgets in this div only*/}
+                    <WidgetReminders addObserver={this.subscribeToChanges} houseid={this.state.houseid} housename={this.state.housename}/>
                     <WidgetExpenses/>
                 </div>
             </div>

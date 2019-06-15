@@ -50,8 +50,33 @@ router
 
             const query = `SELECT reminderID, title, reminderdate, creator FROM RemindersByHouseID 
             WHERE creator = ${req.params.creator} ORDER BY reminderdate`;
-            await db.any(query1).then;
+            await db.any(query1);
             let result = await db.any(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+
+    /* GET ALL reminders based on household, that is sent to ALL users (division). */
+    .get('/reminderstoall/houses/:houseID', async (req,res) => {
+        console.log("here")
+        try {
+            const divisionQuery = `CREATE OR REPLACE VIEW divisionQuery AS
+                            SELECT * FROM Roommate_Reminders 
+                             WHERE reminderID not in ( SELECT reminderID FROM (
+                                (SELECT reminderID , userToRemind FROM (select roommateID as userToRemind from Household_Roommates WHERE 
+                                    Household_Roommates.houseID = ${req.params.houseID}) as p cross join 
+                                (SELECT distinct reminderID from Roommate_Reminders) as sp)
+                            EXCEPT
+                                (SELECT reminderID , userToRemind FROM Roommate_Reminders) ) AS r )`;
+            const joinReminderQuery = `SELECT * FROM reminders
+                                        right join (SELECT distinct reminderID FROM divisionQuery) as r
+                                        on r.reminderID = reminders.reminderID`;
+
+            await db.none(divisionQuery);
+            let result = await db.any(joinReminderQuery);
+            console.log(joinReminderQuery);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);

@@ -6,6 +6,7 @@ export default class WidgetBulletin extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log(props)
         this.state = {
             houseid: this.props.houseid,
             bulletins:[],
@@ -210,8 +211,13 @@ class BulletinPost extends React.Component {
     }
 
     formatDate(date) {
-        let formattedDate = new Date(date);
-        return `${formattedDate.getFullYear()}-${formattedDate.getMonth()}-${formattedDate.getDate()}`;
+        let toFormatDate = new Date(date);
+        let formattedDate =  new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit'
+        }).format(toFormatDate);
+        return `${formattedDate}`;
     }
 
     async deleteBulletin() {
