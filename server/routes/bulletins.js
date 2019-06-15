@@ -7,7 +7,7 @@ const url = "http://localhost:3000/bulletins/";
 router
     .get('/:assignedTo', async (req,res) => {
         try {
-            const query = `SELECT * FROM Bulletin_isCreatedBy WHERE assignedTo = ${req.params.assignedTo}`;
+            const query = `SELECT bid, title, body, datecreated, createdby, assignedto, name FROM Bulletin_isCreatedBy, Roommates WHERE Bulletin_isCreatedBy.createdby = Roommates.userid AND assignedTo = ${req.params.assignedTo} order by datecreated desc`;
             let result = await db.any(query);
             res.status(200).json(result);
         } catch (e) {
@@ -18,11 +18,12 @@ router
         const dateCreated = new Date(Date.now()).toISOString();
         try {
             const query = `INSERT INTO Bulletin_isCreatedBy (title, body, dateCreated, createdBy, assignedTo)` +
-                `VALUES ('${req.body.title}', '${req.body.body}', '${dateCreated}', '${req.body.createdBy}', '${req.body.assignedTo}')` +
-                `RETURNING bID;`;
-            let result = await db.any(query);
-            console.log(result[0].bid);
-            res.status(200).send("http://localhost:3000/bulletins/" + result[0].bid);
+                `VALUES ('${req.body.title}', '${req.body.body}', '${dateCreated}', '${req.body.createdby}', '${req.body.assignedto}')` +
+                `RETURNING bid`;
+            let result = await db.one(query);
+            const query2 =  `SELECT bid, title, body, datecreated, createdby, assignedto, name FROM Bulletin_isCreatedBy, Roommates WHERE Bulletin_isCreatedBy.createdby = Roommates.userid AND bid = ${result.bid}`;
+            let finalResult = await db.one(query2);
+            res.status(200).json(finalResult);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);

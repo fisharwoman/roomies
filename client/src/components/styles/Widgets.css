@@ -3,6 +3,10 @@ ul {
     margin: 10px 10px 10px -15px;
 }
 
+Form {
+    display: inline;
+}
+
 .content-window {
     border-width: 1px;
     border-color: #b4b4b4;
@@ -12,6 +16,17 @@ ul {
     margin: 10px;
     padding: 10px;
     width: 100%;
+}
+
+.scrollable {
+    overflow: hidden;
+    overflow-y: auto;
+    max-height: 350px;
+    scroll-snap-type: y mandatory;
+}
+
+.scrollable-item {
+    scroll-snap-align: start;
 }
 
 .bulletin-object {
@@ -29,6 +44,12 @@ ul {
     margin-right: 20px;
     padding: 10px;
 }
+
+/*
+    Talk bubble CSS adapted from:
+    https://codepen.io/Founts/pen/gmhcl
+    TODO: Add to readme!!
+*/
 
 .talk-bubble {
     margin: 10px;
