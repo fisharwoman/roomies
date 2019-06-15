@@ -57,6 +57,7 @@ class Contact extends Component {
 
     // name, phone number, relationship, owner
     render() {
+        // console.log("CONTACTS"+JSON.stringify(this.state.contacts));
         return (
             <div >
                 <div className={"Cop"}>
@@ -88,8 +89,8 @@ class Contact extends Component {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {this.state.contacts.map((row, index) => (
-                                            <tr key={index}>
+                                    {this.state.contacts.map((row) => (
+                                            <tr key={row.contactsid}>
                                                 <td key={row.name}>{row.name}</td>
                                                 <td key={row.phoneno}>{row.phoneno}</td>
                                                 <td key={row.relationship}>{row.relationship}</td>
@@ -113,14 +114,15 @@ class Contact extends Component {
 
     async addNewContact(cname, cphone, crel, crm) {
         try {
-            let postResp = await this.postContact(cname, cphone, crel, crm);
-           // if (postResp.status === 200) {
+            let cid = await this.postContact(cname, cphone, crel, crm);
+            // console.log("cid"+cid);
+            if (cid != null) {
                 this.setState((state => ({
-                    contacts: state.contacts.concat([{name: cname, phoneno: cphone, relationship: crel,listedby: crm}])
+                    contacts: state.contacts.concat([{contactsid: cid, name: cname, phoneno: cphone, relationship: crel,listedby: crm}])
                 })))
-            // } else {
-            //     alert("Error in adding this contact.");
-            // }
+             } else {
+                 alert("Error in adding this contact.");
+             }
         } catch (e) {
             alert("Error. Something unexpected happened in our system!");
         }
@@ -130,7 +132,6 @@ class Contact extends Component {
     // POST contacts/
     async postContact(cname, cphone, crel, crm) {
         try {
-            console.log("does this work"+cname+cphone+crel+crm);
             const response = await fetch(`/contacts/`, {
                 method: "POST",
                 headers: {
@@ -143,8 +144,9 @@ class Contact extends Component {
                     listedby: crm
                 })
             });
-            console.log(response);
-            return response;
+            // console.log(response);
+            let data = await response.json();
+            return data.cid;
         } catch (e) {
             throw e;
         }

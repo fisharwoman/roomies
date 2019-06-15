@@ -43,7 +43,8 @@ router
                 `RETURNING contactsID;`;
             let result = await db.any(query);
             console.log(result[0].contactsid);
-            res.status(200).send("http://localhost:3000/contacts/" + result[0].contactsid);
+            res.status(200).send({cid:result[0].contactsid});
+            // res.status(200).send("http://localhost:3000/contacts/" + result[0].contactsid);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);
