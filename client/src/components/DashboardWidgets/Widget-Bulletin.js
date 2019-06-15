@@ -92,7 +92,7 @@ export default class WidgetBulletin extends React.Component {
 
     makeEditor() {
         return (
-            <Form onSubmit={() => this.addBulletin()}>
+            <Form id={'editor-form'} onSubmit={() => this.addBulletin()}>
                 <Form.Row>
                     <Col>
                         <Form.Group>

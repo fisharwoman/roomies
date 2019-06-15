@@ -3,9 +3,9 @@ ul {
     margin: 10px 10px 10px -15px;
 }
 
-Form {
-    display: inline;
-}
+#editor-form {
+     display: inline;
+ }
 
 .content-window {
     border-width: 1px;

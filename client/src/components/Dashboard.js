@@ -21,6 +21,7 @@ class Dashboard extends Component {
                     <WidgetBulletin addObserver={this.subscribeToChanges.bind(this)} userid={userid} houseid={this.state.houseid}/>
                 </div>
                 <div style={{float: 'left', width: "30%"}}>
+                    {/*Put other widgets in this div only*/}
                     <WidgetExpenses/>
                 </div>
             </div>
