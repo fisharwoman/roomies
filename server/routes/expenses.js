@@ -92,6 +92,21 @@ router
         }
     })
     /**
+     * Get all the expenses in the specified household created by the given user
+     */
+    .get('/households/:houseID/users/:userID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM expenses WHERE createdby = ${req.params.userID} AND houseid = ${req.params.houseID}`;
+            console.log(query);
+            const response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).send(e.message);
+        }
+    })
+    
+    /**
      * Get all partial expenses for the specified expense
      */
     .get('/splits/:expenseID', async (req, res) => {
@@ -111,6 +126,20 @@ router
             const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` +
             `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl ` +
             `WHERE borrower=${req.params.userID}`;
+            console.log(query);
+            const response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).send(e.message);
+        }
+    })
+    // TODO: CHECK IF IS THIS RIGHT
+    .get('/splits/lender/:userID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` +
+            `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl ` +
+            `WHERE lender=${req.params.userID}`;
             console.log(query);
             const response = await db.any(query);
             res.status(200).json(response);
