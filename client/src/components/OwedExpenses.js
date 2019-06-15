@@ -94,8 +94,23 @@ export default class OwedExpenses extends React.Component {
             let response = await fetch(`expenses/splits/${this.state.selectedExpenseID}`, {
                 method: "GET"
             });
-            let data = await response.json(); 
-            return data;
+
+            let result = [];
+
+            // TODO: iterate over response to get each partial expense
+            // response.forEachAsync(async (value) => {
+            //     const data = await fetch(value, {
+            //         method: "GET",
+            //         headers: {
+            //             "content-type": 'application/json'
+            //         }
+            //     });
+            //     result.push(await response.json(data));
+            // });
+
+            console.log(result);
+            return result;
+
         } catch (e) {
             throw e;
         }
@@ -126,16 +141,9 @@ export default class OwedExpenses extends React.Component {
 
             })
             let result = await this.getPartialExpenses();
-            console.log(result);
         } catch (e) {
-            console.log("helloooo");
+            console.log(e);
         }
-
-        // try {
-        //     let partials = await fetch
-        // } catch (e) {
-
-        // }
     }
 
     makePartialExpenses() {
