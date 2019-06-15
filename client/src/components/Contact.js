@@ -41,6 +41,7 @@ class Contact extends Component {
         this.setState({contacts: data});
 
     }
+
     onAddClick() {
         this.setState(prevState => ({
             showAddCollapsible: !prevState.showAddCollapsible
@@ -59,7 +60,7 @@ class Contact extends Component {
     render() {
         // console.log("CONTACTS"+JSON.stringify(this.state.contacts));
         return (
-            <div >
+            <div>
                 <div className={"Cop"}>
 
                     <h2 className={'title'}>Contacts</h2>
@@ -86,15 +87,29 @@ class Contact extends Component {
                                         <th>Phone Number</th>
                                         <th>Relationship</th>
                                         <th>Owner</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {this.state.contacts.map((row) => (
                                             <tr key={row.contactsid}>
-                                                <td key={row.name}>{row.name}</td>
-                                                <td key={row.phoneno}>{row.phoneno}</td>
-                                                <td key={row.relationship}>{row.relationship}</td>
-                                                <td key={row.listedby}>{row.listedby}</td>
+                                                <td width="30%" key={row.name}>{row.name}</td>
+                                                <td width="30%" key={row.phoneno}>{row.phoneno}</td>
+                                                <td width="20%" key={row.relationship}>{row.relationship}</td>
+                                                <td width="5%" key={row.listedby}>{row.listedby}</td>
+                                                <td width="20%" key={row.contactsid}>
+                                                    <Button
+                                                        size={'sm'}
+                                                        className={'edit'}
+                                                        variant={"outline-info"}
+                                                        onClick={this.handleEditContact.bind(this, row.contactsid)}
+                                                    >Edit</Button>
+                                                    <Button
+                                                        size={'sm'}
+                                                        className={'remove'}
+                                                        variant={"outline-danger"}
+                                                        onClick={this.handleRemoveContact.bind(this, row.contactsid)}
+                                                    >Remove</Button></td>
                                             </tr>
                                         )
                                     )
@@ -118,11 +133,17 @@ class Contact extends Component {
             // console.log("cid"+cid);
             if (cid != null) {
                 this.setState((state => ({
-                    contacts: state.contacts.concat([{contactsid: cid, name: cname, phoneno: cphone, relationship: crel,listedby: crm}])
+                    contacts: state.contacts.concat([{
+                        contactsid: cid,
+                        name: cname,
+                        phoneno: cphone,
+                        relationship: crel,
+                        listedby: crm
+                    }])
                 })))
-             } else {
-                 alert("Error in adding this contact.");
-             }
+            } else {
+                alert("Error in adding this contact.");
+            }
         } catch (e) {
             alert("Error. Something unexpected happened in our system!");
         }
@@ -140,7 +161,7 @@ class Contact extends Component {
                 body: JSON.stringify({
                     name: cname,
                     phoneNo: cphone,
-                    relationship : crel,
+                    relationship: crel,
                     listedby: crm
                 })
             });
