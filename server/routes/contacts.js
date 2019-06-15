@@ -16,6 +16,7 @@ router
           const query2 = `SELECT * FROM ContactsByHouseID`;
           await db.any(query1);
           let result = await db.any(query2);
+          console.log(JSON.stringify(result));
           res.status(200).json(result);
       } catch (e) {
           res.status(400).send(e.message);

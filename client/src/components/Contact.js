@@ -56,6 +56,32 @@ class Contact extends Component {
         alert("remove");
     }
 
+    handleEditContact(cid){
+        console.log(cid);
+    }
+
+    // contacts/:contactid
+    async handleRemoveContact(cid){
+        console.log(cid);
+        try {
+            await fetch(`/contacts/${cid}`, {
+                method: "DELETE"
+            });
+
+            let contacts = this.state.contacts;
+            for (let i in contacts) {
+                if (contacts[i].contactsid === cid) {
+                    contacts.splice(i);
+                    break;
+                }
+            }
+            this.setState({contacts: contacts});
+        } catch (e) {
+            throw e;
+        }
+    }
+
+
     // name, phone number, relationship, owner
     render() {
         // console.log("CONTACTS"+JSON.stringify(this.state.contacts));
@@ -91,12 +117,12 @@ class Contact extends Component {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {this.state.contacts.map((row) => (
-                                            <tr key={row.contactsid}>
+                                    {this.state.contacts.map((row, index) => (
+                                            <tr key={row.contactsid+index}>
                                                 <td width="30%" key={row.name}>{row.name}</td>
                                                 <td width="30%" key={row.phoneno}>{row.phoneno}</td>
                                                 <td width="20%" key={row.relationship}>{row.relationship}</td>
-                                                <td width="5%" key={row.listedby}>{row.listedby}</td>
+                                                <td width="5%" key={row.listedby+index}>{row.listedby}</td>
                                                 <td width="20%" key={row.contactsid}>
                                                     <Button
                                                         size={'sm'}
