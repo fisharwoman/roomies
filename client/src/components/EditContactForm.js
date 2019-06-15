@@ -8,13 +8,14 @@ class EditContactForm extends Component{
         super(props);
 
         this.state={
+            cid:this.props.cid,
             newPhone: null
         };
-        //this.handleEditAddr=this.handleEditAddr.bind(this);
+        this.handleEditPhone=this.handleEditPhone.bind(this);
     }
 
     handleEditPhone(){
-       // this.props.editContact(this.state.newPhone);
+       this.props.editContact(this.state.cid,this.state.newPhone);
     }
 
     // edit contact's phone number

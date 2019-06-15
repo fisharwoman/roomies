@@ -15,16 +15,96 @@ class Contact extends Component {
             selectedHouseholdId: this.props.selectedHousehold.houseid,
             showAddCollapsible: false,
             showEditCollapsible: false,
+            curContactId:null,
             contacts: []
         };
         this.onAddClick = this.onAddClick.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.addNewContact = this.addNewContact.bind(this);
+        this.editContact = this.editContact.bind(this);
+    }
+
+    async editContact(cid, newPhone) {
+        try {
+            let resp = await this.patchContact(cid, newPhone);
+            console.log(resp);
+            let contacts = this.state.contacts;
+            for(let i in contacts) {
+                let contact = contacts[i];
+                if(contact.contactsid == cid) {
+                    contact.phoneno = newPhone;
+                    break;
+                }
+            }
+
+            this.setState({
+                contacts: contacts,
+                showEditCollapsible:false
+            })
+
+           // if (resp.status === 200) {
+           //      this.setState(prevState => ({
+           //          contacts: newaddr
+           //      }));
+           // } else {
+           //     alert("Error. System error for editing household address.");
+           // }
+        } catch(e){
+            alert("Error.");
+        }
+    }
+
+//     /* updates contact for one or more of the attributes */
+// .put('/:contactsID', async (req,res) => {
+//     try {
+//     const query = `UPDATE Contacts SET
+//                     name = '${req.body.name}',
+//                     phoneNo = '${req.body.phoneNo}', relationship = '${req.body.relationship}',
+//                     listedBy = '${req.body.listedby}' ` + `WHERE contactsid = '${req.params.contactsID}' RETURNING *`;
+//     result = await db.any(query);
+//     res.status(200).json(result);
+// } catch (e) {
+//     console.log(e);
+//     res.status(400).send(e.message);
+// }
+// });
+
+    // PATCH contacts/:contactid
+    async patchContact(cid, newPhone) {
+        let contacts = this.state.contacts;
+        let curCon = null;
+        for(let i in contacts) {
+            let contact = contacts[i];
+            if(contact.contactsid == cid) {
+                curCon = contact;
+                break;
+            }
+        }
+        try {
+            const response = await fetch(`/contacts/${cid}`, {
+                method: "PATCH",
+                headers: {
+                    "content-type": 'application/json'
+                },
+                body: JSON.stringify({
+                    name: curCon.name,
+                    phoneNo: newPhone,
+                    relationship: curCon.relationship,
+                    listedby: curCon.listedby
+                })
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
     }
 
     onEditClick(cid) {
         this.setState(prevState => ({
-            showEditCollapsible: !prevState.showEditCollapsible
+            showEditCollapsible: !prevState.showEditCollapsible,
+            curContactId :cid
         }));
     }
 
@@ -91,7 +171,7 @@ class Contact extends Component {
                         </Row>
                         <Row>
                         {this.state.showEditCollapsible ?
-                            <EditContactForm/> :
+                            <EditContactForm cid={this.state.curContactId} editContact={this.editContact}/> :
                             null
                         }
                         </Row>
@@ -117,11 +197,9 @@ class Contact extends Component {
         }
     }
 
-
     async componentDidMount() {
         let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
         this.setState({contacts: data});
-
     }
 
     onAddClick() {
