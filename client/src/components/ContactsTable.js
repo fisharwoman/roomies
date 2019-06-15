@@ -4,37 +4,58 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import './Contact.css';
+import HouseholdManagementHouse from "./Management";
 
 export default class ContactsTable extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            houseid: 1, //todo
+            houseid: 2,
             contacts: []
         }
     }
 
-    // todo populates each row in the contacts table?
-    makeContacts() {
-            return (
-                <tr >
-                    <td>
-                        col 1
-                    </td>
-                    <td>
-                        col 2
-                    </td>
-                    <td>
-                       col 3
-                    </td>
-                    <td>
-                       col 4
-                    </td>
-                </tr>
-        );
+    // this seems to work
+    // GET contacts listing based on householdID. .get('/houses/:houseID'
+    async getContactsFromHouse(houseid) {
+        try {
+            const response = await fetch(`/contacts/houses/${houseid}`, {
+                method: "GET"
+            });
+            let data = await response.json();
+            console.log("CONTACTS FROM HOUSE " + JSON.stringify(data));
+            console.log(response);
+            return data;
+        } catch (e) {
+            throw e;
+        }
     }
 
+    // this works but i don't think we will need it
+    // GET contacts info from contact id .get('/:contactsID'
+    async getEachContact(contactsid) {
+        try {
+            const response = await fetch(`/contacts/${contactsid}`, {
+                method: "GET"
+            });
+            let data = await response.json();
+            data = data.map((value) => {
+                console.log("EACH CONTACT " + JSON.stringify(data));
+            });
+            console.log(response);
+            return data;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+
+    async componentDidMount() {
+        let data = await this.getContactsFromHouse(this.state.houseid);
+        this.setState({contacts: data});
+
+    }
 
     // first i need to do an api call to get the contacts info for the correct household
     // then add it to an object or array to store the info
@@ -57,7 +78,17 @@ export default class ContactsTable extends React.Component {
                                 <th>Owner</th>
                             </tr>
                             </thead>
-                            <tbody>{this.makeContacts()}</tbody>
+                            <tbody>
+                            {this.state.contacts.map(row => (
+                                <tr>
+                                    <td key={row.name}>{row.name}</td>
+                                    <td key={row.phoneno}>{row.phoneno}</td>
+                                    <td key={row.relationship}>{row.relationship}</td>
+                                    <td key={row.listedby}>{row.listedby}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+
                             <tfoot></tfoot>
                         </Table>
 

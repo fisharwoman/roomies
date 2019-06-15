@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import Button from "react-bootstrap/Button";
 import './Contact.css';
 import ContactsTable from "./ContactsTable";
-import AddHouseForm from "./Management";
 import AddContactForm from "./AddContactForm";
 
 class Contact extends Component {
@@ -29,47 +28,6 @@ class Contact extends Component {
         alert("remove");
     }
 
-    // this seems to work
-    // GET contacts listing based on householdID. .get('/houses/:houseID'
-    async getContactsFromHouse(houseid) {
-        try {
-            const response = await fetch(`/contacts/houses/${houseid}`, {
-                method: "GET"
-            });
-            let data = await response.json();
-            data = data.map((value) => {
-                console.log(data);
-            });
-            console.log(response);
-            // return data;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    // this seems to work
-    // GET contacts info from contact id .get('/:contactsID'
-    async getEachContact(contactsid){
-        try {
-            const response = await fetch(`/contacts/${contactsid}`, {
-                method: "GET"
-            });
-            let data = await response.json();
-            data = data.map((value) => {
-                console.log(data);
-            });
-            console.log(response);
-            // return data;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    getInfo(){
-        this.getContactsFromHouse(2);
-        this.getEachContact(1);
-    }
-
     // name, phone number, relationship, owner
     render() {
         return (
@@ -90,7 +48,7 @@ class Contact extends Component {
                     null
                 }
                 <div className={'contentPanel'}>
-                    {this.getInfo()}
+                    {<ContactsTable/>}
                 </div>
             </div>
         );
