@@ -57,7 +57,6 @@ class Contact extends Component {
 
     // name, phone number, relationship, owner
     render() {
-        console.log(this.state.selectedHousehold);
         return (
             <div >
                 <div className={"Cop"}>
@@ -114,7 +113,7 @@ class Contact extends Component {
 
     async addNewContact(cname, cphone, crel, crm) {
         try {
-            let postResp = await this.postContact();
+            let postResp = await this.postContact(cname, cphone, crel, crm);
            // if (postResp.status === 200) {
                 this.setState((state => ({
                     contacts: state.contacts.concat([{name: cname, phoneno: cphone, relationship: crel,listedby: crm}])
@@ -129,19 +128,19 @@ class Contact extends Component {
     }
 
     // POST contacts/
-    async postContact(cid, cname, cphone, crel, crm) {
+    async postContact(cname, cphone, crel, crm) {
         try {
+            console.log("does this work"+cname+cphone+crel+crm);
             const response = await fetch(`/contacts/`, {
                 method: "POST",
                 headers: {
                     "content-type": 'application/json'
                 },
                 body: JSON.stringify({
-                    Cid: cid,
                     name: cname,
                     phoneNo: cphone,
                     relationship : crel,
-                    Listedby: crm
+                    listedby: crm
                 })
             });
             console.log(response);

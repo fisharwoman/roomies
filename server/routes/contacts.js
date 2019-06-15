@@ -35,6 +35,7 @@ router
 
     /* ADDS new contact */
     .post('/', async (req,res) => {
+        console.log("HI"+JSON.stringify(req.body));
         try {
             const query = `INSERT INTO Contacts (name, phoneNo, relationship, listedBy)` +
                 `VALUES ('${req.body.name}', '${req.body.phoneNo}', '${req.body.relationship}', '${req.body.listedby}')` +
