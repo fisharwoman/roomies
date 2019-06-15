@@ -9,6 +9,7 @@ class Contact extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            selectedHousehold: this.props.selectedHousehold,
             showAddCollapsible: false
         };
         this.onAddClick = this.onAddClick.bind(this);
@@ -30,6 +31,7 @@ class Contact extends Component {
 
     // name, phone number, relationship, owner
     render() {
+        console.log(this.state.selectedHousehold);
         return (
             <div >
                 <div className={"Cop"}>
@@ -48,7 +50,7 @@ class Contact extends Component {
                     null
                 }
                 <div className={'contentPanel'}>
-                    {<ContactsTable/>}
+                    {<ContactsTable selectedHousehold = {this.state.selectedHousehold} />}
                 </div>
             </div>
         );

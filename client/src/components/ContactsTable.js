@@ -11,7 +11,7 @@ export default class ContactsTable extends React.Component {
         super(props);
 
         this.state = {
-            houseid: 2,
+            selectedHouseholdId: this.props.selectedHousehold.houseid,
             contacts: []
         }
     }
@@ -51,8 +51,8 @@ export default class ContactsTable extends React.Component {
     }
 
 
-    async componentDidMount() {
-        let data = await this.getContactsFromHouse(this.state.houseid);
+    async componentWillMount() {
+        let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
         this.setState({contacts: data});
 
     }
@@ -79,8 +79,8 @@ export default class ContactsTable extends React.Component {
                             </tr>
                             </thead>
                             <tbody>
-                            {this.state.contacts.map(row => (
-                                <tr>
+                            {this.state.contacts.map((row, index) => (
+                                <tr key={index}>
                                     <td key={row.name}>{row.name}</td>
                                     <td key={row.phoneno}>{row.phoneno}</td>
                                     <td key={row.relationship}>{row.relationship}</td>
