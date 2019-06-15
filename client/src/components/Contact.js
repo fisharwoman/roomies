@@ -5,6 +5,7 @@ import AddContactForm from "./AddContactForm";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
+import EditContactForm from "./EditContactForm";
 
 class Contact extends Component {
 
@@ -13,74 +14,19 @@ class Contact extends Component {
         this.state = {
             selectedHouseholdId: this.props.selectedHousehold.houseid,
             showAddCollapsible: false,
+            showEditCollapsible: false,
             contacts: []
         };
         this.onAddClick = this.onAddClick.bind(this);
+        this.onEditClick = this.onEditClick.bind(this);
         this.addNewContact = this.addNewContact.bind(this);
     }
 
-
-    // GET contacts listing based on householdID. .get('/houses/:houseID'
-    async getContactsFromHouse(houseid) {
-        try {
-            const response = await fetch(`/contacts/houses/${houseid}`, {
-                method: "GET"
-            });
-            let data = await response.json();
-            console.log("CONTACTS FROM HOUSE " + JSON.stringify(data));
-            console.log(response);
-            return data;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-
-    async componentDidMount() {
-        let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
-        this.setState({contacts: data});
-
-    }
-
-    onAddClick() {
+    onEditClick(cid) {
         this.setState(prevState => ({
-            showAddCollapsible: !prevState.showAddCollapsible
+            showEditCollapsible: !prevState.showEditCollapsible
         }));
     }
-
-    onEditClick() {
-        alert("edit");
-    }
-
-    onRemoveClick() {
-        alert("remove");
-    }
-
-    handleEditContact(cid){
-        console.log(cid);
-    }
-
-    // contacts/:contactid
-    async handleRemoveContact(cid){
-        console.log(cid);
-        try {
-            await fetch(`/contacts/${cid}`, {
-                method: "DELETE"
-            });
-
-            let contacts = this.state.contacts;
-            for (let i in contacts) {
-                if (contacts[i].contactsid === cid) {
-                    contacts.splice(i);
-                    break;
-                }
-            }
-            this.setState({contacts: contacts});
-        } catch (e) {
-            throw e;
-        }
-    }
-
 
     // name, phone number, relationship, owner
     render() {
@@ -92,10 +38,6 @@ class Contact extends Component {
                     <h2 className={'title'}>Contacts</h2>
                     <Button className={'ab'} variant={"outline-success"}
                             onClick={this.onAddClick.bind(this)}>Add </Button>
-                    <Button className={'ab'} variant={"outline-info"}
-                            onClick={this.onEditClick.bind(this)}>Edit</Button>
-                    <Button className={'ab'} variant={"outline-danger"}
-                            onClick={this.onRemoveClick.bind(this)}>Remove</Button>
 
                 </div>
                 {this.state.showAddCollapsible ?
@@ -128,7 +70,7 @@ class Contact extends Component {
                                                         size={'sm'}
                                                         className={'edit'}
                                                         variant={"outline-info"}
-                                                        onClick={this.handleEditContact.bind(this, row.contactsid)}
+                                                        onClick={this.onEditClick.bind(this, row.contactsid)}
                                                     >Edit</Button>
                                                     <Button
                                                         size={'sm'}
@@ -147,11 +89,71 @@ class Contact extends Component {
 
                             </Col>
                         </Row>
+                        <Row>
+                        {this.state.showEditCollapsible ?
+                            <EditContactForm/> :
+                            null
+                        }
+                        </Row>
                     </div>
                 </div>
             </div>
         );
     }
+
+
+    // GET contacts listing based on householdID. .get('/houses/:houseID'
+    async getContactsFromHouse(houseid) {
+        try {
+            const response = await fetch(`/contacts/houses/${houseid}`, {
+                method: "GET"
+            });
+            let data = await response.json();
+            console.log("CONTACTS FROM HOUSE " + JSON.stringify(data));
+            console.log(response);
+            return data;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+
+    async componentDidMount() {
+        let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
+        this.setState({contacts: data});
+
+    }
+
+    onAddClick() {
+        this.setState(prevState => ({
+            showAddCollapsible: !prevState.showAddCollapsible
+        }));
+    }
+
+
+
+    // contacts/:contactid
+    async handleRemoveContact(cid){
+        console.log(cid);
+        try {
+            await fetch(`/contacts/${cid}`, {
+                method: "DELETE"
+            });
+
+            let contacts = this.state.contacts;
+            for (let i in contacts) {
+                if (contacts[i].contactsid === cid) {
+                    contacts.splice(i);
+                    break;
+                }
+            }
+            this.setState({contacts: contacts});
+        } catch (e) {
+            throw e;
+        }
+    }
+
+
 
     async addNewContact(cname, cphone, crel, crm) {
         try {

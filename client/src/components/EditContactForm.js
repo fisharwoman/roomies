@@ -10,11 +10,11 @@ class EditContactForm extends Component{
         this.state={
             newPhone: null
         };
-        this.handleEditAddr=this.handleEditAddr.bind(this);
+        //this.handleEditAddr=this.handleEditAddr.bind(this);
     }
 
     handleEditPhone(){
-        this.props.editContact(this.state.newPhone);
+       // this.props.editContact(this.state.newPhone);
     }
 
     // edit contact's phone number
@@ -23,7 +23,7 @@ class EditContactForm extends Component{
             <Form className="edit-contact-form">
                 Edit a Contact <br/>
                 <label htmlFor={"newPhone"}>New Phone Number: &nbsp;&nbsp; </label>
-                <input type={"text"} name={"newPhone"}
+                <input type={"text"} name={"newPhone"} placeholder={"xxx-xxx-xxxx"}
                        onChange={event => {this.setState({newPhone: event.target.value})}}/>
                 <input type={"button"} name={"handleEditPh"} value={"+"} onClick={this.handleEditPhone} />
             </Form>
