@@ -202,6 +202,8 @@ class Contact extends Component {
     }
 
 
+    // todo i don't think delete contact is properly working... a bunch of things become null
+    // might this need error handling?
     // contacts/:contactid
     async handleRemoveContact(cid) {
         console.log(cid);
