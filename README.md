@@ -35,7 +35,9 @@ $ yarn start
 6. When asked, would you like to open in another port, answer:: yes
 
 # DEMO
-
+Use the following user for your demo:
+usernane: `joey_tribbiani@hotmail.com'`
+pwd:    `k#LSV^ZJ*z`
 
 # License
 MIT
