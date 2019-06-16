@@ -15,7 +15,7 @@ class Contact extends Component {
             selectedHouseholdId: this.props.selectedHousehold.houseid,
             showAddCollapsible: false,
             showEditCollapsible: false,
-            curContactId:null,
+            curContactId: null,
             contacts: []
         };
         this.onAddClick = this.onAddClick.bind(this);
@@ -29,9 +29,9 @@ class Contact extends Component {
             let resp = await this.patchContact(cid, newPhone);
             console.log(resp);
             let contacts = this.state.contacts;
-            for(let i in contacts) {
+            for (let i in contacts) {
                 let contact = contacts[i];
-                if(contact.contactsid == cid) {
+                if (contact.contactsid == cid) {
                     contact.phoneno = newPhone;
                     break;
                 }
@@ -39,17 +39,10 @@ class Contact extends Component {
 
             this.setState({
                 contacts: contacts,
-                showEditCollapsible:false
+                showEditCollapsible: false
             })
 
-           // if (resp.status === 200) {
-           //      this.setState(prevState => ({
-           //          contacts: newaddr
-           //      }));
-           // } else {
-           //     alert("Error. System error for editing household address.");
-           // }
-        } catch(e){
+        } catch (e) {
             alert("Error.");
         }
     }
@@ -73,16 +66,16 @@ class Contact extends Component {
     async patchContact(cid, newPhone) {
         let contacts = this.state.contacts;
         let curCon = null;
-        for(let i in contacts) {
+        for (let i in contacts) {
             let contact = contacts[i];
-            if(contact.contactsid == cid) {
+            if (contact.contactsid == cid) {
                 curCon = contact;
                 break;
             }
         }
         try {
             const response = await fetch(`/contacts/${cid}`, {
-                method: "PATCH",
+                method: "PUT",
                 headers: {
                     "content-type": 'application/json'
                 },
@@ -104,7 +97,7 @@ class Contact extends Component {
     onEditClick(cid) {
         this.setState(prevState => ({
             showEditCollapsible: !prevState.showEditCollapsible,
-            curContactId :cid
+            curContactId: cid
         }));
     }
 
@@ -140,11 +133,11 @@ class Contact extends Component {
                                     </thead>
                                     <tbody>
                                     {this.state.contacts.map((row, index) => (
-                                            <tr key={row.contactsid+index}>
+                                            <tr key={row.contactsid + index}>
                                                 <td width="30%" key={row.name}>{row.name}</td>
                                                 <td width="30%" key={row.phoneno}>{row.phoneno}</td>
                                                 <td width="20%" key={row.relationship}>{row.relationship}</td>
-                                                <td width="5%" key={row.listedby+index}>{row.listedby}</td>
+                                                <td width="5%" key={row.listedby + index}>{row.listedby}</td>
                                                 <td width="20%" key={row.contactsid}>
                                                     <Button
                                                         size={'sm'}
@@ -170,10 +163,10 @@ class Contact extends Component {
                             </Col>
                         </Row>
                         <Row>
-                        {this.state.showEditCollapsible ?
-                            <EditContactForm cid={this.state.curContactId} editContact={this.editContact}/> :
-                            null
-                        }
+                            {this.state.showEditCollapsible ?
+                                <EditContactForm cid={this.state.curContactId} editContact={this.editContact}/> :
+                                null
+                            }
                         </Row>
                     </div>
                 </div>
@@ -209,9 +202,8 @@ class Contact extends Component {
     }
 
 
-
     // contacts/:contactid
-    async handleRemoveContact(cid){
+    async handleRemoveContact(cid) {
         console.log(cid);
         try {
             await fetch(`/contacts/${cid}`, {
@@ -230,7 +222,6 @@ class Contact extends Component {
             throw e;
         }
     }
-
 
 
     async addNewContact(cname, cphone, crel, crm) {
