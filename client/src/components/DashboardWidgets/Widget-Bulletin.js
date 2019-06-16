@@ -6,7 +6,6 @@ export default class WidgetBulletin extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(props)
         this.state = {
             houseid: this.props.houseid,
             bulletins:[],
@@ -43,7 +42,7 @@ export default class WidgetBulletin extends React.Component {
     async componentDidMount() {
         try {
             let data = await this.getBulletins();
-            console.log(data);
+            // console.log(data);
             this.setState({
                 bulletins: data
             });

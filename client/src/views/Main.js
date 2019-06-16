@@ -95,7 +95,7 @@ export default class Main extends Component {
                     </BootStrap.Navbar>
 
                     <div className="content">
-                        <Route path="/dashboard" render={(props) => <Dashboard houseid={this.state.selectedHousehold.houseid} housename = {this.state.selectedHousehold.housename}/>}/>
+                        <Route path="/dashboard" render={(props) => <Dashboard houseid={this.state.selectedHousehold.houseid} housename = {this.state.selectedHousehold.name}/>}/>
                         <Route path="/calendar" render={(props) => <Calendar selectedHousehold = {this.state.selectedHousehold} />} />
                         <Route path="/contact" component={Contact}/>
                         <Route path='/expenses' component={(props) => <Expenses selectedHousehold = {this.state.selectedHousehold}/>} />

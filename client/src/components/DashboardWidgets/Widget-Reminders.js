@@ -18,7 +18,7 @@ export default class WidgetReminders extends React.Component{
     render() {
         return (
             <div className={'content-window'}>
-                <h4>Reminders for everyone in {this.props.housename}</h4>
+                <h4>Reminders for all in {this.props.housename}</h4>
                 {
                     this.state.reminders.length === 0 ?
                         null :
@@ -67,12 +67,11 @@ export default class WidgetReminders extends React.Component{
     }
 
     makereminders = () => {
-        // console.log(this.state.reminders);
         return this.state.reminders.map((value,index) => {
-            console.log(value)
+            // console.log(value)
             return(
                 <li  className={'scrollable-item'} key={index}>
-                <ReminderCard data={value}/>
+                <ReminderCard data={value} style={{display: 'flex', flexDirection: 'row'}}/>
                 </li>
             );
         })
@@ -91,13 +90,11 @@ export default class WidgetReminders extends React.Component{
 class ReminderCard extends React.Component{
          render() {
              return(
-                <Card border= "secondary" bg="info" text="white" style={{ width: '15rem' }}>
-                {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+                <Card border= "secondary" style={{ width: '12rem' }}>
                 <Card.Body>
-                  <Card.Title>{this.props.data.title}</Card.Title>
-                  <Card.Text> <small>Date: {this.formatDate(this.props.data.reminderdate)} </small>
-                  </Card.Text>
+                  <Card.Text>{this.props.data.title}</Card.Text>
                 </Card.Body>
+                <Card.Footer className="text-muted"> <small>{this.formatDate(this.props.data.reminderdate)}</small>  </Card.Footer>
               </Card>
              )
          }
@@ -109,9 +106,22 @@ class ReminderCard extends React.Component{
                  month: 'long',
                  day: '2-digit'
              }).format(dateFormat);
-             console.log(newDate)
+            //  console.log(newDate)
              return `${newDate}`
          }
-       
+
+         getCreator = async () => {
+             console.log(this.props.data.creator)
+            try {
+                let creatorName = await fetch(`/users/${this.props.data.creator}`, {
+                    method: 'GET'
+            }); 
+                console.log(creatorName);
+                let data = await creatorName.json();
+                return data.name;
+            } catch (e) {
+            throw e;
+            }
+        }       
        
 }

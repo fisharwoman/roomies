@@ -40,7 +40,8 @@ insert into Reminders (title, reminderDate, creator) values
 ('rehearse lines', '2019-06-23 16:30:00-07', 3),
 ('Chew Gum', '2019-06-23 16:45:00-07', 2),
 ('clean apartment', '2019-06-28 13:15:00-07', 2),
-('straighten hair!!!', '2019-07-01 08:00:00-07', 1);
+('straighten hair!!!', '2019-07-01 08:00:00-07', 1),
+('recycle day!', '2019-06-25 16:30:00-07', 4);
 
 INSERT INTO Roommate_Reminders VALUES
 (1,2),
@@ -48,7 +49,13 @@ INSERT INTO Roommate_Reminders VALUES
 (2,4),
 (2,5),
 (3,4),
-(3,5);
+(3,5),
+(4,2),
+(4,1),
+(5,1),
+(6,3),
+(6,4),
+(6,5);
 
 INSERT INTO Events (title, startDate, endDate, creator) VALUES
 ('Dinner Party', '2019-07-12 19:15:00-07', '2019-07-12 20:15:00-07', 2),
