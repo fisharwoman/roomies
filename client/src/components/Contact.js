@@ -137,6 +137,8 @@ class Contact extends Component {
             });
 
             let contacts = this.state.contacts;
+            // contacts = contacts.filter(contact => contact.id !== cid);
+            // console.log(contacts);
             for (let i in contacts) {
                 if (contacts[i].contactsid === cid) {
                     contacts.splice(i);

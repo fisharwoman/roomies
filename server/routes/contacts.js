@@ -9,7 +9,7 @@ router
         try {
           const query1 = `CREATE OR REPLACE VIEW ContactsByHouseID AS
           SELECT * FROM Contacts
-          RIGHT JOIN (SELECT * FROM Household_Roommates WHERE 
+          INNER JOIN (SELECT * FROM Household_Roommates WHERE 
             Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
           ON derivedTable.roommateID = Contacts.listedBy`;
 
