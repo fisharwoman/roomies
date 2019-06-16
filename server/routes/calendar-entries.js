@@ -60,8 +60,8 @@ router
 
     /* GET ALL reminders based on household, that is sent to ALL users (division). */
     .get('/reminderstoall/houses/:houseID', async (req,res) => {
-        console.log("here")
         try {
+            let today = new Date();
             const divisionQuery = `CREATE OR REPLACE VIEW divisionQuery AS
                             SELECT * FROM Roommate_Reminders 
                              WHERE reminderID not in ( SELECT reminderID FROM (
@@ -72,8 +72,8 @@ router
                                 (SELECT reminderID , userToRemind FROM Roommate_Reminders) ) AS r )`;
             const joinReminderQuery = `SELECT * FROM reminders
                                         right join (SELECT distinct reminderID FROM divisionQuery) as r
-                                        on r.reminderID = reminders.reminderID`;
-
+                                        on r.reminderID = reminders.reminderID WHERE reminderdate > '${today.toISOString()}'`;
+            console.log(joinReminderQuery);
             await db.none(divisionQuery);
             let result = await db.any(joinReminderQuery);
             console.log(joinReminderQuery);

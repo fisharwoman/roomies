@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/Widgets.css';
-import {Button, Card} from 'react-bootstrap';
+import {Button, Card, Carousel} from 'react-bootstrap';
 
 
 export default class WidgetReminders extends React.Component{
@@ -13,17 +13,17 @@ export default class WidgetReminders extends React.Component{
             houseid: this.props.houseid,
             reminders:[],
         };
-        this.props.addObserver(this.parentDidUpdate.bind(this));
+        this.props.addObserver(this.parentDidUpdate);
     }
 
     render() {
         return (
-            <div className={'content-window'}>
-                <h4>Reminders for all in {this.props.housename}</h4>
+            <div className={'content-window'} style={{height: '250px'}}>
+                <h4>Reminders for all roommates of {this.props.housename}</h4>
                 {
                     this.state.reminders.length === 0 ?
                         null :
-                        <ul className={'scrollable'}>{this.makereminders()}</ul>
+                        <Carousel indicators={false} interval={5000}>{this.makereminders()}</Carousel>
                 }
             </div>
         )
@@ -71,11 +71,12 @@ export default class WidgetReminders extends React.Component{
     makereminders = () => {
         return this.state.reminders.map((value,index) => {
             // console.log(value)
-            return(
-                <li  className={'scrollable-item'} key={index}>
-                <ReminderCard data={value} style={{display: 'flex', flexDirection: 'row'}}/>
-                </li>
-            );
+            // return(
+            //     <Carousel.Item key={index}>
+            //         <ReminderCard data={value} style={{display: 'flex', flexDirection: 'row'}}/>
+            //     </Carousel.Item>
+            // );
+            return (<Carousel.Item key={index}><ReminderCard data={value}/></Carousel.Item>)
         })
     }
 
@@ -92,13 +93,13 @@ export default class WidgetReminders extends React.Component{
 class ReminderCard extends React.Component{
          render() {
              return(
-                <Card border= "secondary" style={{ width: '12rem' }}>
+                <Card border= "secondary" style={{ width: '25rem' }}>
                 <Card.Body>
-                  <Card.Text>{this.props.data.title}</Card.Text>
+                  <Card.Text className={'text-center'}>{this.props.data.title}</Card.Text>
                 </Card.Body>
                 <Card.Footer className="text-muted"> <small>{this.formatDate(this.props.data.reminderdate)}</small>  </Card.Footer>
               </Card>
-             )
+             );
          }
 
          formatDate = (date) => {

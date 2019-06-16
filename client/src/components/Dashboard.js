@@ -19,11 +19,11 @@ class Dashboard extends Component {
         return (
             <div>
                 <div style={{width: "50%"}}>
-                    <WidgetBulletin addObserver={this.subscribeToChanges.bind(this)} userid={userid} houseid={this.state.houseid}/>
+                    <WidgetBulletin addObserver={this.subscribeToChanges} userid={userid} houseid={this.state.houseid}/>
                 </div>
-                <div style={{float: 'left', width: "30%"}}>
+                <div style={{float: 'left', width: "47%"}}>
                     {/*Put other widgets in this div only*/}
-                    <WidgetReminders addObserver={this.subscribeToChanges.bind(this)} houseid={this.state.houseid} housename={this.state.housename}/>
+                    <WidgetReminders addObserver={this.subscribeToChanges} houseid={this.state.houseid} housename={this.state.housename}/>
                     <WidgetExpenses/>
                 </div>
             </div>
@@ -39,7 +39,7 @@ class Dashboard extends Component {
         });
     }
 
-    subscribeToChanges(notify) {
+    subscribeToChanges = (notify) => {
         this.observers.push(notify);
     }
 }

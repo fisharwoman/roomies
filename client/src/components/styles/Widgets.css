@@ -278,3 +278,11 @@ ul {
     border: 20px solid;
     border-color: rgba(66, 139, 202, 0.43)   transparent transparent transparent;
 }
+
+.carousel-control-next {
+    filter: invert(100%);
+}
+
+.carousel-control-prev {
+    filter: invert(100%);
+}
