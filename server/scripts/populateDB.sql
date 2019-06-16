@@ -121,7 +121,7 @@ INSERT INTO PartialExpenses (expenseID, lender, borrower, amount, dateSplit, dat
 
 INSERT INTO Bulletin_isCreatedBy (title, body, dateCreated, createdBy, assignedTo) VALUES
 ('Please Clean Bathroom', 'Can we please try harder to keep the bathroom clean?', '2019-05-01 14:01:24-07', 1, 1),
-('Please Clean Bathroom', 'Can we please try harder to keep the bathroom clean?', '2019-05-01 14:01:24-07', 2, 2),
+('Please Clean Bathroom!', 'Can we please TRYYY harder to do our part to make the bathroom clean?', '2019-05-01 14:01:24-07', 2, 2),
 ('Dogs are the best!!', 'Let’s buy a dog next, pleaseeee?', '2019-05-04 16:43:34-07', 2, 1),
 ('Friends coming over', 'Hi! My friends are coming over tonight to watch a movie and eat some pizza. We’ll try to keep it quiet!', '2019-05-05 16:58:12-07', 2, 1),
 ('extra pizza in fridge', 'We have leftover pizza from last night in the fridge. Help yourself!', '2019-05-06 08:02:42-07', 3, 2);

@@ -36,7 +36,7 @@ $ yarn start
 
 # DEMO
 Use the following user for your demo:
-usernane: `joey_tribbiani@hotmail.com'`
+usernane: `joey_tribbiani@hotmail.com`
 pwd:    `k#LSV^ZJ*z`
 
 # License
