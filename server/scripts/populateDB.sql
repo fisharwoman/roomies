@@ -15,6 +15,7 @@ insert into Roommates(name, phoneNo, password, email) values
 insert into Household_Roommates values
 (1,1),
 (1,2),
+(1,3),
 (2,3),
 (2,4),
 (2,5);
@@ -44,7 +45,9 @@ insert into Reminders (title, reminderDate, creator) values
 ('recycle day!', '2019-06-25 16:30:00-07', 4);
 
 INSERT INTO Roommate_Reminders VALUES
+(1,1),
 (1,2),
+(1,3),
 (2,3),
 (2,4),
 (2,5),

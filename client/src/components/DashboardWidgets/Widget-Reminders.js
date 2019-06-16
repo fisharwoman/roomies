@@ -13,6 +13,7 @@ export default class WidgetReminders extends React.Component{
             houseid: this.props.houseid,
             reminders:[],
         };
+        this.props.addObserver(this.parentDidUpdate.bind(this));
     }
 
     render() {
@@ -45,7 +46,8 @@ export default class WidgetReminders extends React.Component{
             if (prevState.houseid !== this.state.houseid) {
                 let data = await this.getRemindersToAll();
                 this.setState({
-                    reminders: data
+                    reminders: data,
+                    housename: this.state.housename
                 });
             }
         } catch (e) {
@@ -80,7 +82,7 @@ export default class WidgetReminders extends React.Component{
     parentDidUpdate = (e) => {
         if (e.hasOwnProperty('houseid')) {
             this.setState({
-                houseid: e.houseid
+                houseid: e.houseid,
             });
         }
     }

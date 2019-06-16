@@ -23,7 +23,7 @@ class Dashboard extends Component {
                 </div>
                 <div style={{float: 'left', width: "30%"}}>
                     {/*Put other widgets in this div only*/}
-                    <WidgetReminders addObserver={this.subscribeToChanges} houseid={this.state.houseid} housename={this.state.housename}/>
+                    <WidgetReminders addObserver={this.subscribeToChanges.bind(this)} houseid={this.state.houseid} housename={this.state.housename}/>
                     <WidgetExpenses/>
                 </div>
             </div>
@@ -31,9 +31,11 @@ class Dashboard extends Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        this.observers.forEach((value) => value({houseid: nextProps.houseid}));
+        this.observers.forEach((value) => value({houseid: nextProps.houseid,
+        housename: nextProps.housename}));
         this.setState({
-            houseid: nextProps.houseid
+            houseid: nextProps.houseid,
+            housename: nextProps.housename
         });
     }
 
