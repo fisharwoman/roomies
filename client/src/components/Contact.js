@@ -24,83 +24,6 @@ class Contact extends Component {
         this.editContact = this.editContact.bind(this);
     }
 
-    async editContact(cid, newPhone) {
-        try {
-            let resp = await this.patchContact(cid, newPhone);
-            console.log(resp);
-            let contacts = this.state.contacts;
-            for (let i in contacts) {
-                let contact = contacts[i];
-                if (contact.contactsid == cid) {
-                    contact.phoneno = newPhone;
-                    break;
-                }
-            }
-
-            this.setState({
-                contacts: contacts,
-                showEditCollapsible: false
-            })
-
-        } catch (e) {
-            alert("Error.");
-        }
-    }
-
-//     /* updates contact for one or more of the attributes */
-// .put('/:contactsID', async (req,res) => {
-//     try {
-//     const query = `UPDATE Contacts SET
-//                     name = '${req.body.name}',
-//                     phoneNo = '${req.body.phoneNo}', relationship = '${req.body.relationship}',
-//                     listedBy = '${req.body.listedby}' ` + `WHERE contactsid = '${req.params.contactsID}' RETURNING *`;
-//     result = await db.any(query);
-//     res.status(200).json(result);
-// } catch (e) {
-//     console.log(e);
-//     res.status(400).send(e.message);
-// }
-// });
-
-    // PATCH contacts/:contactid
-    async patchContact(cid, newPhone) {
-        let contacts = this.state.contacts;
-        let curCon = null;
-        for (let i in contacts) {
-            let contact = contacts[i];
-            if (contact.contactsid == cid) {
-                curCon = contact;
-                break;
-            }
-        }
-        try {
-            const response = await fetch(`/contacts/${cid}`, {
-                method: "PUT",
-                headers: {
-                    "content-type": 'application/json'
-                },
-                body: JSON.stringify({
-                    name: curCon.name,
-                    phoneNo: newPhone,
-                    relationship: curCon.relationship,
-                    listedby: curCon.listedby
-                })
-            });
-            console.log(response);
-            return response;
-        } catch (e) {
-            console.log(e);
-            throw e;
-        }
-    }
-
-    onEditClick(cid) {
-        this.setState(prevState => ({
-            showEditCollapsible: !prevState.showEditCollapsible,
-            curContactId: cid
-        }));
-    }
-
     // name, phone number, relationship, owner
     render() {
         // console.log("CONTACTS"+JSON.stringify(this.state.contacts));
@@ -174,7 +97,6 @@ class Contact extends Component {
         );
     }
 
-
     // GET contacts listing based on householdID. .get('/houses/:houseID'
     async getContactsFromHouse(houseid) {
         try {
@@ -190,8 +112,10 @@ class Contact extends Component {
         }
     }
 
+    // todo something is going wrong with our database?
     async componentDidMount() {
         let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
+        console.log("DATA"+JSON.stringify(data));
         this.setState({contacts: data});
     }
 
@@ -273,6 +197,68 @@ class Contact extends Component {
         }
     }
 
+
+    async editContact(cid, newPhone) {
+        try {
+            let resp = await this.patchContact(cid, newPhone);
+            console.log(resp);
+            let contacts = this.state.contacts;
+            for (let i in contacts) {
+                let contact = contacts[i];
+                if (contact.contactsid == cid) {
+                    contact.phoneno = newPhone;
+                    break;
+                }
+            }
+
+            this.setState({
+                contacts: contacts,
+                showEditCollapsible: false
+            })
+
+        } catch (e) {
+            alert("Error.");
+        }
+    }
+
+    // PATCH contacts/:contactid
+    async patchContact(cid, newPhone) {
+        let contacts = this.state.contacts;
+        let curCon = null;
+        for (let i in contacts) {
+            let contact = contacts[i];
+            if (contact.contactsid == cid) {
+                curCon = contact;
+                break;
+            }
+        }
+        try {
+            const response = await fetch(`/contacts/${cid}`, {
+                method: "PUT",
+                headers: {
+                    "content-type": 'application/json'
+                },
+                body: JSON.stringify({
+                    name: curCon.name,
+                    phoneNo: newPhone,
+                    relationship: curCon.relationship,
+                    listedby: curCon.listedby
+                })
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    onEditClick(cid) {
+        this.setState(prevState => ({
+            showEditCollapsible: !prevState.showEditCollapsible,
+            curContactId: cid
+        }));
+    }
 
 }
 
