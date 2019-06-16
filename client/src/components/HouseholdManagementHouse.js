@@ -163,7 +163,8 @@ export default class HouseholdManagementHouse extends React.Component {
             let postResp = await this.addRoomAPI(houseid, newRoomName);
             if (postResp.status === 200) {
                 this.setState((state => ({
-                    rooms: state.rooms.concat([newRoomName])
+                    rooms: state.rooms.concat([newRoomName]),
+                    showAddRoomForm: false
                 })))
             } else {
                 alert("Error. This room has already been added.");
@@ -198,7 +199,8 @@ export default class HouseholdManagementHouse extends React.Component {
 
             if (postResp.status === 200) {
                 this.setState((state => ({
-                    roommates: state.roommates.concat([rmname]) // this is client side
+                    roommates: state.roommates.concat([rmname]),
+                    showAddRMForm: false
                 })));
             } else {
                 alert("Error. This roommate has already been added."); // duplicate roommate, or roommate that doesn't exist
@@ -259,7 +261,8 @@ export default class HouseholdManagementHouse extends React.Component {
 
             if (resp.status === 200) {
                 this.setState(prevState => ({
-                    address: newaddr
+                    address: newaddr,
+                    showEditHouseForm: false
                 }));
             } else {
                 alert("Error. System error for editing household address.");

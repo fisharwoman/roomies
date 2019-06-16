@@ -236,7 +236,8 @@ class Contact extends Component {
                         phoneno: cphone,
                         relationship: crel,
                         listedby: crm
-                    }])
+                    }]),
+                    showAddCollapsible: false
                 })))
             } else {
                 alert("Error in adding this contact.");

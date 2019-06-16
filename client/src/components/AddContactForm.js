@@ -18,7 +18,6 @@ class AddContactForm extends Component{
     }
 
     handleAddNewContact() {
-        alert("form submitted");
         this.props.addNew(this.state.cname, this.state.cphone, this.state.crel, this.state.crm);
     }
 
