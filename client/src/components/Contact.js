@@ -57,22 +57,25 @@ class Contact extends Component {
                                     <tbody>
                                     {this.state.contacts.map((row, index) => (
                                             <tr key={row.contactsid + index}>
-                                                <td width="30%" key={row.name}>{row.name}</td>
-                                                <td width="30%" key={row.phoneno}>{row.phoneno}</td>
+                                                <td width="20%" key={row.name}>{row.name}</td>
+                                                <td width="15%" key={row.phoneno}>{row.phoneno}</td>
                                                 <td width="20%" key={row.relationship}>{row.relationship}</td>
-                                                <td width="5%" key={row.listedby + index}>{row.listedby}</td>
+                                                <td width="20%" key={row.listedby + index}>{row.listedbyname}</td>
                                                 <td width="20%" key={row.contactsid}>
                                                     <Button
                                                         size={'sm'}
                                                         className={'edit'}
                                                         variant={"outline-info"}
-                                                        onClick={this.onEditClick.bind(this, row.contactsid)}
+                                                        value={row.contactsid}
+                                                        onClick={this.onEditClick}
                                                     >Edit</Button>
                                                     <Button
                                                         size={'sm'}
                                                         className={'remove'}
                                                         variant={"outline-danger"}
-                                                        onClick={this.handleRemoveContact.bind(this, row.contactsid)}
+                                                        value={row.contactsid}
+                                                        key={index}
+                                                        onClick={this.handleRemoveContact}
                                                     >Remove</Button></td>
                                             </tr>
                                         )
@@ -104,8 +107,6 @@ class Contact extends Component {
                 method: "GET"
             });
             let data = await response.json();
-            console.log("CONTACTS FROM HOUSE " + JSON.stringify(data));
-            console.log(response);
             return data;
         } catch (e) {
             throw e;
@@ -114,9 +115,13 @@ class Contact extends Component {
 
     // todo something is going wrong with our database?
     async componentDidMount() {
-        let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
-        console.log("DATA"+JSON.stringify(data));
-        this.setState({contacts: data});
+        try {
+            let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
+            console.log(data);
+            this.setState({contacts: data});
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     onAddClick() {
@@ -129,22 +134,16 @@ class Contact extends Component {
     // todo i don't think delete contact is properly working... a bunch of things become null
     // might this need error handling?
     // contacts/:contactid
-    async handleRemoveContact(cid) {
-        console.log(cid);
+    handleRemoveContact = async (e) => {
+        // console.log(cid);
+        const cid = e.target.value;
+        const idx = e.target.key;
         try {
             await fetch(`/contacts/${cid}`, {
                 method: "DELETE"
             });
-
             let contacts = this.state.contacts;
-            // contacts = contacts.filter(contact => contact.id !== cid);
-            // console.log(contacts);
-            for (let i in contacts) {
-                if (contacts[i].contactsid === cid) {
-                    contacts.splice(i);
-                    break;
-                }
-            }
+            contacts.splice(idx,1);
             this.setState({contacts: contacts});
         } catch (e) {
             throw e;
@@ -155,7 +154,6 @@ class Contact extends Component {
     async addNewContact(cname, cphone, crel, crm) {
         try {
             let cid = await this.postContact(cname, cphone, crel, crm);
-            // console.log("cid"+cid);
             if (cid != null) {
                 this.setState((state => ({
                     contacts: state.contacts.concat([{
@@ -191,7 +189,6 @@ class Contact extends Component {
                     listedby: crm
                 })
             });
-            // console.log(response);
             let data = await response.json();
             return data.cid;
         } catch (e) {
@@ -203,7 +200,6 @@ class Contact extends Component {
     async editContact(cid, newPhone) {
         try {
             let resp = await this.patchContact(cid, newPhone);
-            console.log(resp);
             let contacts = this.state.contacts;
             for (let i in contacts) {
                 let contact = contacts[i];
@@ -247,7 +243,6 @@ class Contact extends Component {
                     listedby: curCon.listedby
                 })
             });
-            console.log(response);
             return response;
         } catch (e) {
             console.log(e);
@@ -255,7 +250,8 @@ class Contact extends Component {
         }
     }
 
-    onEditClick(cid) {
+    onEditClick = (e) => {
+        const cid = e.target.value;
         this.setState(prevState => ({
             showEditCollapsible: !prevState.showEditCollapsible,
             curContactId: cid

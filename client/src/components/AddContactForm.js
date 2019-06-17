@@ -12,7 +12,7 @@ class AddContactForm extends Component{
             cname: null,
             cphone: null,
             crel: null,
-            crm: null
+            crm: window.sessionStorage.getItem('userid')
         };
         this.handleAddNewContact=this.handleAddNewContact.bind(this);
     }
@@ -37,9 +37,6 @@ class AddContactForm extends Component{
                     <label htmlFor={"crel"}>Relationship: &nbsp;&nbsp; </label>
                     <input type={"text"} name={"crel"}
                            onChange={event => {this.setState({crel: event.target.value})}} /> <br/>
-                    <label htmlFor={"crm"}>Roommate: &nbsp;&nbsp; </label>
-                    <input type={"text"} name={"crm"}
-                           onChange={event => {this.setState({crm: event.target.value})}} /> <br/>
                     <input type={"button"} name={"handleAddNewContact"} value={"+"}
                            onClick={this.handleAddNewContact} /> <br/>
                 </Form>

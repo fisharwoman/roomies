@@ -13,10 +13,9 @@ router
             Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
           ON derivedTable.roommateID = Contacts.listedBy`;
 
-          const query2 = `SELECT * FROM ContactsByHouseID`;
+          const query2 = `SELECT c.contactsid, c.name, c.phoneno, c.relationship, c.listedby, r.name as listedbyname FROM ContactsByHouseID c, roommates r where c.listedby = r.userid order by c.name`;
           await db.any(query1);
           let result = await db.any(query2);
-          console.log(JSON.stringify(result));
           res.status(200).json(result);
       } catch (e) {
           res.status(400).send(e.message);
