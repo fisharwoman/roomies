@@ -36,6 +36,7 @@ export default class HouseholdManagementHouse extends React.Component {
         this.editHouse = this.editHouse.bind(this);
     }
 
+
     // updates house address by calling the api and updating front end if successful
     async editHouse(newaddr) {
         try {
@@ -206,7 +207,8 @@ export default class HouseholdManagementHouse extends React.Component {
             let postResp = await this.addRoomAPI(houseid, newRoomName);
             if (postResp.status === 200) {
                 this.setState((state => ({
-                    rooms: state.rooms.concat([newRoomName])
+                    rooms: state.rooms.concat([newRoomName]),
+                    showAddRoomForm: false
                 })))
             } else {
                 alert("Error. This room has already been added.");
@@ -241,7 +243,8 @@ export default class HouseholdManagementHouse extends React.Component {
 
             if (postResp.status === 200) {
                 this.setState((state => ({
-                    roommates: state.roommates.concat([rmname]) // this is client side
+                    roommates: state.roommates.concat([rmname]),
+                    showAddRMForm: false
                 })));
             } else {
                 alert("Error. This roommate has already been added."); // duplicate roommate, or roommate that doesn't exist
@@ -293,5 +296,50 @@ export default class HouseholdManagementHouse extends React.Component {
         }));
     }
 
+
+    // updates house address by calling the api and updating front end if successful
+    async editHouse(newaddr) {
+        try {
+            let houseid = this.state.houseid;
+            let resp = await this.patchHouse(newaddr, houseid);
+
+            if (resp.status === 200) {
+                this.setState(prevState => ({
+                    address: newaddr,
+                    showEditHouseForm: false
+                }));
+            } else {
+                alert("Error. System error for editing household address.");
+            }
+        } catch(e){
+            alert("Error.");
+        }
+    }
+
+    // todo works in front end, returns status 200, but changes to undefined in db.
+    // PATCH households/:houseID/ (for editing house address)
+    async patchHouse(newaddr, houseid) {
+        try {
+            const response = await fetch(`/households/${houseid}/`, {
+                method: "PATCH",
+                headers: {
+                    "content-type": 'application/json'
+                },
+                body: JSON.stringify({Address: newaddr})
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    // toogles edit household form
+    onEditClick() {
+        this.setState(prevState => ({
+            showEditHouseForm: !prevState.showEditHouseForm
+        }));
+    }
 
 }
