@@ -18,17 +18,19 @@ import '../index.css';
 
 import * as BootStrap from 'react-bootstrap';
 
+const placeholder = {
+    houseid: 0,
+    address: '-',
+    name: "You aren't in a house yet!"
+};
+
 export default class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
             households: [],
             userName: "User Name",
-            selectedHousehold: {
-                houseid: 0,
-                address: "-",
-                name: "You aren't in a house yet!"
-            },
+            selectedHousehold: placeholder,
             isLoading: true,
             redirect: '/dashboard'
         };
@@ -61,7 +63,7 @@ export default class Main extends Component {
 
                         <div className="content">
                             <Route path='/management' component={Management}/>
-                            <Route path={'/newAcct'} render={(props) => <NewAcct notify={this.componentDidMount.bind(this)}/>}/>
+                            <Route path={'/newAcct'} render={(props) => <NewAcct update={this.update}/>}/>
                             <Redirect from={'/'} to={'/newAcct'}/>
                         </div>
 
@@ -100,7 +102,7 @@ export default class Main extends Component {
                         <Route path="/calendar" render={(props) => <Calendar selectedHousehold = {this.state.selectedHousehold} />} />
                         <Route path="/contact" component={Contact}/>
                         <Route path='/expenses' component={(props) => <Expenses selectedHousehold = {this.state.selectedHousehold}/>} />
-                        <Route path='/management' component={Management}/>
+                        <Route path='/management' component={(props) => <Management update={this.update}/>}/>
                         <Redirect from={'/'} to={this.state.selectedHousehold.houseid === 0 ? '/management' : '/dashboard'}/>
                     </div>
 
@@ -129,7 +131,16 @@ export default class Main extends Component {
 
     subscribeToChanges = (notify) => {
         this.observers.push(notify);
-    }
+    };
+
+    update = async (v) => {
+        if (v.hasOwnProperty('households')) {
+            this.setState({
+                households: v.households,
+                selectedHousehold: v.households[0] ? v.households[0] : placeholder
+            });
+        }
+    };
 
     async getHouseholds() {
         try {
@@ -203,7 +214,7 @@ export default class Main extends Component {
         this.observers.forEach((value) => {
             value({
                 houseid: this.state.households[key].houseid,
-                housename: this.state.households[key].housename
+                housename: this.state.households[key].name
             });
         });
         this.setState(
@@ -232,7 +243,7 @@ class NewAcct extends React.Component {
                     <li>If you're looking to <em>join a household</em>, a roommate of that household can add you now</li>
                     <li>Otherwise, create a new household now to start using Roomies</li>
                 </ul>
-                <BootStrap.Form onSubmit={() => this.addHouseAPI()} style={{display: 'inline'}}>
+                <BootStrap.Form onSubmit={(e) => this.handleSubmit(e)} style={{display: 'inline'}}>
                     <BootStrap.Form.Row>
                         <BootStrap.Col>
                             <BootStrap.Form.Group>
@@ -255,6 +266,13 @@ class NewAcct extends React.Component {
         )
     }
 
+    async handleSubmit(e) {
+        e.preventDefault();
+        try {
+            await this.addHouseAPI();
+        } catch (e) {console.log(e);}
+    }
+
     async addHouseAPI() {
         try {
             let userid = window.sessionStorage.getItem('userid');
@@ -272,7 +290,13 @@ class NewAcct extends React.Component {
                     'content-type': 'application/json'
                 }
             });
-            this.props.notify();
+            this.props.update({
+                households: [{
+                    houseid: data.hid,
+                    address: this.state.address,
+                    name: this.state.name
+                }]
+            });
         } catch (e) {
             console.log(e);
             throw e;

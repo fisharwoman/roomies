@@ -6,7 +6,6 @@ import {Button, Card, Carousel} from 'react-bootstrap';
 export default class WidgetReminders extends React.Component{
 
     constructor(props) {
-        console.log(props)
         super(props);
         this.state = {
             housename: this.props.housename,
@@ -23,7 +22,7 @@ export default class WidgetReminders extends React.Component{
                 {
                     this.state.reminders.length === 0 ?
                         null :
-                        <Carousel indicators={false} interval={5000}>{this.makereminders()}</Carousel>
+                        <Carousel indicators={false} interval={3500}>{this.makereminders()}</Carousel>
                 }
             </div>
         )
@@ -78,15 +77,16 @@ export default class WidgetReminders extends React.Component{
             // );
             return (<Carousel.Item key={index}><ReminderCard data={value}/></Carousel.Item>)
         })
-    }
+    };
 
     parentDidUpdate = (e) => {
         if (e.hasOwnProperty('houseid')) {
             this.setState({
                 houseid: e.houseid,
+                housename: e.housename,
             });
         }
-    }
+    };
 }
 
 

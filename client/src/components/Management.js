@@ -10,10 +10,12 @@ export default class Management extends React.Component {
         super(props);
         this.state = {
             showAddCollapsible: false,
+            households: [],
             householdComponents: []
         };
         this.onAddClick = this.onAddClick.bind(this);
         this.addNewHouse = this.addNewHouse.bind(this);
+        console.log(this.props.update);
     }
 
     render() {
@@ -37,16 +39,18 @@ export default class Management extends React.Component {
 
     // used for table display
     async componentDidMount() {
-        let data = await this.generateHouseholdComponents();
+        let households = await this.getHouseholds();
+        let data = await this.generateHouseholdComponents(households);
         this.setState({
+            households: households,
             householdComponents: data
         });
     }
 
     // used for table display
-    async generateHouseholdComponents() {
+    async generateHouseholdComponents(data) {
         try {
-            let data = await this.getHouseholds();
+            // let data = await this.getHouseholds();
             data = await Promise.all(data.map(async (value) => {
                 let roommates = await this.getRoommates(value.houseid);
                 let rooms = await this.getRooms(value.houseid);
@@ -148,10 +152,12 @@ export default class Management extends React.Component {
                 }
             });
             if (response.status === 200) {
-                let data = await this.generateHouseholdComponents();
+                let households = await this.getHouseholds();
+                let data = await this.generateHouseholdComponents(households);
                 this.setState({
+                    households: households,
                     householdComponents: data
-                });
+                }, () => this.props.update({households: households}));
             } else {
                 alert("Error. This household could not be removed.");
             }
@@ -172,11 +178,14 @@ export default class Management extends React.Component {
     async addNewHouse(newaddr, newname) {
         try {
             await this.addHouseAPI(newaddr, newname);
-            let data = await this.generateHouseholdComponents();
+            let households = await this.getHouseholds();
+            let data = await this.generateHouseholdComponents(households);
             this.setState({
+                households: households,
                 householdComponents: data
-            });
+            }, () => {this.props.update({households: households})});
         } catch (e) {
+            console.log(e);
             alert("Error. System error for adding household.");
         }
     }
