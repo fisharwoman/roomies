@@ -56,7 +56,7 @@ function loadRouter() {
     app.use('/auth', pass.authenticate);
     app.use('/signup', signupRouter);
     app.use('/users', pass.isAuthenticated, usersRouter);
-    app.use('/contacts', pass.isAuthenticated, contactsRouter);
+    app.use('/contacts', contactsRouter);
     app.use('/households', pass.isAuthenticated, householdsRouter); // TODO add authentication
     app.use('/bulletins', pass.isAuthenticated, bulletinsRouter);
     app.use('/calendar-entries',pass.isAuthenticated, calendarRouter);

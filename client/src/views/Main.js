@@ -63,7 +63,7 @@ export default class Main extends Component {
                     <div className="content">
                         <Route path="/dashboard" component={Dashboard}/>
                         <Route path="/calendar" render={(props) => <Calendar selectedHousehold = {this.state.selectedHousehold} />} />
-                        <Route path="/contact" component={Contact}/>
+                        <Route path="/contact" render={(props) => <Contact selectedHousehold = {this.state.selectedHousehold} />} />
                         <Route path='/expenses' component={Expenses}/>
                         <Route path='/management' component={Management}/>
                         <Redirect from={'/'} to={'/dashboard'}/>
