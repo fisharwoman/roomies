@@ -54,7 +54,6 @@ export default class HouseholdManagementHouse extends React.Component {
         }
     }
 
-    // todo works in front end, returns status 200, but changes to undefined in db.
     // PATCH households/:houseID/ (for editing house address)
     async patchHouse(newaddr, houseid) {
         try {
@@ -63,7 +62,7 @@ export default class HouseholdManagementHouse extends React.Component {
                 headers: {
                     "content-type": 'application/json'
                 },
-                body: JSON.stringify({Address: newaddr})
+                body: JSON.stringify({address: newaddr})
             });
             console.log(response);
             return response;

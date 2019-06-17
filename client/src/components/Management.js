@@ -120,8 +120,6 @@ export default class Management extends React.Component {
                 }
             });
             let data = await response.json();
-            // console.log(response);
-            // console.log(data);
             data = await Promise.all(data.map(async (value) => {
                 const r = await fetch(value, {
                     method: 'GET',

@@ -92,7 +92,7 @@ export default class WidgetBulletin extends React.Component {
 
     makeEditor() {
         return (
-            <Form id={'editor-form'} onSubmit={() => this.addBulletin()}>
+            <Form id={'editor-form'} onSubmit={this.handleSubmit}>
                 <Form.Row>
                     <Col>
                         <Form.Group>
@@ -136,6 +136,15 @@ export default class WidgetBulletin extends React.Component {
             });
         }
     }
+
+    handleSubmit = async () => {
+        if (this.state.newBulletin.title === '' || this.state.newBulletin.body === '') return;
+        else try {
+            await this.addBulletin();
+        } catch (e) {
+            console.log(e);
+        }
+    };
 
     async deleteBulletin(bid) {
         try {
@@ -186,7 +195,7 @@ export default class WidgetBulletin extends React.Component {
                 }
             });
         } catch (e) {
-
+            console.log(e);
         }
     }
 }

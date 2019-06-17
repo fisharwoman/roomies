@@ -72,7 +72,7 @@ router
                                 (SELECT reminderID , userToRemind FROM Roommate_Reminders) ) AS r )`;
             const joinReminderQuery = `SELECT * FROM reminders
                                         right join (SELECT distinct reminderID FROM divisionQuery) as r
-                                        on r.reminderID = reminders.reminderID WHERE reminderdate > '${today.toISOString()}'`;
+                                        on r.reminderID = reminders.reminderID WHERE reminderdate > '${today.toISOString()}' ORDER BY reminders.reminderdate`;
             console.log(joinReminderQuery);
             await db.none(divisionQuery);
             let result = await db.any(joinReminderQuery);

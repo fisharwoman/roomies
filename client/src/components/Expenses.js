@@ -14,12 +14,6 @@ export default class Expenses extends React.Component {
             houseid: props.selectedHousehold.houseid,
             isShowingOwed: true
         };
-        // //  console.log(JSON.stringify(this.state));
-        // this.handleAddRoom = this.handleAddRoom.bind(this); // may or may not need this
-        // this.addNewRoom = this.addNewRoom.bind(this);
-        // this.handleAddRM = this.handleAddRM.bind(this); // may not need this
-        // this.addNewRM = this.addNewRM.bind(this);
-        // this.editHouse = this.editHouse.bind(this);
     }
 
     render() {

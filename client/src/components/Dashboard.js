@@ -12,6 +12,7 @@ class Dashboard extends Component {
             housename: this.props.housename,
         };
         this.observers = [];
+        this.props.addObserver(this.parentDidUpdate);
     }
 
     render() {
@@ -30,17 +31,29 @@ class Dashboard extends Component {
         );
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.observers.forEach((value) => value({houseid: nextProps.houseid,
-        housename: nextProps.housename}));
-        this.setState({
-            houseid: nextProps.houseid,
-            housename: nextProps.housename
-        });
-    }
+    // componentWillReceiveProps(nextProps, nextContext) {
+    //     this.observers.forEach((value) => value({houseid: nextProps.houseid,
+    //     housename: nextProps.housename}));
+    //     this.setState({
+    //         houseid: nextProps.houseid,
+    //         housename: nextProps.housename
+    //     });
+    // }
 
     subscribeToChanges = (notify) => {
         this.observers.push(notify);
+    }
+
+    parentDidUpdate = (e) => {
+        if (e.hasOwnProperty('houseid') && e.hasOwnProperty('housename')) {
+            this.observers.forEach((value) => {
+                value({houseid: e.houseid, housename: e.housename});
+            });
+            this.setState({
+                houseid: e.houseid,
+                housename: e.housename
+            });
+        }
     }
 }
 

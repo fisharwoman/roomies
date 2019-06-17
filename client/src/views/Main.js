@@ -31,7 +31,8 @@ export default class Main extends Component {
             },
             isLoading: true,
             redirect: '/dashboard'
-        }
+        };
+        this.observers = [];
     }
 
     render() {
@@ -95,7 +96,7 @@ export default class Main extends Component {
                     </BootStrap.Navbar>
 
                     <div className="content">
-                        <Route path="/dashboard" render={(props) => <Dashboard houseid={this.state.selectedHousehold.houseid} housename = {this.state.selectedHousehold.name}/>}/>
+                        <Route path="/dashboard" render={(props) => <Dashboard houseid={this.state.selectedHousehold.houseid} housename = {this.state.selectedHousehold.name} addObserver={this.subscribeToChanges}/>}/>
                         <Route path="/calendar" render={(props) => <Calendar selectedHousehold = {this.state.selectedHousehold} />} />
                         <Route path="/contact" component={Contact}/>
                         <Route path='/expenses' component={(props) => <Expenses selectedHousehold = {this.state.selectedHousehold}/>} />
@@ -124,6 +125,10 @@ export default class Main extends Component {
         } catch (e) {
             console.log(e.message);
         }
+    }
+
+    subscribeToChanges = (notify) => {
+        this.observers.push(notify);
     }
 
     async getHouseholds() {
@@ -195,6 +200,12 @@ export default class Main extends Component {
      * @param key
      */
     switchHousehold(key) {
+        this.observers.forEach((value) => {
+            value({
+                houseid: this.state.households[key].houseid,
+                housename: this.state.households[key].housename
+            });
+        });
         this.setState(
             {
                 selectedHousehold: this.state.households[key]
