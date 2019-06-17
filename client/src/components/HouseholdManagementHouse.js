@@ -36,6 +36,50 @@ export default class HouseholdManagementHouse extends React.Component {
         this.editHouse = this.editHouse.bind(this);
     }
 
+
+    // updates house address by calling the api and updating front end if successful
+    async editHouse(newaddr) {
+        try {
+            let houseid = this.state.houseid;
+            let resp = await this.patchHouse(newaddr, houseid);
+
+            if (resp.status === 200) {
+                this.setState(prevState => ({
+                    address: newaddr
+                }));
+            } else {
+                alert("Error. System error for editing household address.");
+            }
+        } catch(e){
+            alert("Error.");
+        }
+    }
+
+    // PATCH households/:houseID/ (for editing house address)
+    async patchHouse(newaddr, houseid) {
+        try {
+            const response = await fetch(`/households/${houseid}/`, {
+                method: "PATCH",
+                headers: {
+                    "content-type": 'application/json'
+                },
+                body: JSON.stringify({address: newaddr})
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    // toogles edit household form
+    onEditClick() {
+        this.setState(prevState => ({
+            showEditHouseForm: !prevState.showEditHouseForm
+        }));
+    }
+
     render() {
         return (
             <div id={'houseComponent'}>

@@ -15,6 +15,7 @@ insert into Roommates(name, phoneNo, password, email) values
 insert into Household_Roommates values
 (1,1),
 (1,2),
+(1,3),
 (2,3),
 (2,4),
 (2,5);
@@ -40,14 +41,24 @@ insert into Reminders (title, reminderDate, creator) values
 ('rehearse lines', '2019-06-23 16:30:00-07', 3),
 ('Chew Gum', '2019-06-23 16:45:00-07', 2),
 ('clean apartment', '2019-06-28 13:15:00-07', 2),
-('straighten hair!!!', '2019-07-01 08:00:00-07', 1);
+('straighten hair!!!', '2019-07-01 08:00:00-07', 1),
+('recycle day!', '2019-06-25 16:30:00-07', 4);
 
 INSERT INTO Roommate_Reminders VALUES
+(1,1),
 (1,2),
+(1,3),
 (2,3),
 (2,4),
+(2,5),
 (3,4),
-(3,5);
+(3,5),
+(4,2),
+(4,1),
+(5,1),
+(6,3),
+(6,4),
+(6,5);
 
 INSERT INTO Events (title, startDate, endDate, creator) VALUES
 ('Dinner Party', '2019-07-12 19:15:00-07', '2019-07-12 20:15:00-07', 2),
@@ -109,8 +120,8 @@ INSERT INTO PartialExpenses (expenseID, lender, borrower, amount, dateSplit, dat
 (2,3,5, '3.00','2019-05-03 17:11:14-07',null);
 
 INSERT INTO Bulletin_isCreatedBy (title, body, dateCreated, createdBy, assignedTo) VALUES
-('Please Clean Bathroom', 'Can we please try harder to keep the bathroom clean?', '2019-05-01 14:01:24-07', 4, 5),
-('Please Clean Bathroom', 'Can we please try harder to keep the bathroom clean?', '2019-05-01 14:01:24-07', 4, 3),
-('Dogs are the best!!', 'Let’s buy a dog next, pleaseeee?', '2019-05-04 16:43:34-07', 1, 2),
+('Please Clean Bathroom', 'Can we please try harder to keep the bathroom clean?', '2019-05-01 14:01:24-07', 1, 1),
+('Please Clean Bathroom!', 'Can we please TRYYY harder to do our part to make the bathroom clean?', '2019-05-01 14:01:24-07', 2, 2),
+('Dogs are the best!!', 'Let’s buy a dog next, pleaseeee?', '2019-05-04 16:43:34-07', 2, 1),
 ('Friends coming over', 'Hi! My friends are coming over tonight to watch a movie and eat some pizza. We’ll try to keep it quiet!', '2019-05-05 16:58:12-07', 2, 1),
-('extra pizza in fridge', 'We have leftover pizza from last night in the fridge. Help yourself!', '2019-05-06 08:02:42-07', 3, 4);
+('extra pizza in fridge', 'We have leftover pizza from last night in the fridge. Help yourself!', '2019-05-06 08:02:42-07', 3, 2);

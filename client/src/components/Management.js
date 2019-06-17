@@ -10,10 +10,12 @@ export default class Management extends React.Component {
         super(props);
         this.state = {
             showAddCollapsible: false,
+            households: [],
             householdComponents: []
         };
         this.onAddClick = this.onAddClick.bind(this);
         this.addNewHouse = this.addNewHouse.bind(this);
+        console.log(this.props.update);
     }
 
     render() {
@@ -37,13 +39,18 @@ export default class Management extends React.Component {
 
     // used for table display
     async componentDidMount() {
-        await this.generateHouseholdComponents();
+        let households = await this.getHouseholds();
+        let data = await this.generateHouseholdComponents(households);
+        this.setState({
+            households: households,
+            householdComponents: data
+        });
     }
 
     // used for table display
-    async generateHouseholdComponents() {
+    async generateHouseholdComponents(data) {
         try {
-            let data = await this.getHouseholds();
+            // let data = await this.getHouseholds();
             data = await Promise.all(data.map(async (value) => {
                 let roommates = await this.getRoommates(value.houseid);
                 let rooms = await this.getRooms(value.houseid);
@@ -56,9 +63,9 @@ export default class Management extends React.Component {
                 return <HouseholdManagementHouse key={value.houseid} house={value}
                                                  removeHousehold={this.removeHousehold.bind(this)}/>
             });
-            this.setState({householdComponents: data});
+            // this.setState({householdComponents: data});
             // console.log(JSON.stringify(data));
-
+            return data;
         } catch (e) {
             console.log(e.message);
         }
@@ -117,8 +124,6 @@ export default class Management extends React.Component {
                 }
             });
             let data = await response.json();
-            // console.log(response);
-            // console.log(data);
             data = await Promise.all(data.map(async (value) => {
                 const r = await fetch(value, {
                     method: 'GET',
@@ -147,7 +152,12 @@ export default class Management extends React.Component {
                 }
             });
             if (response.status === 200) {
-                await this.generateHouseholdComponents();
+                let households = await this.getHouseholds();
+                let data = await this.generateHouseholdComponents(households);
+                this.setState({
+                    households: households,
+                    householdComponents: data
+                }, () => this.props.update({households: households}));
             } else {
                 alert("Error. This household could not be removed.");
             }
@@ -166,34 +176,18 @@ export default class Management extends React.Component {
 
     // adds newly generated household component obj to household component
     async addNewHouse(newaddr, newname) {
-        // console.log("hhh:" + newaddr );
-        // console.log("hhh:" + newname );
-
         try {
-            let hid = await this.addHouseAPI(newaddr, newname);
-
-            let o = {};
-            o.address = newaddr;
-            o.name = newname;
-            o.roommates = [];
-            o.rooms = [];
-            o.houseid = hid;
-
-            let data = [];
-            data.push(o);
-
-            data = data.map((value) => {
-                return <HouseholdManagementHouse key={value.houseid} house={value} removeHousehold={this.removeHousehold.bind(this)}/>
-            });
-            //console.log(JSON.stringify(data));
-
-            this.setState((state) => ({
-                householdComponents: this.state.householdComponents.concat(data)
-            }));
+            await this.addHouseAPI(newaddr, newname);
+            let households = await this.getHouseholds();
+            let data = await this.generateHouseholdComponents(households);
+            this.setState({
+                households: households,
+                householdComponents: data
+            }, () => {this.props.update({households: households})});
         } catch (e) {
+            console.log(e);
             alert("Error. System error for adding household.");
         }
-        // console.log("DATA"+ JSON.stringify(this.state.householdComponents)); // can set hid properly now
     }
 
     // todo this is not hooking up properly to backend

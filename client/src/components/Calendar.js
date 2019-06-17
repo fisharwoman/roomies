@@ -136,10 +136,8 @@ export default class Calendar extends React.Component {
       if (!houseID) return;
       else {
         let data = await this.loadData(houseID);
-        console.log(data);
         let roomnames = await this.getRoomnamesOfHousehold();
         let roommates = await this.getRoommatesOfHousehold();
-        console.log(data);
         this.setState({
           data: data,
           roommates: roommates,
@@ -153,7 +151,6 @@ export default class Calendar extends React.Component {
 
   async loadData(houseID) {
     houseID = houseID.houseid;
-    console.log(houseID);
     let reminders = await this.getReminders(houseID);
     let events = await this.getEvents(houseID);
     let data = reminders.concat(events);
