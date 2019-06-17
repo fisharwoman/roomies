@@ -20,7 +20,6 @@ router
                 `VALUES ($$ ${req.body.title} $$, $$ ${req.body.body} $$, current_timestamp, '${req.body.createdby}', '${req.body.assignedto}')` +
                 `RETURNING bid`;
             let result = await db.one(query);
-            console.log(result);
             const query2 =  `SELECT bid, title, body, datecreated, createdby, assignedto, name FROM Bulletin_isCreatedBy, Roommates WHERE Bulletin_isCreatedBy.createdby = Roommates.userid AND bid = ${result.bid}`;
             let finalResult = await db.one(query2);
             res.status(200).json(finalResult);

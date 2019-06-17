@@ -92,7 +92,7 @@ export default class WidgetBulletin extends React.Component {
 
     makeEditor() {
         return (
-            <Form id={'editor-form'} onSubmit={this.handleSubmit}>
+            <Form id={'editor-form'} onSubmit={(e)=>this.handleSubmit(e)}>
                 <Form.Row>
                     <Col>
                         <Form.Group>
@@ -137,7 +137,8 @@ export default class WidgetBulletin extends React.Component {
         }
     }
 
-    handleSubmit = async () => {
+    async handleSubmit(e) {
+        e.preventDefault();
         if (this.state.newBulletin.title === '' || this.state.newBulletin.body === '') return;
         else try {
             await this.addBulletin();
