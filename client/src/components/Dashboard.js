@@ -25,7 +25,7 @@ class Dashboard extends Component {
                 <div style={{float: 'left', width: "47%"}}>
                     {/*Put other widgets in this div only*/}
                     <WidgetReminders addObserver={this.subscribeToChanges} houseid={this.state.houseid} housename={this.state.housename}/>
-                    <WidgetExpenses/>
+                    <WidgetExpenses housename={this.state.housename} houseid={this.state.houseid}/>
                 </div>
             </div>
         );
