@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
-    Table, Button
+    Table, Button, Form
 } from 'react-bootstrap';
 
 export default class OwedExpenses extends React.Component {
@@ -10,14 +10,23 @@ export default class OwedExpenses extends React.Component {
             houseid: props.houseid,
             expenses: [],
             selectedExpenseID: null,
-            partialExpenses: []
+            partialExpenses: {},
+            selectedPartials: [],
+            showAddExpense: false
         }
     }
 
     render() {
         return (
             <div>
-                <div>
+            <Button style={{float: 'none'}} variant={'outline-primary'} onClick={() => {this.setState({
+                showAddExpense: !this.state.showAddExpense})}}>Add Expense</Button>
+                {this.state.showAddExpense ? 
+                    <AddExpenseForm/> :
+                    null
+                }
+            <div>
+                <div style={{float: 'left', display: 'inline', width: '45%'}}>
                     <h3>Owed expenses</h3>
                     <Table>
                         <thead>
@@ -40,14 +49,14 @@ export default class OwedExpenses extends React.Component {
                     </Table>
                 </div>
 
-                <div>
+                <div style={{float: 'left',display: 'inline', width: '45%', marginLeft: '10px'}}>
                 <h3>Expense #{this.state.selectedExpenseID} Splits</h3>
                     <Table>
                         <thead>
                             <tr>
-                                <td>Date</td>
-                                <td>Description</td>
+                                <td>Borrower</td>
                                 <td>Amount</td>
+                                <td>Date Paid</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,15 +71,23 @@ export default class OwedExpenses extends React.Component {
                         </tfoot>
                     </Table>
                 </div>
+                </div>
             </div>
         )
+    }
+
+    addComponent() {
+
     }
 
     async componentDidMount() {
         try {
             let data = await this.getExpenses();
+            console.log(data);
+            let partials = await this.getPartialExpenses(data);
             this.setState({
-                expenses: data
+                expenses: data,
+                partialExpenses: partials
             });
         } catch (e) {
             console.log(e)
@@ -89,27 +106,18 @@ export default class OwedExpenses extends React.Component {
         }
     }
 
-    async getPartialExpenses() {
+    async getPartialExpenses(data) {
         try {
-            let response = await fetch(`expenses/splits/${this.state.selectedExpenseID}`, {
-                method: "GET"
-            });
-
-            let result = [];
-
-            // TODO: iterate over response to get each partial expense
-            // response.forEachAsync(async (value) => {
-            //     const data = await fetch(value, {
-            //         method: "GET",
-            //         headers: {
-            //             "content-type": 'application/json'
-            //         }
-            //     });
-            //     result.push(await response.json(data));
-            // });
-
-            console.log(result);
-            return result;
+            let partialExpenses = {};
+            await Promise.all(data.map(async (value) => {
+                let response = await fetch(`expenses/splits/${value.expenseid}`, {
+                    method: "GET"
+                });
+                let partials = await response.json();
+                partialExpenses[value.expenseid] = partials;
+            }));
+            
+            return partialExpenses;
 
         } catch (e) {
             throw e;
@@ -130,29 +138,21 @@ export default class OwedExpenses extends React.Component {
         })
     }
 
-    async selectExpense(e) {
-        await this.setState({
-            selectedExpenseID: e
-
-        })
-
-        try {
-            this.setState({
-
-            })
-            let result = await this.getPartialExpenses();
-        } catch (e) {
-            console.log(e);
-        }
+    async selectExpense(expenseid) {
+        console.log("TARGET: " + expenseid);
+        this.setState({
+            selectedExpenseID: expenseid
+        });
     }
 
     makePartialExpenses() {
-        return this.state.expenses.map((value) => {
+        if (this.state.selectedExpenseID === null) return;
+        return this.state.partialExpenses[this.state.selectedExpenseID].map((value, index) => {
             return (
-                <tr key={value.expenseid}>
-                    <td>{value.date}</td>
-                    <td>{value.description}</td>
+                <tr key={index}>
+                    <td>{value.borrower}</td>
                     <td>{value.amount}</td>
+                    <td>{value.datepaid}</td>
                 </tr>
             )
         })
@@ -168,5 +168,70 @@ export default class OwedExpenses extends React.Component {
         this.setState({
             houseid: newProps.houseid
         });
+    }
+}
+
+class AddExpenseForm extends Component{
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            amount: null,
+            description: '',
+            expenseType: null,
+            splitters: []
+        };
+
+    }
+
+    handleAddNewExpense() {
+        alert("form submitted");
+    }
+
+    makeExpenseTypes(){
+        return(
+            <option>
+                "This is an option"
+            </option>
+        )
+        // TODO: make this bitch
+    }
+
+    makeRoommates() {
+        return(
+            <option key={1}>"Option 1"</option>
+        )
+        // TODO: YEEEEET make this
+    }
+
+    render(){
+        return(
+            <div className= "container">
+                <Form className="form">
+                    Add a Shared Expense <br/>
+                    <Form.Group>
+                        <Form.Label>Amount</Form.Label>
+                        <Form.Control type={'number'}/>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control/>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Expense Type</Form.Label>
+                        <Form.Control as={'select'}>
+                            { this.makeExpenseTypes() }
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Split With</Form.Label>
+                        <Form.Control as={'select'} multiple>
+                            { this.makeRoommates() }
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Control type={'submit'} />
+                </Form>
+            </div>
+        );
     }
 }

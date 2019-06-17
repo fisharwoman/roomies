@@ -111,11 +111,8 @@ router
      */
     .get('/splits/:expenseID', async (req, res) => {
         try {
-            const query = `SELECT expenseID, borrower FROM PartialExpenses WHERE expenseID = ${req.params.expenseID}`;
+            const query = `SELECT borrower, amount, datepaid FROM PartialExpenses WHERE expenseID = ${req.params.expenseID}`;
             let result = await db.any(query);
-            result = result.map((value) => {
-                return url + "splits/" + value.expenseid + "/" + value.borrower;
-            });
             res.status(200).json(result);
         } catch (e) {
             res.status(200).send(e.message);
