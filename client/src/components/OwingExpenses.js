@@ -8,13 +8,14 @@ export default class OwingExpenses extends React.Component {
         super(props);
         this.state = {
             houseid: props.houseid,
-            expenses: []
+            expenses: [],
+            total: ""
         }
     }
     render() {
         return (
             <div>
-                <h3>Owing expenses</h3>
+                <h4>Owing expenses</h4>
                 <Table>
                     <thead>
                         <tr>
@@ -43,9 +44,11 @@ export default class OwingExpenses extends React.Component {
 
     async componentDidMount() {
         let data = await this.getPartialExpenses();
+        let total = await this.getTotalOwing();
         // TODO Convert lender ID to name
         this.setState({
-            expenses: data
+            expenses: data,
+            total: total.total
         });
     }
 
@@ -67,7 +70,7 @@ export default class OwingExpenses extends React.Component {
                <tr key={value.expenseid}>
                    <td>{value.description}</td>
                    <td>{value.amount}</td>
-                   <td>{value.lender}</td>
+                   <td>{value.lendername}</td>
                    <td>
                        {value.datepaid !== null ? 
                        value.datepaid : 
@@ -96,18 +99,32 @@ export default class OwingExpenses extends React.Component {
                     o.datepaid = date.datepaid
                 }
             }
+            let total = await this.getTotalOwing();
             this.setState({
-                expenses: data
+                expenses: data,
+                total: total.total
             });
         } catch (e) {
             console.log(e);
         }
     }
 
+    async getTotalOwing() {
+        try {
+            let userid = window.sessionStorage.getItem('userid');
+            let response = await fetch(`/expenses/splits/borrower/${userid}/total`,{
+                method: 'GET'
+            });
+            let data = await response.json();
+            return data;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     sumOwing() {
         return (
-            <td>$500.00</td>
-        
+            <td>{this.state.total}</td>
         )
     }
 
@@ -116,4 +133,6 @@ export default class OwingExpenses extends React.Component {
             houseid: newProps.houseid
         });
     }
+
+
 }
