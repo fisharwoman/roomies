@@ -10,7 +10,7 @@ export default class WidgetBulletin extends React.Component {
             houseid: this.props.houseid,
             bulletins:[],
             userid: this.props.userid,
-            isShowingEditor: false,
+            isShowingEditor: true,
             newBulletin: {
                 title: '',
                 body: '',
@@ -24,17 +24,12 @@ export default class WidgetBulletin extends React.Component {
             <div className={'content-window'}>
                 <h4>Household Bulletins</h4>
                 {
-                    this.state.bulletins.length === 0 ?
+                    this.state.bulletins.length === -1 ?
                         null :
                         <ul className={'scrollable'}>{this.makeBulletins()}</ul>
                 }
-                {
-                    this.state.isShowingEditor ?
-                        this.makeEditor() :
-                        null
-                }
-                <Button onClick={() => this.setState({isShowingEditor: !this.state.isShowingEditor})}>
-                    Create Post</Button>
+                <strong><span>Compose New Bulletin</span></strong>
+                {this.makeEditor()}
             </div>
         )
     }
@@ -90,30 +85,18 @@ export default class WidgetBulletin extends React.Component {
         })
     }
 
+
     makeEditor() {
+        let name = this.props.username.split(' ').map((n)=>n[0]).join('');
         return (
-            <Form id={'editor-form'} onSubmit={(e)=>this.handleSubmit(e)}>
-                <Form.Row>
-                    <Col>
-                        <Form.Group>
-                            <Form.Label >Title</Form.Label>
-                            <Form.Control onChange={e => this.handleTitle(e)}/>
-                        </Form.Group>
-                    </Col>
-                    <Col xs={6}>
-                        <Form.Group>
-                            <Form.Label>Message</Form.Label>
-                            <Form.Control
-                                as={'textarea'} placeholder={'Enter your message here'}
-                                onChange={e => this.handleBody(e)}
-                            ></Form.Control>
-                        </Form.Group>
-                    </Col>
-                    <Col xs={2}>
-                        <Button variant={'outline-primary'} type={'submit'}>Post</Button>
-                    </Col>
-                </Form.Row>
-            </Form>
+            <div style={{borderTopStyle: 'solid', borderTopWidth: '1px', borderTopColor: 'lightgray', paddingTop: '5px'}}>
+                <div id={'bulletin-creator'}>{name}</div>
+                <div style={{display:'inline-block'}} className={'talk-bubble tri-right left-top'}>
+                    <input autoComplete={"false"} id={'new-bulletin-title'} onChange={(e) => this.handleTitle(e)} style={{backgroundColor: 'transparent', borderStyle: 'none', width:'100%', borderBottomStyle: 'solid', borderBottomWidth: '1pt'}} placeholder={'Title'}/>
+                    <textarea id={'new-bulletin-text'} onChange={(e) => this.handleBody(e)} style={{backgroundColor: 'transparent', borderStyle: 'none', width:'100%'}} placeholder={'Message...'}/>
+                </div>
+                <Button variant={'outline-primary'} onClick={this.handleSubmit}>Post</Button>
+            </div>
         )
     }
 
@@ -137,11 +120,12 @@ export default class WidgetBulletin extends React.Component {
         }
     }
 
-    async handleSubmit(e) {
-        e.preventDefault();
+    handleSubmit = async () => {
         if (this.state.newBulletin.title === '' || this.state.newBulletin.body === '') return;
         else try {
             await this.addBulletin();
+            document.getElementById('new-bulletin-title').value = "";
+            document.getElementById('new-bulletin-text').value = "";
         } catch (e) {
             console.log(e);
         }

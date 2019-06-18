@@ -13,6 +13,7 @@ export default class WidgetExpenses extends React.Component {
             owedExpenses: [],
             owingExpenses: []
         }
+        this.props.addObserver(this.parentDidUpdate);
     }
     render() {
         return (
@@ -33,13 +34,13 @@ export default class WidgetExpenses extends React.Component {
         try {
             let owedExpenses = await this.getOwedExpenses();
             let owingExpenses = await this.getOwingExpenses();
-            console.log(owedExpenses);
             this.setState({
                 owedExpenses: owedExpenses,
                 owingExpenses: owingExpenses
             });
         } catch (e) {console.log(e);}
     }
+
 
     makeOwedExpensesTable() {
         if (this.state.owedExpenses.length > 0) {
@@ -107,5 +108,22 @@ export default class WidgetExpenses extends React.Component {
             let data = await response.json();
             return data;
         } catch (e) {console.log(e);}
+    }
+
+    // TODO: add connection to backend
+    parentDidUpdate = (e) => {
+        if (e.hasOwnProperty('houseid') && e.hasOwnProperty('housename')) {
+            this.setState({
+                houseid: e.houseid,
+                housename: e.housename
+            }, async ()=>{
+                let owedExpenses = await this.getOwedExpenses();
+                let owingExpenses = await this.getOwingExpenses();
+                this.setState({
+                    owedExpenses: owedExpenses,
+                    owingExpenses: owingExpenses
+                });
+            });
+        }
     }
 }

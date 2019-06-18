@@ -20,12 +20,12 @@ class Dashboard extends Component {
         return (
             <div>
                 <div style={{width: "50%"}}>
-                    <WidgetBulletin addObserver={this.subscribeToChanges} userid={userid} houseid={this.state.houseid}/>
+                    <WidgetBulletin username={this.props.username} addObserver={this.subscribeToChanges} userid={userid} houseid={this.state.houseid}/>
                 </div>
                 <div style={{float: 'left', width: "47%"}}>
                     {/*Put other widgets in this div only*/}
                     <WidgetReminders addObserver={this.subscribeToChanges} houseid={this.state.houseid} housename={this.state.housename}/>
-                    <WidgetExpenses housename={this.state.housename} houseid={this.state.houseid}/>
+                    <WidgetExpenses addObserver={this.subscribeToChanges} housename={this.state.housename} houseid={this.state.houseid}/>
                 </div>
             </div>
         );
