@@ -236,14 +236,14 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     // GET RM name, POST RM to household database, display RM if success
-    async addNewRM(rmid) {
+    async addNewRM(email) {
         try {
-            let rmname = await this.getRMName(rmid);
-            let postResp = await this.postRMName(this.state.houseid, rmid);
+            let roommate = await this.getRMName(email);
+            let postResp = await this.postRMName(this.state.houseid, roommate.userid);
 
             if (postResp.status === 200) {
                 this.setState((state => ({
-                    roommates: state.roommates.concat([rmname]),
+                    roommates: state.roommates.concat([roommate.name]),
                     showAddRMForm: false
                 })));
             } else {
@@ -255,19 +255,17 @@ export default class HouseholdManagementHouse extends React.Component {
         // console.log(this.state.roommates);
     }
 
-    // GET /user/:userID
-    async getRMName(rmid) {
+    // GET /user/email-:email
+    async getRMName(email) {
         try {
-            console.log(rmid);
-            const response = await fetch(`/users/${rmid}`, {
+            const response = await fetch(`/users/user/email-${email}`, {
                 method: 'GET',
                 headers: {
                     "content-type": 'application/json'
                 }
             });
             let data = await response.json();
-            console.log(data.name);
-            return data.name;
+            return data;
         } catch (e) {
             throw e;
         }
@@ -276,7 +274,6 @@ export default class HouseholdManagementHouse extends React.Component {
     // POST households/:houseID/roommates/:roommateID
     async postRMName(houseid, rmid) {
         try {
-            console.log(houseid, rmid);
             const response = await fetch(`/households/${houseid}/roommates/${rmid}`, {
                 method: 'POST',
                 headers: {

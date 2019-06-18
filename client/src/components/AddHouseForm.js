@@ -28,16 +28,18 @@ class AddHouseForm extends Component{
             <div
 
                 className= "container">
-                <Form className="form">
-                    Add a Household <br/>
-                    <label htmlFor={"Address"}>Household Address: &nbsp;&nbsp; </label>
-                    <input type={"text"} name={"address"} placeholder={"555 Some Street"}
-                           onChange={event => {this.setState({address: event.target.value})}} /> <br/>
-                    <label htmlFor={"Name"}>Household Name: &nbsp;&nbsp; </label>
-                    <input type={"text"} name={"name"} placeholder={"My Household"}
-                           onChange={event => {this.setState({name: event.target.value})}} /> <br/>
-                    <input type={"button"} name={"handleNewAddHouse"} value={"+"}
-                           onClick={this.handleNewAddHouse} /> <br/>
+                <Form className={'form'} style={{margin: 'none', maxWidth: 'none', justifyContent: 'center'}} inline>
+                    <Form.Group style={{padding: '10px'}}>
+                        <Form.Label>Address &nbsp;</Form.Label>
+                        <Form.Control autoComplete={'false'} placeholder={"One Infinite Loop, CA"}
+                               onChange={event => {this.setState({address: event.target.value})}} />
+                    </Form.Group>
+                    <Form.Group style={{padding: '10px'}}>
+                        <Form.Label>Household Name &nbsp;</Form.Label>
+                        <Form.Control autoComplete={'false'} placeholder={"My House..."}
+                               onChange={event => {this.setState({name: event.target.value})}} />
+                    </Form.Group>
+                    <Button onClick={this.handleNewAddHouse}>Add House</Button>
                 </Form>
 
             </div>

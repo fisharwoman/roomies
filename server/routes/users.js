@@ -47,6 +47,18 @@ router
             res.status(400).send(e.message);
         }
     })
+    .get('/user/email-:email', async (req, res) => {
+        try {
+            const query = `select * from roommates where email='${req.params.email}'`;
+            console.log(query);
+            let result = await db.oneOrNone(query);
+            if (!result) res.status(204);
+            else res.status(200);
+            res.json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
     /**
      * Remove the specified user
      */
