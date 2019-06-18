@@ -192,11 +192,8 @@ router
      */
     .get('/types', async (req, res) => {
         try {
-            const query = "SELECT expenseTypeID from ExpenseTypes";
+            const query = "SELECT t.expensetypeid, t.description as typename, c.description as categoryname from ExpenseTypes t, ExpenseCategories c where t.category=c.categoryid order by c.description, t.description";
             let result = await db.any(query);
-            result = result.map(values => {
-                return url + "types/" + values.expensetypeid;
-            });
             res.status(200).json(result);
         } catch (e) {
             res.status(200).send(e.message);

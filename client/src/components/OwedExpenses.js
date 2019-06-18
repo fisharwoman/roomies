@@ -22,7 +22,7 @@ export default class OwedExpenses extends React.Component {
             <Button style={{float: 'none'}} variant={'outline-primary'} onClick={() => {this.setState({
                 showAddExpense: !this.state.showAddExpense})}}>Add Expense</Button>
                 {this.state.showAddExpense ? 
-                    <AddExpenseForm/> :
+                    <AddExpenseForm houseid={this.state.houseid} /> :
                     null
                 }
             <div>
@@ -176,10 +176,12 @@ class AddExpenseForm extends Component{
     constructor(props) {
         super(props);
         this.state = {
+            houseid: this.props.houseid,
             amount: null,
             description: '',
             expenseType: null,
-            splitters: []
+            expenseTypes: [],
+            roommates: []
         };
 
     }
@@ -189,25 +191,48 @@ class AddExpenseForm extends Component{
     }
 
     makeExpenseTypes(){
-        return(
-            <option>
-                "This is an option"
-            </option>
-        )
-        // TODO: make this bitch
+        return this.state.expenseTypes.map((v, index) => {
+            return(
+                <option key={index} value={v.expensetypeid}>{v.categoryname} - {v.typename}</option>
+            )
+        });
+    }
+
+    async getExpenseTypes() {
+        try {
+            let response = await fetch(`/expenses/types`, {
+                method: "GET"
+            });
+    
+            let data = await response.json();
+            return data;
+        } catch(e) {
+            console.log(e);
+        }
+
     }
 
     makeRoommates() {
-        return(
-            <option key={1}>"Option 1"</option>
-        )
-        // TODO: YEEEEET make this
+        console.log(this.state.roommates);
+        return this.state.roommates.map((v, index) => {
+            return(
+                <option key={index} value={v.userid}>{v.name}</option>
+            )
+        });
+    }
+
+    async getRoommates() {
+        let roommates = await fetch(`households/${this.state.houseid}/roommates`, {
+            method: 'GET'
+        });
+        let data = await roommates.json();
+        return data;
     }
 
     render(){
         return(
             <div className= "container">
-                <Form className="form">
+                <Form className="form" onSubmit={(e) => {e.preventDefault()}}>
                     Add a Shared Expense <br/>
                     <Form.Group>
                         <Form.Label>Amount</Form.Label>
@@ -220,6 +245,7 @@ class AddExpenseForm extends Component{
                     <Form.Group>
                         <Form.Label>Expense Type</Form.Label>
                         <Form.Control as={'select'}>
+                            <option key={-1}>Choose an expense type...</option>
                             { this.makeExpenseTypes() }
                         </Form.Control>
                     </Form.Group>
@@ -233,5 +259,19 @@ class AddExpenseForm extends Component{
                 </Form>
             </div>
         );
+    }
+
+    async componentDidMount() {
+        try {
+            let types = await this.getExpenseTypes();
+            let roommates = await this.getRoommates();
+            this.setState({
+                expenseTypes: types,
+                roommates: roommates
+            });
+        } catch (e) {
+            console.log(e)
+        }
+
     }
 }
