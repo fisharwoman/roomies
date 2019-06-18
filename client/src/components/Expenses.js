@@ -14,6 +14,7 @@ export default class Expenses extends React.Component {
             isShowingOwed: true,
             isShowingReportMaker: false
         };
+        this.observers = [];
     }
 
     render() {
@@ -27,7 +28,7 @@ export default class Expenses extends React.Component {
                 </Button>
                 {
                     this.state.isShowingReportMaker ?
-                        <BuildReport houseid={this.state.houseid}/> :
+                        <BuildReport addObserver={this.addObserver} houseid={this.state.houseid}/> :
                         null
                 }
                 {this.state.isShowingOwed ?
@@ -71,6 +72,10 @@ export default class Expenses extends React.Component {
         })
     }
 
+    addObserver = (notify) => {
+        this.observers.push(notify);
+    };
+
     componentWillReceiveProps(newProps) {
         this.setState({
             houseid: newProps.selectedHousehold.houseid
@@ -107,7 +112,8 @@ class BuildReport extends React.Component {
         this.state = {
             houseid: this.props.houseid,
             selectedColumns: []
-        }
+        };
+        this.props.addObserver(this.parentDidUpdate);
     }
 
     render() {
@@ -147,7 +153,6 @@ class BuildReport extends React.Component {
     async handleSubmit(e) {
         e.preventDefault();
         try {
-            console.log('here');
             await this.sendReport();
         } catch (e) {
             console.log(e);
@@ -158,7 +163,7 @@ class BuildReport extends React.Component {
         try {
             let userid = window.sessionStorage.getItem('userid');
             if (this.state.selectedColumns.length === 0) {alert('At least one column needs to be selected'); return;}
-            let cols = JSON.stringify({cols: this.state.selectedColumns});
+            let cols = JSON.stringify({cols: this.state.selectedColumns, houseid: this.state.houseid});
             let response = await fetch(`/expenses/roommates/${userid}/report`, {
                 method: 'POST',
                 headers: {
@@ -223,6 +228,14 @@ class BuildReport extends React.Component {
             line += comma;
         }
         return line;
+    }
+
+    parentDidUpdate = (e) => {
+        if(e.hasOwnProperty('houseid')) {
+            this.setState({
+                houseid: e.houseid
+            });
+        }
     }
 
 }

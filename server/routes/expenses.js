@@ -327,7 +327,7 @@ router
     })
     /**
      * Generates a list of the expenses with the columns specified in req.body.cols
-     * [expensedate, amount, expensedescription, createdby, typedescription, categorydescription]
+     * {cols: [expensedate, amount, expensedescription, createdby, typedescription, categorydescription],houseid: number}
      */
     .post('/roommates/:userID/report', async (req, res) => {
         try {
@@ -337,7 +337,7 @@ router
                 if (idx < req.body.cols.length-1) columns+=",";
             });
             console.log(columns);
-            const query = `select ${columns} from user_expense_report where createdby = ${req.params.userID}`;
+            const query = `select ${columns} from user_expense_report where createdby = ${req.params.userID} and houseid = ${req.body.houseid}`;
             let response = await db.any(query);
             res.status(200).json(response);
         } catch (e) {

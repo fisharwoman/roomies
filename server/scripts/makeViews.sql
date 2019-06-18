@@ -6,6 +6,6 @@ select * FROM expenses left join expense_types_altered on expenses.expensetype =
 
 create or replace view user_expense_report as
 select e.expensedate, e.amount, e.description as expensedescription, e.createdby, t.description as typedescription,
-c.description as categorydescription
+c.description as categorydescription, e.houseid
 from expenses e, expensetypes t, expensecategories c
 where e.expensetype = t.expensetypeid and t.category = c.categoryid
