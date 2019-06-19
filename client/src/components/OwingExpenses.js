@@ -46,7 +46,6 @@ export default class OwingExpenses extends React.Component {
     async componentDidMount() {
         let data = await this.getPartialExpenses();
         let total = await this.getTotalOwing();
-        // TODO Convert lender ID to name
         this.setState({
             expenses: data,
             total: total.total

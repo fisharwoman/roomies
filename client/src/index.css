@@ -59,6 +59,27 @@ Button {
   padding: 20px;
 }
 
+.clickable-row:hover {
+  background: #3d9eff;
+  color: white;
+}
+
+.expense-button {
+  margin: 10px;
+}
+
+/* .form {
+  width: 100%;
+  display: inline-block;
+  max-width: 100%;
+  width: 100%;
+  margin: 20px;
+}
+
+.container {
+  width: 100%
+} */
+
 /*.sticky-top {*/
   /*position: sticky;*/
 /*}*/

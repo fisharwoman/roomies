@@ -21,18 +21,20 @@ export default class Expenses extends React.Component {
         return(
             <div id={'expensesComponent'}>
                 <h3>Expenses</h3>
-                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(true)}}>Owed</Button>
-                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(false)}}>Owing</Button>
-                <Button variant={'outline-primary'} onClick={() => {this.setState({isShowingReportMaker: !this.state.isShowingReportMaker})}}>
-                    Build Report
-                </Button>
+                <div>
+                    <Button className="expense-button" variant={"outline-success"} onClick={()=>{this.handleViewSwitcher(true)}}>To Collect</Button>
+                    <Button className="expense-button" variant={'outline-danger'} onClick={()=>{this.handleViewSwitcher(false)}}>To Pay</Button>
+                    <Button className="expense-button" variant={'outline-primary'} onClick={() => {this.setState({isShowingReportMaker: !this.state.isShowingReportMaker})}}>
+                        Build Report
+                    </Button>
+                </div>
                 {
                     this.state.isShowingReportMaker ?
                         <BuildReport addObserver={this.addObserver} houseid={this.state.houseid}/> :
                         null
                 }
                 {this.state.isShowingOwed ?
-                    <OwedExpenses  userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/> :
+                    <OwedExpenses  addObserver={this.addObserver} userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/> :
                     <OwingExpenses addObserver={this.addObserver} userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/>
                 }
             </div>

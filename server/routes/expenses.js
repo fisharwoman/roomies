@@ -9,10 +9,9 @@ router
         try {
             const query = `INSERT INTO Expenses (expenseDate, amount, description, createdBy, expenseType, houseID)`+
                 `VALUES ('${req.body.expenseDate}','${req.body.amount}','${req.body.description}',` +
-                `${req.body.createdBy},${req.body.expenseType},${req.body.houseID}) RETURNING expenseID`;
-            let result = await db.any(query);
-            result = url + "expense/" + result[0].expenseid;
-            res.status(200).send(result);
+                `${req.body.createdBy},${req.body.expenseType},${req.body.houseID}) RETURNING *`;
+            let result = await db.one(query);
+            res.status(200).json(result);
 
         } catch (e) {
             res.status(400).send(e.message);
@@ -111,7 +110,7 @@ router
      */
     .get('/splits/:expenseID', async (req, res) => {
         try {
-            const query = `SELECT borrower, amount, datepaid FROM PartialExpenses WHERE expenseID = ${req.params.expenseID}`;
+            const query = `SELECT p.borrower, p.amount, p.datepaid, r.name FROM PartialExpenses p, Roommates r WHERE p.borrower = r.userID AND p.expenseID = ${req.params.expenseID}`;
             let result = await db.any(query);
             res.status(200).json(result);
         } catch (e) {
@@ -152,6 +151,7 @@ router
             res.status(400).send(e.message);
         }
     })
+    
     /* Gets the total amount owed */
     .get('/splits/household/:houseID/borrower/:userID/total', async (req, res) => {
         try {
@@ -190,18 +190,28 @@ router
             let expense = await db.one(`SELECT createdBy, amount::numeric FROM Expenses WHERE expenseID = ${expenseID}`);
             let loaner = expense.createdby;
             let totalCost = expense.amount;
+            let remainingCost = totalCost;
             let date = req.body.date;
             await db.tx(t => {
-               roommateProportions = roommateProportions.map((value) => {
-                   let splitCost = calculateSplitCost(totalCost, value.proportion);
-                   const query = `INSERT INTO PartialExpenses VALUES (${expenseID}, ${loaner}, ${value.roommateID}, `+
-                       `'${splitCost}', '${date}', null)`;
+               roommateProportions = roommateProportions.map((value,idx) => {
+                   let query;
+                   let datepaid = req.user === value.roommateID ? `'${date}'` : 'null';
+                   if (idx === roommateProportions.length-1) {
+                       query = `INSERT INTO PartialExpenses VALUES (${expenseID}, ${loaner}, ${value.roommateID}, `+
+                           `'${remainingCost}', '${date}', ${datepaid})`;
+                   } else {
+                       let splitCost = calculateSplitCost(totalCost, value.proportion);
+                       remainingCost-=splitCost;
+                       query = `INSERT INTO PartialExpenses VALUES (${expenseID}, ${loaner}, ${value.roommateID}, `+
+                           `'${splitCost}', '${date}', ${datepaid})`;
+                   }
                    return t.none(query);
                });
                return t.batch(roommateProportions);
             });
             res.status(200).send();
         } catch (e) {
+            console.log(e);
             res.status(400).send(e.message);
         }
     })
