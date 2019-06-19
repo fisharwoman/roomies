@@ -11,6 +11,7 @@ export default class OwingExpenses extends React.Component {
             expenses: [],
             total: ""
         }
+        this.props.addObserver(this.parentDidUpdate);
     }
     render() {
         return (
@@ -133,6 +134,26 @@ export default class OwingExpenses extends React.Component {
             houseid: newProps.houseid
         });
     }
+
+    parentDidUpdate = async (e) => {
+        try {
+            if (e.hasOwnProperty('houseid')) {
+                this.setState({houseid: e.houseid}, async () => {
+                    let data = await this.getPartialExpenses();
+                    let total = await this.getTotalOwing();
+                    // TODO Convert lender ID to name
+                    this.setState({
+                        expenses: data,
+                        total: total.total
+                    });
+                })
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+
 
 
 }

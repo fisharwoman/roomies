@@ -33,7 +33,7 @@ export default class Expenses extends React.Component {
                 }
                 {this.state.isShowingOwed ?
                     <OwedExpenses  userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/> :
-                    <OwingExpenses userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/>
+                    <OwingExpenses addObserver={this.addObserver} userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/>
                 }
             </div>
         )
@@ -46,8 +46,12 @@ export default class Expenses extends React.Component {
     }
 
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.props.addObserver(this.parentDidUpdate);
+    }
 
+    componentWillUnmount() {
+        this.props.unsubscribe(this.parentDidUpdate);
     }
 
     async getHouseholdExpenses() {
@@ -76,11 +80,6 @@ export default class Expenses extends React.Component {
         this.observers.push(notify);
     };
 
-    // componentWillReceiveProps(newProps) {
-    //     this.setState({
-    //         houseid: newProps.selectedHousehold.houseid
-    //     });
-    // }
 
     parentDidUpdate = (e) => {
         if (e.hasOwnProperty('houseid')) {

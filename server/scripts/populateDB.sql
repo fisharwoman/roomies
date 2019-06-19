@@ -111,7 +111,7 @@ insert into Expenses (expenseDate, amount, description, createdBy, expenseType, 
 ('2019-05-06 16:01:19-07','38.99','Groceries from Save-On',3,6,2),
 ('2019-05-07 09:12:21-07','5.10','Toilet Paper (on sale)', 2,17,1),
 ('2019-05-15 17:11:14-07', '50.00', 'April electricity bill', 4,8,2),
-('2019-05-07 09:12:21-07','10.10','Kleenex', 2,17,1);
+('2019-05-07 09:12:21-07','10.10','Kleenex', 2,17,1),
 ('2019-06-17 17:11:14-07', '100.00', 'Microwave',2,1,1);
 
 INSERT INTO PartialExpenses (expenseID, lender, borrower, amount, dateSplit, datePaid) VALUES
