@@ -92,15 +92,27 @@ router
         }
     })
     /**
+     * Get all the expenses in the specified household created by the given user
+     */
+    .get('/households/:houseID/users/:userID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM expenses WHERE createdby = ${req.params.userID} AND houseid = ${req.params.houseID}`;
+            console.log(query);
+            const response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).send(e.message);
+        }
+    })
+    
+    /**
      * Get all partial expenses for the specified expense
      */
     .get('/splits/:expenseID', async (req, res) => {
         try {
-            const query = `SELECT expenseID, borrower FROM PartialExpenses WHERE expenseID = ${req.params.expenseID}`;
+            const query = `SELECT borrower, amount, datepaid FROM PartialExpenses WHERE expenseID = ${req.params.expenseID}`;
             let result = await db.any(query);
-            result = result.map((value) => {
-                return url + "splits/" + value.expenseid + "/" + value.borrower;
-            });
             res.status(200).json(result);
         } catch (e) {
             res.status(200).send(e.message);
@@ -109,8 +121,31 @@ router
     .get('/splits/borrower/:userID', async (req,res) => {
         try {
             const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` +
+            `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl, (select userid, name as lendername from roommates) as r ` +
+            `WHERE tbl.borrower=${req.params.userID} and tbl.lender = r.userid`;
+            const response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).send(e.message);
+        }
+    })
+    /* Gets the total amount owed */
+    .get('/splits/borrower/:userID/total', async (req, res) => {
+        try {
+            const query = `select sum(amount) as total from partialexpenses where borrower=${req.params.userID}  and datepaid is null`;
+            const response = await db.one(query);
+            res.status(200).json(response);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    // TODO: CHECK IF IS THIS RIGHT
+    .get('/splits/lender/:userID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` +
             `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl ` +
-            `WHERE borrower=${req.params.userID}`;
+            `WHERE lender=${req.params.userID}`;
             console.log(query);
             const response = await db.any(query);
             res.status(200).json(response);
@@ -166,11 +201,8 @@ router
      */
     .get('/types', async (req, res) => {
         try {
-            const query = "SELECT expenseTypeID from ExpenseTypes";
+            const query = "SELECT t.expensetypeid, t.description as typename, c.description as categoryname from ExpenseTypes t, ExpenseCategories c where t.category=c.categoryid order by c.description, t.description";
             let result = await db.any(query);
-            result = result.map(values => {
-                return url + "types/" + values.expensetypeid;
-            });
             res.status(200).json(result);
         } catch (e) {
             res.status(200).send(e.message);
@@ -291,6 +323,26 @@ router
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Generates a list of the expenses with the columns specified in req.body.cols
+     * {cols: [expensedate, amount, expensedescription, createdby, typedescription, categorydescription],houseid: number}
+     */
+    .post('/roommates/:userID/report', async (req, res) => {
+        try {
+            let columns = "";
+            req.body.cols.forEach((value,idx) => {
+                columns+=value;
+                if (idx < req.body.cols.length-1) columns+=",";
+            });
+            console.log(columns);
+            const query = `select ${columns} from user_expense_report where createdby = ${req.params.userID} and houseid = ${req.body.houseid}`;
+            let response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            // console.log(e);
+            res.status(400).send(e);
         }
     })
     /**
