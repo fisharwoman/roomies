@@ -322,7 +322,7 @@ export default class HouseholdManagementHouse extends React.Component {
                 headers: {
                     "content-type": 'application/json'
                 },
-                body: JSON.stringify({Address: newaddr})
+                body: JSON.stringify({address: newaddr})
             });
             console.log(response);
             return response;
