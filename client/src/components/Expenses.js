@@ -14,6 +14,8 @@ export default class Expenses extends React.Component {
             houseid: props.selectedHousehold.houseid,
             isShowingOwed: true
         };
+        this.observers = [];
+
     }
 
     render() {
@@ -38,7 +40,7 @@ export default class Expenses extends React.Component {
 
 
     async componentDidMount() {
-       
+
     }
 
     async getHouseholdExpenses() {
@@ -63,10 +65,20 @@ export default class Expenses extends React.Component {
         })
     }
 
-    componentWillReceiveProps(newProps) {
-        this.setState({
-            houseid: newProps.selectedHousehold.houseid
-        });
+    // componentWillReceiveProps(newProps) {
+    //     this.setState({
+    //         houseid: newProps.selectedHousehold.houseid
+    //     });
+    // }
+
+    parentDidUpdate = (e) => {
+        if (e.hasOwnProperty('houseid')) {
+            this.setState({
+                houseid: e.houseid
+            },() => {
+                this.observers.forEach((v)=>{v(e)});
+            });
+        }
     }
 
 //     <div id={'expensesComponent'}>

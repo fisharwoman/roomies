@@ -87,11 +87,22 @@ export default class Calendar extends React.Component {
     } catch (e) {console.log(e.message);}
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      selectedHousehold: nextProps.selectedHousehold
-    }, this.componentDidMount);
-  }
+  // componentWillReceiveProps(nextProps, nextContext) {
+  //   this.setState({
+  //     selectedHousehold: nextProps.selectedHousehold
+  //   }, this.componentDidMount);
+  // }
+
+  parentDidUpdate = (e) => {
+    if (e.hasOwnProperty('houseid') && e.hasOwnProperty('housename')) {
+      this.setState({
+        selectedHousehold: {
+          houseid: e.houseid,
+          housename: e.housename
+        }
+      }, this.componentDidMount);
+    }
+  };
 
 
   render() {
@@ -132,6 +143,7 @@ export default class Calendar extends React.Component {
 
   async componentDidMount() {
     try {
+      this.props.addObserver(this.parentDidUpdate);
       let houseID = this.state.selectedHousehold;
       if (!houseID) return;
       else {
@@ -147,6 +159,10 @@ export default class Calendar extends React.Component {
     } catch (e) {
       console.log(e.message);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.unsubscribe(this.parentDidUpdate);
   }
 
   async loadData(houseID) {

@@ -98,10 +98,11 @@ export default class Main extends Component {
                     </BootStrap.Navbar>
 
                     <div className="content">
-                        <Route path="/dashboard" render={(props) => <Dashboard username={this.state.userName} houseid={this.state.selectedHousehold.houseid} housename = {this.state.selectedHousehold.name} addObserver={this.subscribeToChanges}/>}/>
-                        <Route path="/calendar" render={(props) => <Calendar selectedHousehold = {this.state.selectedHousehold} />} />
-                        <Route path="/contact" render={(props) => <Contact selectedHousehold = {this.state.selectedHousehold} />}/>
-                        <Route path='/expenses' component={(props) => <Expenses selectedHousehold = {this.state.selectedHousehold}/>} />
+                        <Route path="/dashboard" render={(props) =>
+                            <Dashboard username={this.state.userName} houseid={this.state.selectedHousehold.houseid} housename = {this.state.selectedHousehold.name} addObserver={this.subscribeToChanges} unsubscribe={this.unsubscribe}/>} />
+                        <Route path="/calendar" render={(props) => <Calendar addObserver={this.subscribeToChanges} unsubscribe={this.unsubscribe} selectedHousehold = {this.state.selectedHousehold} />} />
+                        <Route path="/contact" render={(props) => <Contact addObserver={this.subscribeToChanges} unsubscribe={this.unsubscribe} selectedHousehold = {this.state.selectedHousehold} username={this.state.userName}/>}/>
+                        <Route path='/expenses' component={(props) => <Expenses addObserver={this.subscribeToChanges} unsubscribe={this.unsubscribe} selectedHousehold = {this.state.selectedHousehold}/>} />
                         <Route path='/management' component={(props) => <Management update={this.update}/>}/>
                         <Redirect from={'/'} to={this.state.selectedHousehold.houseid === 0 ? '/management' : '/dashboard'}/>
                     </div>
@@ -131,6 +132,12 @@ export default class Main extends Component {
 
     subscribeToChanges = (notify) => {
         this.observers.push(notify);
+    };
+
+    unsubscribe = (notify) => {
+        for (let i in this.observers) {
+            if (this.observers[i] === notify) {this.observers.splice(i,1);}
+        }
     };
 
     update = async (v) => {

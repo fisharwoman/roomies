@@ -75,6 +75,7 @@ class Contact extends Component {
                                                         variant={"outline-danger"}
                                                         value={row.contactsid}
                                                         key={index}
+                                                        dataKey={index}
                                                         onClick={this.handleRemoveContact}
                                                     >Remove</Button></td>
                                             </tr>
@@ -113,16 +114,27 @@ class Contact extends Component {
         }
     }
 
-    // todo something is going wrong with our database?
+
     async componentDidMount() {
         try {
+            this.props.addObserver(this.parentDidUpdate);
             let data = await this.getContactsFromHouse(this.state.selectedHouseholdId);
-            console.log(data);
             this.setState({contacts: data});
         } catch (e) {
             console.log(e);
         }
     }
+
+    componentWillUnmount() {
+        this.props.unsubscribe(this.parentDidUpdate);
+    }
+
+    parentDidUpdate = async (e) => {
+        if (e.hasOwnProperty('houseid')) {
+            let data = await this.getContactsFromHouse(e.houseid);
+            this.setState({selectedHouseholdId: e.houseid, contacts: data});
+        }
+    };
 
     onAddClick() {
         this.setState(prevState => ({
@@ -131,13 +143,14 @@ class Contact extends Component {
     }
 
 
-    // todo i don't think delete contact is properly working... a bunch of things become null
+
     // might this need error handling?
     // contacts/:contactid
     handleRemoveContact = async (e) => {
         // console.log(cid);
         const cid = e.target.value;
-        const idx = e.target.key;
+        const idx = e.target.attributes.dataKey.value;
+        console.log(idx);
         try {
             await fetch(`/contacts/${cid}`, {
                 method: "DELETE"
@@ -161,7 +174,8 @@ class Contact extends Component {
                         name: cname,
                         phoneno: cphone,
                         relationship: crel,
-                        listedby: crm
+                        listedby: crm,
+                        listedbyname: this.props.username
                     }]),
                     showAddCollapsible: false
                 })))

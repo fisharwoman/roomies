@@ -12,7 +12,7 @@ class Dashboard extends Component {
             housename: this.props.housename,
         };
         this.observers = [];
-        this.props.addObserver(this.parentDidUpdate);
+
     }
 
     render() {
@@ -54,6 +54,14 @@ class Dashboard extends Component {
                 housename: e.housename
             });
         }
+    };
+
+    componentDidMount() {
+        this.props.addObserver(this.parentDidUpdate);
+    }
+
+    componentWillUnmount() {
+        this.props.unsubscribe(this.parentDidUpdate);
     }
 }
 
