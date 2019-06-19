@@ -111,7 +111,7 @@ router
      */
     .get('/splits/:expenseID', async (req, res) => {
         try {
-            const query = `SELECT borrower, amount, datepaid FROM PartialExpenses WHERE expenseID = ${req.params.expenseID}`;
+            const query = `SELECT p.borrower, p.amount, p.datepaid, r.name FROM PartialExpenses p, Roommates r WHERE p.borrower = r.userID AND p.expenseID = ${req.params.expenseID}`;
             let result = await db.any(query);
             res.status(200).json(result);
         } catch (e) {
@@ -152,6 +152,7 @@ router
             res.status(400).send(e.message);
         }
     })
+    
     /* Gets the total amount owed */
     .get('/splits/household/:houseID/borrower/:userID/total', async (req, res) => {
         try {

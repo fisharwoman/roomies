@@ -88,7 +88,6 @@ export default class OwedExpenses extends React.Component {
     async componentDidMount() {
         try {
             let data = await this.getExpenses();
-            console.log(data);
             let partials = await this.getPartialExpenses(data);
             this.setState({
                 expenses: data,
@@ -109,6 +108,16 @@ export default class OwedExpenses extends React.Component {
         } catch (e) {
             throw e;
         }
+    }
+
+    formatDate = (date) => {
+        let dateFormat = new Date(date);
+        let newDate = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit'
+        }).format(dateFormat);
+        return `${newDate}`
     }
 
     async getPartialExpenses(data) {
@@ -134,7 +143,7 @@ export default class OwedExpenses extends React.Component {
                 <tr className="clickable-row" style={this.state.selectedExpenseID === value.expenseid ? 
                 { backgroundColor:'#007bff',
                   color: 'white' } : {}} key={value.expenseid} onClick={() => this.selectExpense(value.expenseid)}>
-                    <td>{value.expensedate}</td>
+                    <td>{this.formatDate(value.expensedate)}</td>
                     <td>{value.description}</td>
                     <td>{value.amount}</td>
                 </tr>
@@ -155,9 +164,9 @@ export default class OwedExpenses extends React.Component {
         return this.state.partialExpenses[this.state.selectedExpenseID].map((value, index) => {
             return (
                 <tr key={index}>
-                    <td>{value.borrower}</td>
+                    <td>{value.name}</td>
                     <td>{value.amount}</td>
-                    <td>{value.datepaid}</td>
+                    <td>{this.formatDate(value.datepaid)}</td>
                 </tr>
             )
         })
@@ -228,7 +237,8 @@ class AddExpenseForm extends Component{
             description: '',
             expenseType: null,
             expenseTypes: [],
-            roommates: []
+            roommates: [],
+            splitters: []
         };
 
     }
@@ -276,33 +286,64 @@ class AddExpenseForm extends Component{
         return data;
     }
 
+    handleSubmit = async (e) => {
+        console.log(this.state);
+
+        e.preventDefault();
+
+        let userid = window.sessionStorage.getItem('userid');
+        let response = await fetch(`/expenses/expense/`, {
+            method: "POST",
+            body: JSON.stringify({
+                expenseDate: new Date(),
+                amount: this.state.amount,
+                description: this.state.description,
+                createdBy: userid,
+                houseID: this.state.houseid
+            })
+        });
+
+        console.log(response);
+        
+        // TODO: split expenses among roommates
+
+        this.setState({
+            amount: null,
+            description: '',
+            expenseType: null,
+            splitters: []
+        })
+    }
+
     render(){
         return(
             <div className= "container">
-                <Form className="form" onSubmit={(e) => {e.preventDefault()}}>
-                    Add a Shared Expense <br/>
+                <Form style={style} onSubmit={this.handleSubmit}>
+                    <h3 style={{ alignText: 'center' }}>Add a Shared Expense</h3>
+                    <Form.Row style={tableRow}>
+                        <Form.Group>
+                            <Form.Label>Amount</Form.Label>
+                            <Form.Control type={'number'} />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control/>
+                        </Form.Group>
                     <Form.Group>
-                        <Form.Label>Amount</Form.Label>
-                        <Form.Control type={'number'}/>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Description</Form.Label>
+                        <Form.Label>Expense Type</Form.Label>
+                        <Form.Control as={'select'}/>
+                            <option key={-1}>Choose an expense type...</option>
+                            { this.makeExpenseTypes() }
                         <Form.Control/>
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Expense Type</Form.Label>
-                        <Form.Control as={'select'}>
-                            <option key={-1}>Choose an expense type...</option>
-                            { this.makeExpenseTypes() }
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Split With</Form.Label>
+                        <Form.Label>Split Evenly Among</Form.Label>
                         <Form.Control as={'select'} multiple>
                             { this.makeRoommates() }
                         </Form.Control>
                     </Form.Group>
                     <Form.Control type={'submit'} />
+                    </Form.Row>
                 </Form>
             </div>
         );
@@ -321,4 +362,20 @@ class AddExpenseForm extends Component{
         }
 
     }
+}
+
+const style = {
+    display: 'inline-block',
+    width: '95%',
+    margin: '40px',
+    maxWidth: '100%',
+    padding: '50px',
+    borderStyle: 'solid',
+    borderColor: '#007bff',
+    borderRadius: '10px',
+}
+
+const tableRow = {
+    maxWidth: '100%',
+    width: '100%'
 }
