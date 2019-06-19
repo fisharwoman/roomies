@@ -20,8 +20,8 @@ export default class Expenses extends React.Component {
         return(
             <div id={'expensesComponent'}>
                 <h3>Expenses</h3>
-                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(true)}}>Owed</Button>
-                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(false)}}>Owing</Button>
+                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(true)}}>To Collect</Button>
+                <Button variant={'outline-primary'} onClick={()=>{this.handleViewSwitcher(false)}}>To Pay</Button>
                 {this.state.isShowingOwed ?
                     <OwedExpenses  userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/> :
                     <OwingExpenses userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/>

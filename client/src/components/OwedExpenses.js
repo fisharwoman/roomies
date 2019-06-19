@@ -27,7 +27,7 @@ export default class OwedExpenses extends React.Component {
                 }
             <div>
                 <div style={{float: 'left', display: 'inline', width: '45%'}}>
-                    <h3>Owed expenses</h3>
+                    <h3>Expenses Owed</h3>
                     <Table>
                         <thead>
                             <tr>
@@ -42,15 +42,15 @@ export default class OwedExpenses extends React.Component {
                         <tfoot>
                             <tr>
                                 <td>Total Money Owing:</td>
-                                {this.sumOwing()}
                                 <td></td>
+                                {this.sumOwing()}
                             </tr>
                         </tfoot>
                     </Table>
                 </div>
 
                 <div style={{float: 'left',display: 'inline', width: '45%', marginLeft: '10px'}}>
-                <h3>Expense #{this.state.selectedExpenseID} Splits</h3>
+                <h3>Selected Expense Splits</h3>
                     <Table>
                         <thead>
                             <tr>
@@ -65,7 +65,7 @@ export default class OwedExpenses extends React.Component {
                         <tfoot>
                             <tr>
                                 <td>Total Money Owing:</td>
-                                {this.sumOwing()}
+                                {this.sumPartialOwing()}
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -116,7 +116,6 @@ export default class OwedExpenses extends React.Component {
                 let partials = await response.json();
                 partialExpenses[value.expenseid] = partials;
             }));
-            
             return partialExpenses;
 
         } catch (e) {
@@ -159,10 +158,53 @@ export default class OwedExpenses extends React.Component {
     }
 
     sumOwing() {
+        // let response = await fetch(`/expenses/households/${this.props.houseid}/summary`, {
+        //     method: "POST",
+        //     aggregation: 'sum',
+        //     grouBy: ['createdby']
+        // });
+
+        // console.log(response);
+        let sum = 0;
+        for(let e of this.state.expenses) {
+            var amount = Number(e.amount.replace(/[^0-9.-]+/g,""));
+            sum += amount;
+        }
+        let money = sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         return (
-            <td>$500.00</td>
-        )
+            <td>${ money }</td>
+        );
     }
+
+    sumPartialOwing() {
+        if(this.state.selectedExpenseID !== null) {
+            let partials = this.state.partialExpenses[this.state.selectedExpenseID];
+            let sum = 0;
+            for(let e of partials) {
+                var amount = Number(e.amount.replace(/[^0-9.-]+/g,""));
+                sum += amount;
+            }
+            let money = sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            return (
+                <td>${ money }</td>
+            );
+        } else {
+            return (
+                <td>$0.00</td>
+            )
+        }
+    }
+
+    formatMoney(n, c, d, t) {
+        var c = isNaN(c = Math.abs(c)) ? 2 : c,
+          d = d == undefined ? "." : d,
+          t = t == undefined ? "," : t,
+          s = n < 0 ? "-" : "",
+          i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
+          j = (j = i.length) > 3 ? j % 3 : 0;
+      
+        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    };
 
     componentWillReceiveProps(newProps) {
         this.setState({
