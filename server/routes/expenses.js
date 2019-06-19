@@ -121,13 +121,22 @@ router
     .get('/splits/borrower/:userID', async (req,res) => {
         try {
             const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` +
-            `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl ` +
-            `WHERE borrower=${req.params.userID}`;
-            console.log(query);
+            `(select expenseid, description, expensetype from expenses) as foo using (expenseid)) as tbl, (select userid, name as lendername from roommates) as r ` +
+            `WHERE tbl.borrower=${req.params.userID} and tbl.lender = r.userid`;
             const response = await db.any(query);
             res.status(200).json(response);
         } catch (e) {
             console.log(e.message);
+            res.status(400).send(e.message);
+        }
+    })
+    /* Gets the total amount owed */
+    .get('/splits/borrower/:userID/total', async (req, res) => {
+        try {
+            const query = `select sum(amount) as total from partialexpenses where borrower=${req.params.userID}  and datepaid is null`;
+            const response = await db.one(query);
+            res.status(200).json(response);
+        } catch (e) {
             res.status(400).send(e.message);
         }
     })
@@ -314,6 +323,26 @@ router
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
+        }
+    })
+    /**
+     * Generates a list of the expenses with the columns specified in req.body.cols
+     * {cols: [expensedate, amount, expensedescription, createdby, typedescription, categorydescription],houseid: number}
+     */
+    .post('/roommates/:userID/report', async (req, res) => {
+        try {
+            let columns = "";
+            req.body.cols.forEach((value,idx) => {
+                columns+=value;
+                if (idx < req.body.cols.length-1) columns+=",";
+            });
+            console.log(columns);
+            const query = `select ${columns} from user_expense_report where createdby = ${req.params.userID} and houseid = ${req.body.houseid}`;
+            let response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            // console.log(e);
+            res.status(400).send(e);
         }
     })
     /**
