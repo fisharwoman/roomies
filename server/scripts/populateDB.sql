@@ -122,8 +122,8 @@ INSERT INTO PartialExpenses (expenseID, lender, borrower, amount, dateSplit, dat
 (2,3,3, '3.00', '2019-05-03 17:11:14-07','2019-05-03 17:11:14-07'),
 (2,3,4, '3.00', '2019-05-03 17:11:14-07',null),
 (2,3,5, '3.00','2019-05-03 17:11:14-07',null),
-(6,2,1, '50.00','2019-06-17 17:11:14-07',null),
-(6,2,2, '50.00','2019-06-17 17:11:14-07','2019-06-17 17:11:14-07');
+(7,2,1, '50.00','2019-06-17 17:11:14-07',null),
+(7,2,2, '50.00','2019-06-17 17:11:14-07','2019-06-17 17:11:14-07');
 
 INSERT INTO Bulletin_isCreatedBy (title, body, dateCreated, createdBy, assignedTo) VALUES
 ('Please Clean Bathroom', 'Can we please try harder to keep the bathroom clean?', '2019-05-01 14:01:24-07', 1, 1),

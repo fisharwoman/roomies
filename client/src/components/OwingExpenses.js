@@ -55,7 +55,7 @@ export default class OwingExpenses extends React.Component {
 
     async getPartialExpenses() {
         try {
-            let response = await fetch(`expenses/splits/borrower/${this.props.userid}`, {
+            let response = await fetch(`expenses/splits/household/${this.state.houseid}/borrower/${this.props.userid}`, {
                 method: "GET"
             });
             let data = await response.json(); 
@@ -113,7 +113,7 @@ export default class OwingExpenses extends React.Component {
     async getTotalOwing() {
         try {
             let userid = window.sessionStorage.getItem('userid');
-            let response = await fetch(`/expenses/splits/borrower/${userid}/total`,{
+            let response = await fetch(`/expenses/splits/household/${this.state.houseid}/borrower/${userid}/total`,{
                 method: 'GET'
             });
             let data = await response.json();
