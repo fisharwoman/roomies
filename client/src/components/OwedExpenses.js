@@ -171,11 +171,18 @@ export default class OwedExpenses extends React.Component {
     }
 
     sumOwing() {
+        /**
+         * TODO: get this value via an aggregation (SUM) query
+         * as opposed to iteration
+         */
         let sum = 0;
         for(let e of this.state.expenses) {
             var amount = Number(e.amount.replace(/[^0-9.-]+/g,""));
             sum += amount;
         }
+        /**
+         * TODO: make a call to this.formatMoney() instead, although this works
+         */
         let money = sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         return (
             <td>${ money }</td>
@@ -184,11 +191,18 @@ export default class OwedExpenses extends React.Component {
 
     sumPartialOwing() {
         if(this.state.selectedExpenseID !== null) {
+            /**
+             * TODO: get this value via an aggregation (SUM) query
+             * as opposed to iteration
+             */
             let sum = 0;
             for(let e of this.state.selectedPartials) {
                 var amount = Number(e.amount.replace(/[^0-9.-]+/g,""));
                 sum += amount;
             }
+            /**
+            * TODO: make a call to this.formatMoney() instead, although this works
+            */
             let money = sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
             return (
                 <td>${ money }</td>
@@ -203,12 +217,12 @@ export default class OwedExpenses extends React.Component {
     async addNewExpense(request) {
         try {
             let expense = request.expense;
-            let total = expense.amount;
             let splitters = request.splitters;
+            let percentage = 1/(splitters.length);
 
             console.log("EXPENSE: " + JSON.stringify(expense));
 
-            // TODO: remove calls to test and replace with expense
+            // TODO: remove calls to test and replace with expense once expense has proper values
             let test = {
                 expenseDate: expense.expenseDate,
                 amount: 24,
@@ -218,18 +232,51 @@ export default class OwedExpenses extends React.Component {
                 houseID: expense.houseID
             }
 
-            let response = await fetch(`/expenses/expense`, {
+            let response1 = await fetch(`/expenses/expense`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
+                // TODO: remove calls to test and replace with expense
                 body: JSON.stringify(test)
             });
 
             /**
              * The post request is working on the test data! I just can't for the life of me
-             * figure out how to access the url it's sending back.
+             * figure out how to access the url it's sending me back.
              */
+
+            //  TODO: assign url value from response (don't hard code!)
+             let url = "http://localhost:3000/expenses/expense/7";
+
+             let roommateProportions = [];
+             for(let s of splitters) {
+                 let obj = {
+                     roommateID: s,
+                     proportion: percentage
+                 }
+                 roommateProportions.push(obj);
+             }
+
+
+             let response2 = await fetch(url, {
+                 method: 'POST',
+                 headers: {
+                    'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({
+                     roommateProportions: roommateProportions,
+                     date: new Date()
+                 })
+             });
+
+             this.setState({
+                showAddExpense: false
+             })
+
+             await this.componentDidMount();
+             let data = await response2.json()
+             return data;
 
         } catch (e) {
             console.log(e.message);
