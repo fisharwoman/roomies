@@ -59,6 +59,11 @@ Button {
   padding: 20px;
 }
 
+.clickable-row:hover {
+  background: #3d9eff;
+  color: white;
+}
+
 /*.sticky-top {*/
   /*position: sticky;*/
 /*}*/

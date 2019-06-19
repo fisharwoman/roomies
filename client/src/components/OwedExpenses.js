@@ -51,6 +51,9 @@ export default class OwedExpenses extends React.Component {
 
                 <div style={{float: 'left',display: 'inline', width: '45%', marginLeft: '10px'}}>
                 <h3>Selected Expense Splits</h3>
+                { this.state.selectedExpenseID === null ? 
+                    <h4>Click on an expense to view its splits.</h4> :
+                    this.state.selectedPartials.length > 0 ?
                     <Table>
                         <thead>
                             <tr>
@@ -69,7 +72,9 @@ export default class OwedExpenses extends React.Component {
                                 <td></td>
                             </tr>
                         </tfoot>
-                    </Table>
+                    </Table> :
+                    <h4>There are no partial expenses to show.</h4>
+                }
                 </div>
                 </div>
             </div>
@@ -126,7 +131,7 @@ export default class OwedExpenses extends React.Component {
     makeExpenses() {
         return this.state.expenses.map((value) => {
             return (
-                <tr style={this.state.selectedExpenseID === value.expenseid ? 
+                <tr className="clickable-row" style={this.state.selectedExpenseID === value.expenseid ? 
                 { backgroundColor:'#007bff',
                   color: 'white' } : {}} key={value.expenseid} onClick={() => this.selectExpense(value.expenseid)}>
                     <td>{value.expensedate}</td>
@@ -140,7 +145,8 @@ export default class OwedExpenses extends React.Component {
     async selectExpense(expenseid) {
         console.log("TARGET: " + expenseid);
         this.setState({
-            selectedExpenseID: expenseid
+            selectedExpenseID: expenseid,
+            selectedPartials: this.state.partialExpenses[expenseid]
         });
     }
 
@@ -178,9 +184,8 @@ export default class OwedExpenses extends React.Component {
 
     sumPartialOwing() {
         if(this.state.selectedExpenseID !== null) {
-            let partials = this.state.partialExpenses[this.state.selectedExpenseID];
             let sum = 0;
-            for(let e of partials) {
+            for(let e of this.state.selectedPartials) {
                 var amount = Number(e.amount.replace(/[^0-9.-]+/g,""));
                 sum += amount;
             }
