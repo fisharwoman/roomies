@@ -12,6 +12,7 @@ router
                 `${req.body.createdBy},${req.body.expenseType},${req.body.houseID}) RETURNING expenseID`;
             let result = await db.any(query);
             result = url + "expense/" + result[0].expenseid;
+            console.log("RESULT: " + result);
             res.status(200).send(result);
 
         } catch (e) {

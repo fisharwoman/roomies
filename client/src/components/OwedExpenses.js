@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
     Table, Button, Form
 } from 'react-bootstrap';
+import AddExpenseForm from './AddExpenseForm';
 
 export default class OwedExpenses extends React.Component {
     constructor(props) {
@@ -13,7 +14,8 @@ export default class OwedExpenses extends React.Component {
             partialExpenses: {},
             selectedPartials: [],
             showAddExpense: false
-        }
+        };
+        this.addNewExpense = this.addNewExpense.bind(this);
     }
 
     render() {
@@ -22,7 +24,7 @@ export default class OwedExpenses extends React.Component {
             <Button className="expense-button" style={{float: 'none'}} variant={'outline-primary'} onClick={() => {this.setState({
                 showAddExpense: !this.state.showAddExpense})}}>Add Expense</Button>
                 {this.state.showAddExpense ? 
-                    <AddExpenseForm houseid={this.state.houseid} /> :
+                    <AddExpenseForm houseid={this.state.houseid} addNewExpense={this.addNewExpense}/> :
                     null
                 }
             <div>
@@ -79,10 +81,6 @@ export default class OwedExpenses extends React.Component {
                 </div>
             </div>
         )
-    }
-
-    addComponent() {
-
     }
 
     async componentDidMount() {
@@ -173,13 +171,6 @@ export default class OwedExpenses extends React.Component {
     }
 
     sumOwing() {
-        // let response = await fetch(`/expenses/households/${this.props.houseid}/summary`, {
-        //     method: "POST",
-        //     aggregation: 'sum',
-        //     grouBy: ['createdby']
-        // });
-
-        // console.log(response);
         let sum = 0;
         for(let e of this.state.expenses) {
             var amount = Number(e.amount.replace(/[^0-9.-]+/g,""));
@@ -209,6 +200,42 @@ export default class OwedExpenses extends React.Component {
         }
     }
 
+    async addNewExpense(request) {
+        try {
+            let expense = request.expense;
+            let total = expense.amount;
+            let splitters = request.splitters;
+
+            console.log("EXPENSE: " + JSON.stringify(expense));
+
+            // TODO: remove calls to test and replace with expense
+            let test = {
+                expenseDate: expense.expenseDate,
+                amount: 24,
+                description: 'Wow this worked!',
+                createdBy: expense.createdBy,
+                expenseType: 1,
+                houseID: expense.houseID
+            }
+
+            let response = await fetch(`/expenses/expense`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(test)
+            });
+
+            /**
+             * The post request is working on the test data! I just can't for the life of me
+             * figure out how to access the url it's sending back.
+             */
+
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
+
     formatMoney(n, c, d, t) {
         var c = isNaN(c = Math.abs(c)) ? 2 : c,
           d = d == undefined ? "." : d,
@@ -227,155 +254,153 @@ export default class OwedExpenses extends React.Component {
     }
 }
 
-class AddExpenseForm extends Component{
+// class AddExpenseForm extends Component{
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            houseid: this.props.houseid,
-            amount: null,
-            description: '',
-            expenseType: null,
-            expenseTypes: [],
-            roommates: [],
-            splitters: []
-        };
+//     constructor(props) {
+//         super(props);
+//         this.state = {
+//             houseid: this.props.houseid,
+//             amount: null,
+//             description: '',
+//             expenseType: null,
+//             expenseTypes: [],
+//             roommates: [],
+//             splitters: []
+//         };
 
-    }
+//     }
 
-    handleAddNewExpense() {
-        alert("form submitted");
-    }
+//     handleAddNewExpense() {
+//         alert("form submitted");
+//     }
 
-    makeExpenseTypes(){
-        return this.state.expenseTypes.map((v, index) => {
-            return(
-                <option key={index} value={v.expensetypeid}>{v.categoryname} - {v.typename}</option>
-            )
-        });
-    }
+//     makeExpenseTypes(){
+//         return this.state.expenseTypes.map((v, index) => {
+//             return(
+//                 <option key={index} value={v.expensetypeid}>{v.categoryname} - {v.typename}</option>
+//             )
+//         });
+//     }
 
-    async getExpenseTypes() {
-        try {
-            let response = await fetch(`/expenses/types`, {
-                method: "GET"
-            });
+//     async getExpenseTypes() {
+//         try {
+//             let response = await fetch(`/expenses/types`, {
+//                 method: "GET"
+//             });
     
-            let data = await response.json();
-            return data;
-        } catch(e) {
-            console.log(e);
-        }
+//             let data = await response.json();
+//             return data;
+//         } catch(e) {
+//             console.log(e);
+//         }
 
-    }
+//     }
 
-    makeRoommates() {
-        console.log(this.state.roommates);
-        return this.state.roommates.map((v, index) => {
-            return(
-                <option key={index} value={v.userid}>{v.name}</option>
-            )
-        });
-    }
+//     makeRoommates() {
+//         console.log(this.state.roommates);
+//         return this.state.roommates.map((v, index) => {
+//             return(
+//                 <option key={index} value={v.userid}>{v.name}</option>
+//             )
+//         });
+//     }
 
-    async getRoommates() {
-        let roommates = await fetch(`households/${this.state.houseid}/roommates`, {
-            method: 'GET'
-        });
-        let data = await roommates.json();
-        return data;
-    }
+//     async getRoommates() {
+//         let roommates = await fetch(`households/${this.state.houseid}/roommates`, {
+//             method: 'GET'
+//         });
+//         let data = await roommates.json();
+//         return data;
+//     }
 
-    handleSubmit = async (e) => {
-        console.log(this.state);
+    // handleSubmit = async (e) => {
+    //     console.log(this.state);
 
-        e.preventDefault();
+    //     e.preventDefault();
 
-        let userid = window.sessionStorage.getItem('userid');
-        let response = await fetch(`/expenses/expense/`, {
-            method: "POST",
-            body: JSON.stringify({
-                expenseDate: new Date(),
-                amount: this.state.amount,
-                description: this.state.description,
-                createdBy: userid,
-                houseID: this.state.houseid
-            })
-        });
+    //     let userid = window.sessionStorage.getItem('userid');
+    //     let response = await fetch(`/expenses/expense/`, {
+    //         method: "POST",
+    //         body: JSON.stringify({
+    //             expenseDate: new Date(),
+    //             amount: this.state.amount,
+    //             description: this.state.description,
+    //             createdBy: userid,
+    //             houseID: this.state.houseid
+    //         })
+    //     });
 
-        console.log(response);
+    //     console.log(response);
         
-        // TODO: split expenses among roommates
+    //     // TODO: split expenses among roommates
 
-        this.setState({
-            amount: null,
-            description: '',
-            expenseType: null,
-            splitters: []
-        })
-    }
+    //     this.setState({
+    //         amount: null,
+    //         description: '',
+    //         expenseType: null,
+    //         splitters: []
+    //     })
+    // }
 
-    render(){
-        return(
-            <div className= "container">
-                <Form style={style} onSubmit={this.handleSubmit}>
-                    <h3 style={{ alignText: 'center' }}>Add a Shared Expense</h3>
-                    <Form.Row style={tableRow}>
-                        <Form.Group>
-                            <Form.Label>Amount</Form.Label>
-                            <Form.Control type={'number'} />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control/>
-                        </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Expense Type</Form.Label>
-                        <Form.Control as={'select'}/>
-                            <option key={-1}>Choose an expense type...</option>
-                            { this.makeExpenseTypes() }
-                        <Form.Control/>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Split Evenly Among</Form.Label>
-                        <Form.Control as={'select'} multiple>
-                            { this.makeRoommates() }
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Control type={'submit'} />
-                    </Form.Row>
-                </Form>
-            </div>
-        );
-    }
+//     render(){
+//         return(
+//                 <Form style={style} onSubmit={this.handleSubmit}>
+//                     <h3 style={{ alignText: 'center' }}>Add a Shared Expense</h3>
+//                     <Form.Row style={tableRow}>
+//                         <Form.Group>
+//                             <Form.Label>Amount</Form.Label>
+//                             <Form.Control type={'number'} />
+//                         </Form.Group>
+//                         <Form.Group>
+//                             <Form.Label>Description</Form.Label>
+//                             <Form.Control/>
+//                         </Form.Group>
+//                     <Form.Group>
+//                         <Form.Label>Expense Type</Form.Label>
+//                         <Form.Control as={'select'}/>
+//                             <option key={-1}>Choose an expense type...</option>
+//                             { this.makeExpenseTypes() }
+//                         <Form.Control/>
+//                     </Form.Group>
+//                     <Form.Group>
+//                         <Form.Label>Split Evenly Among</Form.Label>
+//                         <Form.Control as={'select'} multiple>
+//                             { this.makeRoommates() }
+//                         </Form.Control>
+//                     </Form.Group>
+//                     <Form.Control type={'submit'} />
+//                     </Form.Row>
+//                 </Form>
+//         );
+//     }
 
-    async componentDidMount() {
-        try {
-            let types = await this.getExpenseTypes();
-            let roommates = await this.getRoommates();
-            this.setState({
-                expenseTypes: types,
-                roommates: roommates
-            });
-        } catch (e) {
-            console.log(e)
-        }
+//     async componentDidMount() {
+//         try {
+//             let types = await this.getExpenseTypes();
+//             let roommates = await this.getRoommates();
+//             this.setState({
+//                 expenseTypes: types,
+//                 roommates: roommates
+//             });
+//         } catch (e) {
+//             console.log(e)
+//         }
 
-    }
-}
+//     }
+// }
 
-const style = {
-    display: 'inline-block',
-    width: '95%',
-    margin: '40px',
-    maxWidth: '100%',
-    padding: '50px',
-    borderStyle: 'solid',
-    borderColor: '#007bff',
-    borderRadius: '10px',
-}
+// const style = {
+//     display: 'inline-block',
+//     width: '95%',
+//     margin: '40px',
+//     maxWidth: '100%',
+//     padding: '50px',
+//     borderStyle: 'solid',
+//     borderColor: '#007bff',
+//     borderRadius: '10px',
+// }
 
-const tableRow = {
-    maxWidth: '100%',
-    width: '100%'
-}
+// const tableRow = {
+//     maxWidth: '100%',
+//     width: '100%'
+// }
