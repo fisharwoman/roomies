@@ -15,6 +15,8 @@ export default class OwedExpenses extends React.Component {
             selectedPartials: [],
             showAddExpense: false
         };
+        this.observers = [];
+        this.props.addObserver(this.parentDidUpdate);
     }
 
     render() {
@@ -23,7 +25,7 @@ export default class OwedExpenses extends React.Component {
             <Button className="expense-button" style={{float: 'none'}} variant={'outline-primary'} onClick={() => {this.setState({
                 showAddExpense: !this.state.showAddExpense})}}>Add Expense</Button>
                 {this.state.showAddExpense ? 
-                    <AddExpenseForm houseid={this.state.houseid} addNewExpense={this.addNewExpense}/> :
+                    <AddExpenseForm houseid={this.state.houseid} addNewExpense={this.addNewExpense} addObserver={this.addObserver}/> :
                     null
                 }
             <div>
@@ -239,13 +241,22 @@ export default class OwedExpenses extends React.Component {
         return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
     };
 
-    componentWillReceiveProps(newProps) {
-        this.setState({
-            houseid: newProps.houseid
-        });
-    }
-}
+    parentDidUpdate = (e) => {
+        if (e.hasOwnProperty('houseid')) {
+            this.observers.forEach(v=>{
+                v(e);
+            });
+            this.setState({
+                housid: e.houseid
+            },this.addNewExpense);
+        }
+    };
 
+    addObserver = (notify) => {
+        this.observers.push(notify);
+    };
+}
+//////////////
 class AddExpenseForm extends Component{
 
     constructor(props) {
@@ -259,7 +270,7 @@ class AddExpenseForm extends Component{
             roommates: [],
             splitters: []
         };
-
+        this.props.addObserver(this.parentDidUpdate);
     }
 
     makeExpenseTypes(){
@@ -415,6 +426,25 @@ class AddExpenseForm extends Component{
             console.log(e)
         }
 
+    }
+
+    parentDidUpdate = (e) => {
+        try {
+            if (e.hasOwnProperty('houseid')) {
+                this.setState({
+                    houseid: e.houseid
+                }, async () => {
+                    let types = await this.getExpenseTypes();
+                    let roommates = await this.getRoommates();
+                    this.setState({
+                        expenseTypes: types,
+                        roommates: roommates
+                    });
+                })
+            }
+        } catch (e) {
+            console.log(e);
+        }
     }
 }
 

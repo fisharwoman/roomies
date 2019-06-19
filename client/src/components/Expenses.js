@@ -34,7 +34,7 @@ export default class Expenses extends React.Component {
                         null
                 }
                 {this.state.isShowingOwed ?
-                    <OwedExpenses  userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/> :
+                    <OwedExpenses  addObserver={this.addObserver} userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/> :
                     <OwingExpenses addObserver={this.addObserver} userid={window.sessionStorage.getItem("userid")} houseid={this.state.houseid}/>
                 }
             </div>
