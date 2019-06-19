@@ -74,7 +74,7 @@ export default class OwingExpenses extends React.Component {
                    <td>{value.lendername}</td>
                    <td>
                        {value.datepaid !== null ? 
-                       value.datepaid : 
+                       this.formatDate(value.datepaid) : 
                        <Button value={value.expenseid} onClick={e => this.makePayment(e)} variant={'outline-success'}>Pay</Button>
                        }
                     </td>
@@ -95,9 +95,9 @@ export default class OwingExpenses extends React.Component {
             const date = await response.json();
             let data = this.state.expenses;
             for (let o of data) {
-                console.log(o);
+                // console.log(o);
                 if (o.expenseid === expenseid) {
-                    o.datepaid = date.datepaid
+                    o.datepaid = date.datepaid;
                 }
             }
             let total = await this.getTotalOwing();
@@ -108,6 +108,17 @@ export default class OwingExpenses extends React.Component {
         } catch (e) {
             console.log(e);
         }
+    }
+
+    formatDate = (date) => {
+        let dateFormat = new Date(date);
+        let newDate = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit'
+        }).format(dateFormat);
+       //  console.log(newDate)
+        return `${newDate}`
     }
 
     async getTotalOwing() {

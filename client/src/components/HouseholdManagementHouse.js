@@ -88,9 +88,9 @@ export default class HouseholdManagementHouse extends React.Component {
                         <h3>{this.state.houseName}
 
                             <Button variant={"outline-danger"} className={"rh"}
-                                    onClick={() => this.props.removeHousehold(this.state.houseid)}>Remove</Button>
+                                    onClick={() => this.props.removeHousehold(this.state.houseid)}>Leave House</Button>
                             <Button variant={"outline-info"} className={"eh"}
-                                    onClick={this.onEditClick.bind(this)}>Edit</Button></h3>
+                                    onClick={this.onEditClick.bind(this)}>Edit Address</Button></h3>
                         <p>{this.state.address}</p>
                         {this.state.showEditHouseForm ?
                             <EditHouseForm editHouse={this.editHouse}/> :
