@@ -19,7 +19,7 @@ export default class OwedExpenses extends React.Component {
     render() {
         return (
             <div>
-            <Button style={{float: 'none'}} variant={'outline-primary'} onClick={() => {this.setState({
+            <Button className="expense-button" style={{float: 'none'}} variant={'outline-primary'} onClick={() => {this.setState({
                 showAddExpense: !this.state.showAddExpense})}}>Add Expense</Button>
                 {this.state.showAddExpense ? 
                     <AddExpenseForm houseid={this.state.houseid} /> :

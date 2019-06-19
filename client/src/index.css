@@ -64,6 +64,10 @@ Button {
   color: white;
 }
 
+.expense-button {
+  margin: 10px;
+}
+
 /*.sticky-top {*/
   /*position: sticky;*/
 /*}*/
