@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Form from "react-bootstrap/Form";
+import {Form, Button} from "react-bootstrap";
 
 class AddRMForm extends Component {
 
@@ -8,13 +8,12 @@ class AddRMForm extends Component {
 
         this.state = {
             // rmname: null,
-            rmid: null
+            roommateEmail: null
         };
-        this.handleAddNewRM= this.handleAddNewRM.bind(this);
     }
 
-    handleAddNewRM() {
-        this.props.addNew(this.state.rmid); //this.state.rmname
+    handleAddNewRM = () => {
+        this.props.addNew(this.state.roommateEmail); //this.state.rmname
     }
 
     // API Adds the roommate of specified ID to the household of specified ID
@@ -27,13 +26,14 @@ class AddRMForm extends Component {
         return (
                 <Form className="form">
                     Add a Roommate <br/>
-                    <label htmlFor={"Id"}>Roommate ID: &nbsp;&nbsp; </label>
-                    <input type={"text"} name={"rmid"}
-                           onChange={event => {
-                               this.setState({rmid: event.target.value})
-                           }}/> <br/>
-                    <input type={"button"} name={"handleAddNewRM"} value={"+"}
-                           onClick={this.handleAddNewRM}/> <br/>
+                    <Form.Group>
+                        <Form.Label>Roommate Email: &nbsp;&nbsp; </Form.Label>
+                        <Form.Control type={"email"}
+                               onChange={event => {
+                                   this.setState({roommateEmail: event.target.value})
+                               }}/>
+                        <Button variant={'outline-primary'} onClick={this.handleAddNewRM}>Add Room</Button>
+                    </Form.Group>
                 </Form>
         );
     }

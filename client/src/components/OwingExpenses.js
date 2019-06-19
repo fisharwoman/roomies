@@ -11,6 +11,7 @@ export default class OwingExpenses extends React.Component {
             expenses: [],
             total: ""
         }
+        this.props.addObserver(this.parentDidUpdate);
     }
     render() {
         return (
@@ -54,7 +55,7 @@ export default class OwingExpenses extends React.Component {
 
     async getPartialExpenses() {
         try {
-            let response = await fetch(`expenses/splits/borrower/${this.props.userid}`, {
+            let response = await fetch(`expenses/splits/household/${this.state.houseid}/borrower/${this.props.userid}`, {
                 method: "GET"
             });
             let data = await response.json(); 
@@ -73,7 +74,7 @@ export default class OwingExpenses extends React.Component {
                    <td>{value.lendername}</td>
                    <td>
                        {value.datepaid !== null ? 
-                       value.datepaid : 
+                       this.formatDate(value.datepaid) : 
                        <Button value={value.expenseid} onClick={e => this.makePayment(e)} variant={'outline-success'}>Pay</Button>
                        }
                     </td>
@@ -94,9 +95,9 @@ export default class OwingExpenses extends React.Component {
             const date = await response.json();
             let data = this.state.expenses;
             for (let o of data) {
-                console.log(o);
+                // console.log(o);
                 if (o.expenseid === expenseid) {
-                    o.datepaid = date.datepaid
+                    o.datepaid = date.datepaid;
                 }
             }
             let total = await this.getTotalOwing();
@@ -109,10 +110,21 @@ export default class OwingExpenses extends React.Component {
         }
     }
 
+    formatDate = (date) => {
+        let dateFormat = new Date(date);
+        let newDate = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit'
+        }).format(dateFormat);
+       //  console.log(newDate)
+        return `${newDate}`
+    }
+
     async getTotalOwing() {
         try {
             let userid = window.sessionStorage.getItem('userid');
-            let response = await fetch(`/expenses/splits/borrower/${userid}/total`,{
+            let response = await fetch(`/expenses/splits/household/${this.state.houseid}/borrower/${userid}/total`,{
                 method: 'GET'
             });
             let data = await response.json();
@@ -133,6 +145,26 @@ export default class OwingExpenses extends React.Component {
             houseid: newProps.houseid
         });
     }
+
+    parentDidUpdate = async (e) => {
+        try {
+            if (e.hasOwnProperty('houseid')) {
+                this.setState({houseid: e.houseid}, async () => {
+                    let data = await this.getPartialExpenses();
+                    let total = await this.getTotalOwing();
+                    // TODO Convert lender ID to name
+                    this.setState({
+                        expenses: data,
+                        total: total.total
+                    });
+                })
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+
 
 
 }

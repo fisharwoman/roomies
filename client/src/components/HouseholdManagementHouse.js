@@ -36,6 +36,7 @@ export default class HouseholdManagementHouse extends React.Component {
         this.editHouse = this.editHouse.bind(this);
     }
 
+
     // updates house address by calling the api and updating front end if successful
     async editHouse(newaddr) {
         try {
@@ -54,7 +55,6 @@ export default class HouseholdManagementHouse extends React.Component {
         }
     }
 
-    // todo works in front end, returns status 200, but changes to undefined in db.
     // PATCH households/:houseID/ (for editing house address)
     async patchHouse(newaddr, houseid) {
         try {
@@ -63,7 +63,7 @@ export default class HouseholdManagementHouse extends React.Component {
                 headers: {
                     "content-type": 'application/json'
                 },
-                body: JSON.stringify({Address: newaddr})
+                body: JSON.stringify({address: newaddr})
             });
             console.log(response);
             return response;
@@ -88,9 +88,9 @@ export default class HouseholdManagementHouse extends React.Component {
                         <h3>{this.state.houseName}
 
                             <Button variant={"outline-danger"} className={"rh"}
-                                    onClick={() => this.props.removeHousehold(this.state.houseid)}>Remove</Button>
+                                    onClick={() => this.props.removeHousehold(this.state.houseid)}>Leave House</Button>
                             <Button variant={"outline-info"} className={"eh"}
-                                    onClick={this.onEditClick.bind(this)}>Edit</Button></h3>
+                                    onClick={this.onEditClick.bind(this)}>Edit Address</Button></h3>
                         <p>{this.state.address}</p>
                         {this.state.showEditHouseForm ?
                             <EditHouseForm editHouse={this.editHouse}/> :
@@ -207,7 +207,8 @@ export default class HouseholdManagementHouse extends React.Component {
             let postResp = await this.addRoomAPI(houseid, newRoomName);
             if (postResp.status === 200) {
                 this.setState((state => ({
-                    rooms: state.rooms.concat([newRoomName])
+                    rooms: state.rooms.concat([newRoomName]),
+                    showAddRoomForm: false
                 })))
             } else {
                 alert("Error. This room has already been added.");
@@ -235,14 +236,15 @@ export default class HouseholdManagementHouse extends React.Component {
     }
 
     // GET RM name, POST RM to household database, display RM if success
-    async addNewRM(rmid) {
+    async addNewRM(email) {
         try {
-            let rmname = await this.getRMName(rmid);
-            let postResp = await this.postRMName(this.state.houseid, rmid);
+            let roommate = await this.getRMName(email);
+            let postResp = await this.postRMName(this.state.houseid, roommate.userid);
 
             if (postResp.status === 200) {
                 this.setState((state => ({
-                    roommates: state.roommates.concat([rmname]) // this is client side
+                    roommates: state.roommates.concat([roommate.name]),
+                    showAddRMForm: false
                 })));
             } else {
                 alert("Error. This roommate has already been added."); // duplicate roommate, or roommate that doesn't exist
@@ -253,19 +255,17 @@ export default class HouseholdManagementHouse extends React.Component {
         // console.log(this.state.roommates);
     }
 
-    // GET /user/:userID
-    async getRMName(rmid) {
+    // GET /user/email-:email
+    async getRMName(email) {
         try {
-            console.log(rmid);
-            const response = await fetch(`/users/${rmid}`, {
+            const response = await fetch(`/users/user/email-${email}`, {
                 method: 'GET',
                 headers: {
                     "content-type": 'application/json'
                 }
             });
             let data = await response.json();
-            console.log(data.name);
-            return data.name;
+            return data;
         } catch (e) {
             throw e;
         }
@@ -274,7 +274,6 @@ export default class HouseholdManagementHouse extends React.Component {
     // POST households/:houseID/roommates/:roommateID
     async postRMName(houseid, rmid) {
         try {
-            console.log(houseid, rmid);
             const response = await fetch(`/households/${houseid}/roommates/${rmid}`, {
                 method: 'POST',
                 headers: {
@@ -294,5 +293,50 @@ export default class HouseholdManagementHouse extends React.Component {
         }));
     }
 
+
+    // updates house address by calling the api and updating front end if successful
+    async editHouse(newaddr) {
+        try {
+            let houseid = this.state.houseid;
+            let resp = await this.patchHouse(newaddr, houseid);
+
+            if (resp.status === 200) {
+                this.setState(prevState => ({
+                    address: newaddr,
+                    showEditHouseForm: false
+                }));
+            } else {
+                alert("Error. System error for editing household address.");
+            }
+        } catch(e){
+            alert("Error.");
+        }
+    }
+
+    // todo works in front end, returns status 200, but changes to undefined in db.
+    // PATCH households/:houseID/ (for editing house address)
+    async patchHouse(newaddr, houseid) {
+        try {
+            const response = await fetch(`/households/${houseid}/`, {
+                method: "PATCH",
+                headers: {
+                    "content-type": 'application/json'
+                },
+                body: JSON.stringify({address: newaddr})
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    // toogles edit household form
+    onEditClick() {
+        this.setState(prevState => ({
+            showEditHouseForm: !prevState.showEditHouseForm
+        }));
+    }
 
 }

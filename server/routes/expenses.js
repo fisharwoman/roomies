@@ -140,6 +140,28 @@ router
             res.status(400).send(e.message);
         }
     })
+    .get('/splits/household/:houseID/borrower/:userID', async (req,res) => {
+        try {
+            const query = `SELECT * FROM (SELECT * FROM partialexpenses inner join ` +
+                `(select expenseid, description, expensetype, houseid from expenses) as foo using (expenseid)) as tbl, (select userid, name as lendername from roommates) as r ` +
+                `WHERE tbl.borrower=${req.params.userID} and tbl.lender = r.userid and tbl.houseid=${req.params.houseID}`;
+            const response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).send(e.message);
+        }
+    })
+    /* Gets the total amount owed */
+    .get('/splits/household/:houseID/borrower/:userID/total', async (req, res) => {
+        try {
+            const query = `select sum(p.amount) as total from partialexpenses p, expenses e where p.expenseid = e.expenseid and e.houseid=${req.params.houseID} and p.borrower=${req.params.userID}  and p.datepaid is null`;
+            const response = await db.one(query);
+            res.status(200).json(response);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
     // TODO: CHECK IF IS THIS RIGHT
     .get('/splits/lender/:userID', async (req,res) => {
         try {
@@ -369,6 +391,30 @@ router
             const query = QueryUtil.makeHouseholdExpenseSummary(req.body);
             let result = await db.manyOrNone(query);
             res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /* Gets an aggregate view of expenses made for a particular household, for a particular user*/
+    .get('/households/:houseID/roommates/:userID/owed', async (req,res) => {
+        try {
+            const query = `select e.expenseid, e.description, e.amount, t.outstanding from expenses e, ` +
+                `(select e.expenseid, sum(p.amount) as outstanding from expenses e, partialexpenses p ` +
+                `where e.expenseid = p.expenseid and p.datepaid is null and e.houseid = ${req.params.houseID}  ` +
+                `and e.createdby = ${req.params.userID} group by e.expenseid) as t where e.expenseid = t.expenseid`;
+            let response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /* Get the splits a user hasn't paid yet for a particular household*/
+    .get('/households/:houseID/roommates/:userID/owing', async (req,res) => {
+        try {
+            const query = `select e.expenseid, e.description, e.amount, p.amount as outstanding from expenses e, partialexpenses p where `+
+                `e.expenseid = p.expenseid and houseid=${req.params.houseID} and p.borrower=${req.params.userID} and p.datepaid is null`;
+            let response = await db.any(query);
+            res.status(200).json(response);
         } catch (e) {
             res.status(400).send(e.message);
         }

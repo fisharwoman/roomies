@@ -11,7 +11,7 @@ router
             const query = `select * from `+
                 `(select * from roommate_reminders left join reminders using (reminderid)) as tbl where usertoremind = ${req.user} ORDER BY reminderdate`;
             let result = await db.any(query);
-            console.log(result);
+            // console.log(result);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -50,8 +50,33 @@ router
 
             const query = `SELECT reminderID, title, reminderdate, creator FROM RemindersByHouseID 
             WHERE creator = ${req.params.creator} ORDER BY reminderdate`;
-            await db.any(query1).then;
+            await db.any(query1);
             let result = await db.any(query);
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+
+    /* GET ALL reminders based on household, that is sent to ALL users (division). */
+    .get('/reminderstoall/houses/:houseID', async (req,res) => {
+        try {
+            let today = new Date();
+            const divisionQuery = `CREATE OR REPLACE VIEW divisionQuery AS
+                            SELECT * FROM Roommate_Reminders 
+                             WHERE reminderID not in ( SELECT reminderID FROM (
+                                (SELECT reminderID , userToRemind FROM (select roommateID as userToRemind from Household_Roommates WHERE 
+                                    Household_Roommates.houseID = ${req.params.houseID}) as p cross join 
+                                (SELECT distinct reminderID from Roommate_Reminders) as sp)
+                            EXCEPT
+                                (SELECT reminderID , userToRemind FROM Roommate_Reminders) ) AS r )`;
+            const joinReminderQuery = `SELECT * FROM reminders
+                                        right join (SELECT distinct reminderID FROM divisionQuery) as r
+                                        on r.reminderID = reminders.reminderID WHERE reminderdate > '${today.toISOString()}' ORDER BY reminders.reminderdate`;
+            // console.log(joinReminderQuery);
+            await db.none(divisionQuery);
+            let result = await db.any(joinReminderQuery);
+            // console.log(joinReminderQuery);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -98,7 +123,7 @@ router
                 WHERE houseID = ${req.params.houseID}) AS derivedTable
             on derivedTable.eventID = Events.eventID`;
             let result = await db.any(query1);
-            console.log(result);
+            // console.log(result);
             res.status(200).json(result);
         } catch (e) {
             res.status(400).send(e.message);
@@ -192,7 +217,7 @@ router
         try {
             const query = `SELECT * FROM Events_Located_In 
             WHERE eventID = ${req.params.eventID} AND houseID = ${req.params.houseID};`
-            console.log(query)
+            // console.log(query)
             let result = await db.any(query);
             res.status(200).json(result);
         } catch (e) {
@@ -221,7 +246,7 @@ router
             const query = `INSERT INTO Events_Located_In (eventID, houseID, roomName)
                 VALUES ('${req.body.eventID}', '${req.body.houseID}', '${req.body.roomName}') 
                 RETURNING *;`
-                console.log(query)
+                // console.log(query)
             let result = await db.any(query);
             res.status(200).send("http://localhost:3000/eventslocated/" + result[0].eventid + "/" + result[0].houseid + "/"  + result[0].roomname);
         } catch (e) {
