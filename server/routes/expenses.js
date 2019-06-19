@@ -372,6 +372,30 @@ router
         } catch (e) {
             res.status(400).send(e.message);
         }
+    })
+    /* Gets an aggregate view of expenses made for a particular household, for a particular user*/
+    .get('/households/:houseID/roommates/:userID/owed', async (req,res) => {
+        try {
+            const query = `select e.expenseid, e.description, e.amount, t.outstanding from expenses e, ` +
+                `(select e.expenseid, sum(p.amount) as outstanding from expenses e, partialexpenses p ` +
+                `where e.expenseid = p.expenseid and p.datepaid is null and e.houseid = ${req.params.houseID}  ` +
+                `and e.createdby = ${req.params.userID} group by e.expenseid) as t where e.expenseid = t.expenseid`;
+            let response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
+    })
+    /* Get the splits a user hasn't paid yet for a particular household*/
+    .get('/households/:houseID/roommates/:userID/owing', async (req,res) => {
+        try {
+            const query = `select e.expenseid, e.description, e.amount, p.amount as outstanding from expenses e, partialexpenses p where `+
+                `e.expenseid = p.expenseid and houseid=${req.params.houseID} and p.borrower=${req.params.userID} and p.datepaid is null`;
+            let response = await db.any(query);
+            res.status(200).json(response);
+        } catch (e) {
+            res.status(400).send(e.message);
+        }
     });
 
 function calculateSplitCost(totalCost, proportion) {

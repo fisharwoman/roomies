@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Form from "react-bootstrap/Form";
+import {Form, Button} from "react-bootstrap";
 
 class AddRoomForm extends Component{
 
@@ -9,22 +9,23 @@ class AddRoomForm extends Component{
         this.state={
             roomname: null
         };
-        this.handleAddNewRoom = this.handleAddNewRoom.bind(this);
     }
 
-    handleAddNewRoom(){
+    handleAddNewRoom = () => {
         // console.log(this.state.roomname);
         this.props.addNew(this.state.roomname);
-    }
+    };
 
     render(){
         return (
-            <Form className="add-room-form">
+            <Form className="form">
                 Add a Room <br/>
-                <label htmlFor={"roomname"}>Room Name: &nbsp;&nbsp; </label>
-                <input type={"text"} name={"roomname"} placeholder={"room name goes here"}
-                       onChange={event => {this.setState({roomname: event.target.value})}}/>
-                <input type={"button"} name={"handleNewAddRoom"} value={"+"} onClick={this.handleAddNewRoom} />
+                <Form.Group>
+                    <Form.Label>Room Name: &nbsp;&nbsp; </Form.Label>
+                    <Form.Control placeholder={"Enter the room name..."}
+                           onChange={event => {this.setState({roomname: event.target.value})}}/>
+                    <Button variant={'outline-primary'} onClick={this.handleAddNewRoom}>Add Room</Button>
+                </Form.Group>
             </Form>
         );
     }

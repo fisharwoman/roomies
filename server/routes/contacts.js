@@ -9,11 +9,11 @@ router
         try {
           const query1 = `CREATE OR REPLACE VIEW ContactsByHouseID AS
           SELECT * FROM Contacts
-          RIGHT JOIN (SELECT * FROM Household_Roommates WHERE 
+          INNER JOIN (SELECT * FROM Household_Roommates WHERE 
             Household_Roommates.houseID = ${req.params.houseID}) AS derivedTable
           ON derivedTable.roommateID = Contacts.listedBy`;
 
-          const query2 = `SELECT * FROM ContactsByHouseID`;
+          const query2 = `SELECT c.contactsid, c.name, c.phoneno, c.relationship, c.listedby, r.name as listedbyname FROM ContactsByHouseID c, roommates r where c.listedby = r.userid order by c.name`;
           await db.any(query1);
           let result = await db.any(query2);
           res.status(200).json(result);
@@ -35,6 +35,7 @@ router
 
     /* ADDS new contact */
     .post('/', async (req,res) => {
+        console.log("HI"+JSON.stringify(req.body));
         try {
             const query = `INSERT INTO Contacts (name, phoneNo, relationship, listedBy)` +
                 `VALUES ('${req.body.name}', '${req.body.phoneNo}', '${req.body.relationship}', '${req.body.listedby}')` +
@@ -42,7 +43,8 @@ router
                 `RETURNING contactsID;`;
             let result = await db.any(query);
             console.log(result[0].contactsid);
-            res.status(200).send("http://localhost:3000/contacts/" + result[0].contactsid);
+            res.status(200).send({cid:result[0].contactsid});
+            // res.status(200).send("http://localhost:3000/contacts/" + result[0].contactsid);
         } catch (e) {
             console.log(e);
             res.status(400).send(e.message);

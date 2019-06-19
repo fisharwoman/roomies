@@ -6,12 +6,12 @@ ROOMIES is a full-stack Web App project that is a household management tool for 
 We have used a number of open source and free-level resources to build our web app:
 * JavaScript
 * [Node.js] : open-source, cross-platform JavaScript run-time environment that executes JavaScript code outside of a browser
-*  [Express] : Fast, unopinionated, minimalist web framework for Node.js
+*  [Express] : Fast, unopinionated, minimalist web framework for Node.js to build APIs
 * [Passport.js]: Authentication middleware for Node.js
 * [React]: JavaScript library for building user interfaces.
 * [React-Bootstrap]: front-end framework for React.
 * CSS: style sheet language alongside HTML, JavaScript
-* [PostgreSQL]: free and open-source relational database management syste
+* [PostgreSQL]: free and open-source relational database management system
 * [Docker]: container platform for our PostgreSQL
 
 ### Easy start instructions
@@ -35,7 +35,9 @@ $ yarn start
 6. When asked, would you like to open in another port, answer:: yes
 
 # DEMO
-
+Use the following user for your demo:
+usernane: `joey_tribbiani@hotmail.com`
+pwd:    `k#LSV^ZJ*z`
 
 # License
 MIT

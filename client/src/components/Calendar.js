@@ -87,11 +87,22 @@ export default class Calendar extends React.Component {
     } catch (e) {console.log(e.message);}
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      selectedHousehold: nextProps.selectedHousehold
-    }, this.componentDidMount);
-  }
+  // componentWillReceiveProps(nextProps, nextContext) {
+  //   this.setState({
+  //     selectedHousehold: nextProps.selectedHousehold
+  //   }, this.componentDidMount);
+  // }
+
+  parentDidUpdate = (e) => {
+    if (e.hasOwnProperty('houseid') && e.hasOwnProperty('housename')) {
+      this.setState({
+        selectedHousehold: {
+          houseid: e.houseid,
+          housename: e.housename
+        }
+      }, this.componentDidMount);
+    }
+  };
 
 
   render() {
@@ -132,14 +143,13 @@ export default class Calendar extends React.Component {
 
   async componentDidMount() {
     try {
+      this.props.addObserver(this.parentDidUpdate);
       let houseID = this.state.selectedHousehold;
       if (!houseID) return;
       else {
         let data = await this.loadData(houseID);
-        console.log(data);
         let roomnames = await this.getRoomnamesOfHousehold();
         let roommates = await this.getRoommatesOfHousehold();
-        console.log(data);
         this.setState({
           data: data,
           roommates: roommates,
@@ -151,9 +161,12 @@ export default class Calendar extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.unsubscribe(this.parentDidUpdate);
+  }
+
   async loadData(houseID) {
     houseID = houseID.houseid;
-    console.log(houseID);
     let reminders = await this.getReminders(houseID);
     let events = await this.getEvents(houseID);
     let data = reminders.concat(events);
